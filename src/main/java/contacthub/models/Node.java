@@ -1,4 +1,4 @@
-package com.contactlab.contacthub.models;
+package com.contactlab.hub.models;
 
 import java.util.List;
 

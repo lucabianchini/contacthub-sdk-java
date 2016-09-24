@@ -1,12 +1,12 @@
-package com.contactlab.contacthub;
+package com.contactlab.hub;
 
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
 import java.util.List;
 
-import com.contactlab.contacthub.models.Customer;
+import com.contactlab.hub.models.Customer;
 
-public class Node extends com.contactlab.contacthub.models.Node {
+public class Node extends com.contactlab.hub.models.Node {
 
   public Node(String id, String workspaceId) {
     super(id, workspaceId);

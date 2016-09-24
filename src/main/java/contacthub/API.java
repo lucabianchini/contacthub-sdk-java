@@ -1,4 +1,4 @@
-package com.contactlab.contacthub;
+package com.contactlab.hub;
 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -10,7 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import com.contactlab.contacthub.models.Customer;
+import com.contactlab.hub.models.Customer;
 
 public class API {
 

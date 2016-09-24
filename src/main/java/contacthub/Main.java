@@ -1,4 +1,4 @@
-package com.contactlab.contacthub;
+package com.contactlab.hub;
 
 public class Main {
 

@@ -1,7 +1,7 @@
-package com.contactlab.contacthub.test
+package com.contactlab.hub.test
 
 package object integration {
   import org.scalatest.Tag
 
-  object Integration extends Tag("com.contactlab.contacthub.IntegrationTest")
+  object Integration extends Tag("com.contactlab.hub.IntegrationTest")
 }

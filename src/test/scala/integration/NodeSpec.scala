@@ -1,11 +1,11 @@
-package com.contactlab.contacthub.test.integration
+package com.contactlab.hub.test.integration
 
 import org.scalatest.AsyncFeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 import scala.compat.java8.FutureConverters._
 
-import com.contactlab.contacthub.Node
+import com.contactlab.hub.Node
 
 class NodeSpec extends AsyncFeatureSpec with GivenWhenThen {
 
