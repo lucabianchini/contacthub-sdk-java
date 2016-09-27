@@ -14,7 +14,7 @@ class NodeSpec extends AsyncFeatureSpec with GivenWhenThen {
   val defaultNode = new Node("854f0791-c120-4e4a-9264-6dd197cb922c", "40b6195f-e4f7-4f95-b10e-75268d850988")
 
   feature("retrieving customers") {
-    scenario("retrieving all customers of a node") {
+    scenario("retrieving all customers of a node", Integration) {
 
       Given("a node with 10 customers")
       val node = defaultNode
@@ -28,7 +28,7 @@ class NodeSpec extends AsyncFeatureSpec with GivenWhenThen {
       }
     }
 
-    scenario("retrieving a single customer of a node by id") {
+    scenario("retrieving a single customer of a node by id", Integration) {
       Given("a node with 10 customers")
       val node = defaultNode
 
@@ -46,7 +46,7 @@ class NodeSpec extends AsyncFeatureSpec with GivenWhenThen {
     }
 
 
-    scenario("retrieving a single customer of a node by external id") {
+    scenario("retrieving a single customer of a node by external id", Integration) {
       Given("a node with 10 customers")
       val node = defaultNode
 
