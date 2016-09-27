@@ -13,7 +13,7 @@
 
 #### sbt
 ```scala
-libraryDependencies += "com.contactlab.hub" % "java-sdk" % "<LATEST>"
+libraryDependencies += "com.contactlab.hub" % "sdk.java" % "<LATEST>"
 ```
 
 ## Quickstart

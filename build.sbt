@@ -1,9 +1,12 @@
-organization := "com.contactlab"
-name := "ContactHUB Java SDK"
+organization := "com.contactlab.hub"
+name := "sdk-java"
+description := "ContactHUB Java SDK"
 version := "1.0-SNAPSHOT"
 autoScalaLibrary := false
 scalaVersion := scalaV
 libraryDependencies ++= testDepedencies ++ dependencies
+publishMavenStyle := true
+crossPaths := false
 
 lazy val scalaV = "2.11.8"
 
