@@ -11,8 +11,16 @@ import java.util.concurrent.CompletionStage;
  */
 public class Node extends com.contactlab.hub.models.Node {
 
+  private final Api api;
+
   public Node(String id, String workspaceId) {
     super(id, workspaceId);
+    this.api = new ContactHubApi();
+  }
+
+  public Node(String id, String workspaceId, Api api) {
+    super(id, workspaceId);
+    this.api = api;
   }
 
   /**
@@ -20,7 +28,7 @@ public class Node extends com.contactlab.hub.models.Node {
    */
   public CompletionStage<List<Customer>> getCustomers() {
     return CompletableFuture.supplyAsync(() -> {
-      return API.getCustomers(this.workspaceId, this.id);
+      return api.getCustomers(this.workspaceId, this.id);
     });
   }
 

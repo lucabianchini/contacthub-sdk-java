@@ -12,6 +12,7 @@ lazy val scalaV = "2.11.8"
 
 lazy val testDepedencies = Seq(
   "org.scalatest" %% "scalatest" % "3.0.0",
+  "org.mockito" % "mockito-core" % "1.10.19",
   "org.scala-lang" % "scala-library" % scalaV,
   "org.scala-lang.modules" % "scala-java8-compat_2.11" % "0.8.0-RC7"
 ).map(_ % "test")
