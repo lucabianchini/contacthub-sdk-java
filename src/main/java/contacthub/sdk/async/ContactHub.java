@@ -1,5 +1,7 @@
-package com.contactlab.hub;
+package com.contactlab.hub.sdk.async;
 
+import com.contactlab.hub.Auth;
+import com.contactlab.hub.api.CustomerApi;
 import com.contactlab.hub.models.Customer;
 
 import java.util.List;
@@ -7,12 +9,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 /**
- * A ContactHUB Node.
+ * ContactHub Java SDK (Async version).
  */
-public class Node extends com.contactlab.hub.models.Node {
 
-  public Node(String id, String workspaceId) {
-    super(id, workspaceId);
+public class ContactHub {
+
+  public Auth auth;
+
+  public ContactHub(Auth auth) {
+    this.auth = auth;
   }
 
   /**
@@ -20,7 +25,7 @@ public class Node extends com.contactlab.hub.models.Node {
    */
   public CompletionStage<List<Customer>> getCustomers() {
     return CompletableFuture.supplyAsync(() -> {
-      return API.getCustomers(this.workspaceId, this.id);
+      return CustomerApi.get(this.auth);
     });
   }
 
