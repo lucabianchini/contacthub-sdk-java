@@ -19,6 +19,9 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 
+# IntelliJ specific
+.idea
+
 # ENSIME specific
 .ensime_cache/
 .ensime
