@@ -25,16 +25,18 @@ object Main extends App {
 
   def definitionToClass(definition: (YamlValue, YamlValue)): Option[(String, String)] = try {
     val (YamlString(className), fields@YamlObject(_)) = definition
-    val props = fields.getFields(YamlString("properties")).lift(0) match {
-      case Some(YamlObject(props)) => props
+    val (props, superclass) = fields.getFields(YamlString("properties")).lift(0) match {
+      case Some(YamlObject(props)) => (props, None)
       case _ => fields.getFields(YamlString("allOf")).lift(0) match {
         case Some(YamlArray(allOfProps)) =>
-          // TODO: handle $allOf
-          color(Console.YELLOW) {
-            print("WARNING")
-          }
-          println(s": allOf is not supported yet. Class $className will have no properties")
-          Map.empty
+          val YamlString(superclass) =
+            allOfProps(0).asInstanceOf[YamlObject].getFields(YamlString("$ref"))(0)
+          val maybeProps = util.Try {
+            allOfProps(1).asInstanceOf[YamlObject]
+              .getFields(YamlString("properties"))(0).asInstanceOf[YamlObject]
+          }.toOption
+          (maybeProps.map { case YamlObject(props) => props }.getOrElse(Map.empty),
+            Some(superclass.split('/').last))
         case x =>
           throw new Exception(s"Neither 'properties' nor 'allOf' found in $className");
       }
@@ -82,6 +84,8 @@ object Main extends App {
           |  }
           |""".stripMargin
 
+    val extendSegment = superclass.map(sc => s"extends $sc ").getOrElse("")
+
     Some(className,
       s"""| /* Automatically generated from Swagger definitions */
           | /* DO NOT EDIT MANUALLY */
@@ -91,7 +95,7 @@ object Main extends App {
           |import java.util.List;
           |import java.util.Map;
           |
-          |public class $className {
+          |public class $className $extendSegment{
           |$constructor
           |$members
           |$toStringMethod
