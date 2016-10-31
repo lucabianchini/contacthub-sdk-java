@@ -1,4 +1,4 @@
-package com.contactlab.hub.sdk;
+package com.example.sync;
 
 import com.contactlab.hub.Auth;
 import com.contactlab.hub.models.Customer;

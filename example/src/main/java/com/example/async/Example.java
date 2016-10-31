@@ -1,4 +1,4 @@
-package com.contactlab.hub.sdk.async;
+package com.example.async;
 
 import com.contactlab.hub.Auth;
 import com.contactlab.hub.sdk.async.ContactHub;
