@@ -128,7 +128,7 @@ paths:
               _embedded:
                 type: object
                 properties:
-                  properties_base:
+                  baseProperties:
                     description: the list of base properties
                     type: array
                     items:
@@ -379,7 +379,7 @@ paths:
               _embedded:
                 type: object
                 properties:
-                  entry_nodes:
+                  entryNodes:
                     description: the list of node
                     type: array
                     items:
@@ -500,7 +500,7 @@ paths:
               _embedded:
                 type: object
                 properties:
-                  view_nodes:
+                  viewNodes:
                     description: the list of node view
                     type: array
                     items:
@@ -1098,7 +1098,7 @@ paths:
           description: Identifier of the node where you want to do the search
           required: true
           type: string
-        - name: externaId
+        - name: externalId
           in: query
           description: The external id assigned to the customers
           type: string
@@ -1145,6 +1145,8 @@ paths:
             $ref: '#/definitions/Customer'
         '403':
           description: "You don't have the necessary permissions for the resource"
+        '409':
+          description: "Customer unique constraint violation"
       tags:
         - customer
   '/workspaces/{id-workspace}/customers/{id}':
@@ -1195,7 +1197,7 @@ paths:
           description: The customer object
           required: true
           schema:
-            $ref: '#/definitions/Customer'
+            $ref: '#/definitions/PatchCustomer'
       security:
          - Bearer: []
       responses:
@@ -1203,6 +1205,8 @@ paths:
           description: Successful response
         '403':
           description: "You don't have the necessary permissions for the resource"
+        '409':
+          description: "Customer unique constraint violation"
       tags:
         - customer
     put:
@@ -1234,6 +1238,8 @@ paths:
             $ref: '#/definitions/Customer'
         '403':
           description: "You don't have the necessary permissions for the resource"
+        '409':
+          description: "Customer unique constraint violation"
       tags:
         - customer
     delete:
@@ -1430,6 +1436,34 @@ paths:
           description: "You don't have the necessary permissions for the resource"
       tags:
         - customer
+    delete:
+      description: |
+        Delete customer education
+      parameters:
+        - name: customerId
+          in: path
+          description: The unique identifier of customer
+          required: true
+          type: string
+        - name: id-workspace
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The unique identifier of customer education
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+      tags:
+        - customer
   '/workspaces/{id-workspace}/customers/{customerId}/likes':
     post:
       description: |
@@ -1525,6 +1559,34 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/Like'
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+      tags:
+        - customer
+    delete:
+      description: |
+        Delete customer like
+      parameters:
+        - name: customerId
+          in: path
+          description: The unique identifier of customer
+          required: true
+          type: string
+        - name: id-workspace
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The unique identifier of customer like
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
         '403':
           description: "You don't have the necessary permissions for the resource"
       tags:
@@ -1628,6 +1690,34 @@ paths:
           description: "You don't have the necessary permissions for the resource"
       tags:
         - customer
+    delete:
+      description: |
+        Delete customer job
+      parameters:
+        - name: customerId
+          in: path
+          description: The unique identifier of customer
+          required: true
+          type: string
+        - name: id-workspace
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The unique identifier of customer job
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+      tags:
+        - customer
   '/workspaces/{id-workspace}/customers/{customerId}/subscriptions':
     post:
       description: |
@@ -1660,7 +1750,6 @@ paths:
           description: "You don't have the necessary permissions for the resource"
       tags:
         - customer
-
   '/workspaces/{id-workspace}/customers/{customerId}/subscriptions/{id}':
     get:
       description: |
@@ -1728,6 +1817,34 @@ paths:
           description: "You don't have the necessary permissions for the resource"
       tags:
         - customer
+    delete:
+      description: |
+        Delete customer subscription
+      parameters:
+        - name: customerId
+          in: path
+          description: The unique identifier of customer
+          required: true
+          type: string
+        - name: id-workspace
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The unique identifier of customer subscription
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+      tags:
+        - customer
   '/workspaces/{id-workspace}/configuration/sources/priority':
     get:
       description: |
@@ -1775,6 +1892,273 @@ paths:
           description: "You don't have the necessary permissions for the resource"
       tags:
         - configuration
+
+  # [BEGIN] EVENT AUTOMATION APIs DEFINITION
+  '/workspaces/{id-workspace}/configuration/automations/event-trigger':
+    get:
+      description: Gets all configured automations
+      parameters:
+        - name: id-workspace
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/PagedAutomationConfigurationValues'
+        '403':
+          description: You don't have the necessary permissions for the resource
+      tags:
+        - automation
+    post:
+      description: |
+        Creates a new automation configuration
+        #### EXAMPLE
+        ```json
+        {
+          "name": "Webhook",
+          "enabled": true,
+          "nodes": [
+            "9d57e0e4-42cd-4b84-9eab-7dc28fb5a220"
+          ],
+          "topic": {
+            "eventType": "addedProduct",
+            "customerType": "ANONYMOUS",
+            "eventContext": "WEB",
+            "query": {
+              "are": {
+                "condition": {
+                  "conditions": [
+                    {
+                      "value": [
+                        "82f0d0a1-84df-4af5-9fb8-57dca1950808"
+                      ],
+                      "operator": "IN",
+                      "attribute": "nodeId",
+                      "type": "atomic"
+                    },
+                    {
+                      "value": [
+                        1472421600000,
+                        1475099999999
+                      ],
+                      "operator": "BETWEEN",
+                      "attribute": "date",
+                      "type": "atomic"
+                    },
+                    {
+                      "value": "customerCreated",
+                      "operator": "EQUALS",
+                      "attribute": "type",
+                      "type": "atomic"
+                    }
+                  ],
+                  "conjunction": "and",
+                  "type": "composite"
+                }
+              },
+              "name": "mySimpleQuery",
+              "type": "simple"
+            }
+          },
+          "tag": {
+            "operations": [
+              { "op": "SET_NULL", "path": "/foo"},
+              { "op": "SET_CONSTANT", "path": "/baz", "value": "boo" },
+              { "op": "ADD_CONSTANT", "path": "/hello", "value": ["world"] },
+              { "op": "SUB_EVENT_PROPERTY", "path": "/customerPrice", "value": "/_price"},
+              { "op": "SUB_CONSTANT", "path": "/customerPrice2", "value": 2}
+            ]
+          },
+          "webhook": {
+            "url": "http://...",
+            "format": "JSON",
+            "body": {
+              "type": "LIST",
+              "contents": [
+                {"type": "CONSTANT", "key": "d","value": "/eventfield"},
+                {"type": "EVENT_PROPERTY", "key": "d", "value": "/constantvalue"}
+              ]
+            }
+          }
+        }
+        ```
+      parameters:
+        - name: id-workspace
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+        - name: configuration
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AutomationConfigurationPayload'
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/AutomationConfiguration'
+        '403':
+          description: You don't have the necessary permissions for the resource
+      tags:
+        - automation
+
+  '/workspaces/{id-workspace}/configuration/automations/event-trigger/{id-automation}':
+    get:
+      description: Gets a specific automation
+      parameters:
+        - name: id-workspace
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+        - name: id-automation
+          in: path
+          description: Unique identifier of automation
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/AutomationConfiguration'
+        '403':
+          description: You don't have the necessary permissions for the resource
+      tags:
+        - automation
+    put:
+      description: |
+        Updates a specific automation
+        #### EXAMPLE
+        ```json
+        {
+          "name": "Webhook",
+          "enabled": true,
+          "nodes": [
+            "9d57e0e4-42cd-4b84-9eab-7dc28fb5a220"
+          ],
+          "topic": {
+            "eventType": "addedProduct",
+            "customerType": "ANONYMOUS",
+            "eventContext": "WEB",
+            "query": {
+              "are": {
+                "condition": {
+                  "conditions": [
+                    {
+                      "value": [
+                        "82f0d0a1-84df-4af5-9fb8-57dca1950808"
+                      ],
+                      "operator": "IN",
+                      "attribute": "nodeId",
+                      "type": "atomic"
+                    },
+                    {
+                      "value": [
+                        1472421600000,
+                        1475099999999
+                      ],
+                      "operator": "BETWEEN",
+                      "attribute": "date",
+                      "type": "atomic"
+                    },
+                    {
+                      "value": "customerCreated",
+                      "operator": "EQUALS",
+                      "attribute": "type",
+                      "type": "atomic"
+                    }
+                  ],
+                  "conjunction": "and",
+                  "type": "composite"
+                }
+              },
+              "name": "mySimpleQuery",
+              "type": "simple"
+            }
+          },
+          "tag": {
+            "operations": [
+              { "op": "REMOVE", "path": "/foo"},
+              { "op": "SET_CONSTANT", "path": "/baz", "value": "boo" },
+              { "op": "ADD_CONSTANT", "path": "/hello", "value": ["world"] },
+              { "op": "SUB_EVENT_PROPERTY", "path": "/customerPrice", "value": "/_price"},
+              { "op": "SUB_CONSTANT", "path": "/customerPrice2", "value": 2}
+            ]
+          },
+          "webhook": {
+            "url": "http://...",
+            "format": "JSON",
+            "body": {
+              "type": "LIST",
+              "contents": [
+                {"type": "CONSTANT", "key": "d","value": "/eventfield"},
+                {"type": "EVENT_PROPERTY", "key": "d", "value": "/constantvalue"}
+              ]
+            }
+          }
+        }
+        ```
+      parameters:
+        - name: id-workspace
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+        - name: id-automation
+          in: path
+          description: Unique identifier of automation
+          required: true
+          type: string
+        - name: configuration
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AutomationConfigurationPayload'
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/AutomationConfiguration'
+        '403':
+          description: You don't have the necessary permissions for the resource
+      tags:
+        - automation
+    delete:
+      description: Deletes a specific automation
+      parameters:
+        - name: id-workspace
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+        - name: id-automation
+          in: path
+          description: Unique identifier of automation
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+        '403':
+          description: You don't have the necessary permissions for the resource
+      tags:
+        - automation
+  # [END] EVENT AUTOMATION APIs DEFINITION
+
   '/workspaces/{id-workspace}/customers/{id}/sessions':
     get:
       description: |
@@ -1840,8 +2224,7 @@ paths:
               value:
                 type: string
                 description: >-
-                  the session id of customer. the value is unique for a single
-                  customer
+                  the session id of customer. the value is unique for a single node
       security:
          - Bearer: []
       responses:
@@ -2371,7 +2754,9 @@ paths:
             "nodes": null,
             "mode": "MONTHLY",
             "startDate": "2015-12-31",
-            "endDate": "2016-08-31"
+            "endDate": "2016-08-31",
+            "eventType": "completedOrder",
+            "context": "ECOMMERCE"
           },
           "headers": {
             "nodeId": {
@@ -2456,13 +2841,21 @@ paths:
           in: query
           description: The list of nodeId separated by comma
           type: string
+        - name: context
+          in: query
+          description: the event context
+          type: string
+        - name: eventType
+          in: query
+          description: the event type
+          type: string
       security:
          - Bearer: []
       responses:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/Trend'
+            $ref: '#/definitions/EventTrend'
         '403':
           description: "You don't have the necessary permissions for the resource"
       tags:
@@ -2549,7 +2942,9 @@ paths:
         {
           "name": "analytics gender",
           "parameters": {
-            "nodes": null
+            "nodes": null,
+            "startDate": "2015-12-31",
+            "endDate": "2016-08-31"
           },
           "headers": {
             "nodeId": {
@@ -2597,6 +2992,16 @@ paths:
           in: query
           description: The list of nodeId separated by comma
           type: string
+        - name: startDate
+          in: query
+          description: Start date of the composition
+          type: string
+          format: date
+        - name: endDate
+          in: query
+          description: End date of the composition
+          type: string
+          format: date
       security:
          - Bearer: []
       responses:
@@ -2617,7 +3022,9 @@ paths:
         {
           "name": "analytics age-range",
           "parameters": {
-            "nodes": null
+            "nodes": null,
+            "startDate": "2015-12-31",
+            "endDate": "2016-08-31"
           },
           "headers": {
             "nodeId": {
@@ -2668,6 +3075,16 @@ paths:
           in: query
           description: The list of nodeId separated by comma
           type: string
+        - name: startDate
+          in: query
+          description: Start date of the composition
+          type: string
+          format: date
+        - name: endDate
+          in: query
+          description: End date of the composition
+          type: string
+          format: date
       security:
         - Bearer: []
       responses:
@@ -2680,64 +3097,6 @@ paths:
       tags:
         - analytic
 
-  '/workspaces/{id-workspace}/dashboards':
-    get:
-      description: |
-        Gets all dashboards. If the 'industry' parameter is supplied
-        returns all dashboards that have the relative industry type.
-      parameters:
-        - name: id-workspace
-          in: path
-          description: The unique identifier of workspace
-          required: true
-          type: string
-        - name: industry
-          in: query
-          description: The industry code
-          required: false
-          type: string
-      security:
-        - Bearer: []
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            type: object
-            description: Object that wraps a list of dashboards
-            properties:
-              dashboards:
-                type: array
-                description: List of dashboards
-                items:
-                    $ref: '#/definitions/Dashboard'
-        '403':
-          description: "You don't have the necessary permissions for the resource"
-
-  '/workspaces/{id-workspace}/dashboards/{id}':
-    get:
-      description: |
-        Gets the dashboards identifyed by a given id
-      parameters:
-        - name: id-workspace
-          in: path
-          description: The unique identifier of workspace
-          required: true
-          type: string
-        - name: id
-          in: path
-          description: The unique identifier of dashboard
-          required: true
-          type: string
-      security:
-        - Bearer: []
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            $ref: '#/definitions/Dashboard'
-        '403':
-          description: "You don't have the necessary permissions for the resource"
-
   '/workspaces/{id-workspace}/analytics/composition/geo/country':
     get:
       description: |
@@ -2747,7 +3106,9 @@ paths:
         {
           "name": "analytics geo-country",
           "parameters": {
-            "nodes": null
+            "nodes": null,
+            "startDate": "2015-12-31",
+            "endDate": "2016-08-31"
           },
           "headers": {
             "nodeId": {
@@ -2799,6 +3160,16 @@ paths:
           in: query
           description: The list of nodeId separated by comma
           type: string
+        - name: startDate
+          in: query
+          description: Start date of the composition
+          type: string
+          format: date
+        - name: endDate
+          in: query
+          description: End date of the composition
+          type: string
+          format: date
       security:
          - Bearer: []
       responses:
@@ -2820,7 +3191,9 @@ paths:
           "name": "analytics geo-city",
           "parameters": {
             "nodes": null,
-            "country": 'italy'
+            "country": 'italy',
+            "startDate": "2015-12-31",
+            "endDate": "2016-08-31"
           },
           "headers": {
             "nodeId": {
@@ -2872,6 +3245,16 @@ paths:
           in: query
           description: The list of nodeId separated by comma
           type: string
+        - name: startDate
+          in: query
+          description: Start date of the composition
+          type: string
+          format: date
+        - name: endDate
+          in: query
+          description: End date of the composition
+          type: string
+          format: date
       security:
          - Bearer: []
       responses:
@@ -3512,6 +3895,64 @@ paths:
       tags:
         - analytic
 
+  '/workspaces/{id-workspace}/dashboards':
+    get:
+      description: |
+        Gets all dashboards. If the 'industry' parameter is supplied
+        returns all dashboards that have the relative industry type.
+      parameters:
+        - name: id-workspace
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: industry
+          in: query
+          description: The industry code
+          required: false
+          type: string
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            description: Object that wraps a list of dashboards
+            properties:
+              dashboards:
+                type: array
+                description: List of dashboards
+                items:
+                    $ref: '#/definitions/Dashboard'
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+
+  '/workspaces/{id-workspace}/dashboards/{id}':
+    get:
+      description: |
+        Gets the dashboards identifyed by a given id
+      parameters:
+        - name: id-workspace
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The unique identifier of dashboard
+          required: true
+          type: string
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Dashboard'
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+
   '/workspaces/{id-workspace}/models/properties/base':
     get:
       description: >
@@ -3798,34 +4239,177 @@ paths:
       tags:
         - model
 definitions:
-  CompositionAgeRange:
+  # [BEGIN] EVENT AUTOMATION DEFINITION TYPES
+  EventContext:
+    type: string
+    description: Context of the target event/s
+    enum:
+      - WEB
+      - MOBILE
+      - ECOMMERCE
+      - RETAIL
+      - SOCIAL
+      - DIGITAL_CAMPAIGN
+      - CONTACT_CENTER
+      - OTHER
+
+  PagedAutomationConfigurationValues:
     type: object
+    properties:
+      _embedded:
+        type: object
+        properties:
+          automations:
+            $ref: '#/definitions/AutomationConfigurationValues'
+      _links:
+        $ref: '#/definitions/PageLink'
+      page:
+        $ref: '#/definitions/Page'
+
+  AutomationConfigurationValues:
+    type: array
+    description: List of workspaces provisioning configurations
+    items:
+      $ref: '#/definitions/AutomationConfiguration'
+
+  AutomationConfigurationPayload:
+    type: object
+    description: "Workspace provisioning configuration"
     properties:
       name:
         type: string
-        description: the analytics name
-      headers:
-        type: object
-        description: the schema of object inside data property list
-      parameters:
-        type: object
-        properties:
-          nodes:
-            description: The list of nodeId separated by comma
-            type: string
-      data:
+        description: Automation configuration's name
+      enabled:
+        type: boolean
+        description: Flag that specifies if the automation is enabled
+      nodes:
         type: array
-        description: list of node
+        description: List of nodes
+        items:
+          type: string
+      topic:
+        type: object
+        description: Object that represents a binding with the target event/s
+        properties:
+          eventType:
+            type: string
+            description: Type of the event to bind
+          customerType:
+            type: string
+            description: Type of customer
+            enum:
+              - ANONYMOUS
+              - KNONW
+              - ANY
+          eventContext:
+            $ref: '#/definitions/EventContext'
+          query:
+            type: object
+      tag:
+        $ref: '#/definitions/ActionTagType'
+      webhook:
+        $ref: '#/definitions/ActionWebhookType'
+
+  AutomationConfiguration:
+    type: object
+    description: "Workspace provisioning configuration"
+    properties:
+      id:
+        type: string
+        description: Automation configuration's identifier
+      name:
+        type: string
+        description: Automation configuration's name
+      enabled:
+        type: boolean
+        description: Flag that specifies if the automation is enabled
+      nodes:
+        type: array
+        description: List of nodes
+        items:
+          type: string
+      topic:
+        type: object
+        description: Object that represents a binding with the target event/s
+        properties:
+          eventType:
+            type: string
+            description: Type of the event to bind
+          customerType:
+            type: string
+            description: Type of customer
+            enum:
+              - ANONYMOUS
+              - KNONW
+              - ANY
+          eventContext:
+            $ref: '#/definitions/EventContext'
+          query:
+            type: object
+      tag:
+        $ref: '#/definitions/ActionTagType'
+      webhook:
+        $ref: '#/definitions/ActionWebhookType'
+
+  AutomationOperation:
+    type: string
+    enum:
+      - CLEAR
+      - SET_NULL
+      - ADD_CONSTANT
+      - ADD_EVENT_PROPERTY
+      - SET_CONSTANT
+      - SET_EVENT_PROPERTY
+      - SUB_CONSTANT
+      - SUB_EVENT_PROPERTY
+
+  ActionTagType:
+    type: object
+    description: Object that represents a "TAG" action
+    properties:
+      operations:
+        type: array
         items:
           type: object
           properties:
-            nodeId:
-              description: id of node
+            op:
+              $ref: '#/definitions/AutomationOperation'
+            path:
               type: string
-            distribution:
-              type: array
-              items:
-                $ref: '#/definitions/CompositionAgeRangeValue'
+            value:
+              type: object
+
+  ActionWebhookType:
+    type: object
+    description: Object that represents a "WEBHOOK" action
+    properties:
+      url:
+        $ref: '#/definitions/Link'
+      format:
+        type: string
+        enum:
+          - JSON
+          - XML
+      body:
+        type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - LIST
+              - KEY_VALUE
+          content:
+            type: array
+            items:
+              type: object
+              properties:
+                type:
+                  type: string
+                key:
+                  type: string
+                value:
+                  type: object
+  # [END] EVENT AUTOMATION DEFINITION TYPES
 
   Graph:
     type: object
@@ -3903,6 +4487,42 @@ definitions:
               items:
                   $ref: '#/definitions/Widget'
 
+  CompositionAgeRange:
+      type: object
+      properties:
+        name:
+          type: string
+          description: the analytics name
+        headers:
+          type: object
+          description: the schema of object inside data property list
+        parameters:
+          type: object
+          properties:
+            nodes:
+              description: The list of nodeId separated by comma
+              type: string
+            startDate:
+              description: Start date
+              type: string
+              format: date
+            endDate:
+              description: End date
+              type: string
+              format: date
+        data:
+          type: array
+          description: list of node
+          items:
+            type: object
+            properties:
+              nodeId:
+                description: id of node
+                type: string
+              distribution:
+                type: array
+                items:
+                  $ref: '#/definitions/CompositionAgeRangeValue'
   CompositionAgeRangeValue:
       type: object
       properties:
@@ -3927,6 +4547,14 @@ definitions:
           nodes:
             description: The list of nodeId separated by comma
             type: string
+          startDate:
+            description: Start date
+            type: string
+            format: date
+          endDate:
+            description: End date
+            type: string
+            format: date
       data:
         type: array
         description: list of node
@@ -3964,6 +4592,14 @@ definitions:
           nodes:
             description: The list of nodeId separated by comma
             type: string
+          startDate:
+            description: Start date
+            type: string
+            format: date
+          endDate:
+            description: End date
+            type: string
+            format: date
           country:
             description: The name of country to filter
             type: string
@@ -4004,6 +4640,14 @@ definitions:
           nodes:
             description: The list of nodeId separated by comma
             type: string
+          startDate:
+            description: Start date
+            type: string
+            format: date
+          endDate:
+            description: End date
+            type: string
+            format: date
       data:
         type: array
         description: list of node
@@ -4417,6 +5061,62 @@ definitions:
       description:
         type: string
         description: Description of kpi
+  EventTrend:
+    type: object
+    properties:
+      name:
+        type: string
+        description: the analytics name
+      headers:
+        type: object
+        description: the schema of object inside data property list
+      parameters:
+        type: object
+        properties:
+          mode:
+            description: 'Mode of aggretation daily, weekly,monthly'
+            type: string
+            enum:
+              - DAILY
+              - WEEKLY
+              - MONTHLY
+            default: DAILY
+          startDate:
+            description: The start date for get the trend
+            type: string
+            format: date
+          endDate:
+            description: The end date for get the trend
+            type: string
+            format: date
+          nodes:
+            description: The list of nodeId separated by comma
+            type: string
+          context:
+            description: the event context
+            type: string
+          eventType:
+            description: the event type
+            type: string
+      data:
+        type: array
+        description: list of node
+        items:
+          type: object
+          properties:
+            nodeId:
+              description: id of node
+              type: string
+            values:
+              type: array
+              items:
+                $ref: '#/definitions/TrendValue'
+      _links:
+        type: object
+        properties:
+          self:
+            description: self link
+            $ref: '#/definitions/Link'
   Trend:
     type: object
     properties:
@@ -4622,6 +5322,13 @@ definitions:
           - UNIQUE_WORKSPACE
         description: 'the external id check policy (NO_CHECK, UNIQUE_NODE, UNIQUE_WORKSPACE)'
         default: UNIQUE_NODE
+      customerUniquenessPolicy:
+          type: string
+          enum:
+          - NO_CHECK
+          - UNIQUE_NODE
+          description: 'the customer uniqueness check policy (NO_CHECK, UNIQUE_NODE)'
+          default: UNIQUE_NODE
   BasePropertyConfiguration:
     type: object
     properties:
@@ -4710,8 +5417,8 @@ definitions:
             description: the related links of entry node
             type: object
             properties:
-              entry_nodes:
-                description: entry nodes configutation link
+              entryNodes:
+                description: entry nodes configuration link
                 $ref: '#/definitions/Link'
               self:
                 description: self entry node link
@@ -4747,7 +5454,7 @@ definitions:
             description: the related links of view node
             type: object
             properties:
-              view_nodes:
+              viewNodes:
                 description: view nodes configutation link
                 $ref: '#/definitions/Link'
               self:
@@ -4959,6 +5666,39 @@ definitions:
       enabled:
         type: boolean
         description: flag for soft delete
+    required: [ nodeId ]
+  PatchCustomer:
+    type: object
+    properties:
+      externalId:
+        type: string
+        description: the external id of customer
+      base:
+        type: object
+        description: >-
+          properties predefined in contacthub in base to the model retrived in
+          /models/properties/base
+      extended:
+        type: object
+        description: custom data defined by workspace based on a declarated schema
+      extra:
+        type: string
+        description: custom data defined by workspace not based on a declarated schema
+      tags:
+        description: the default tags property of customers
+        type: object
+        properties:
+          auto:
+            type: array
+            items:
+              type: string
+          manual:
+            type: array
+            items:
+              type: string
+      enabled:
+        type: boolean
+        description: flag for soft delete
   Customer:
     allOf:
       - $ref: '#/definitions/PostCustomer'
@@ -5076,7 +5816,7 @@ definitions:
         description: Unique identifier of session
       value:
         type: string
-        description: the session id of customer. the value is unique for a single customer
+        description: the session id of customer. the value is unique for a single node
       _links:
         description: the related links of session
         type: object

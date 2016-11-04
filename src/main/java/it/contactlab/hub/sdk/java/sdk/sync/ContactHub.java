@@ -1,8 +1,8 @@
-package com.contactlab.hub.sdk.sync;
+package it.contactlab.hub.sdk.java.sync;
 
-import com.contactlab.hub.Auth;
-import com.contactlab.hub.api.CustomerApi;
-import com.contactlab.hub.models.Customer;
+import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.CustomerApi;
+import it.contactlab.hub.sdk.java.models.Customer;
 
 import java.util.List;
 
@@ -22,6 +22,13 @@ public class ContactHub {
    */
   public List<Customer> getCustomers() {
     return CustomerApi.get(this.auth);
+  }
+
+  /**
+   * Retrieves a Customer by id.
+   */
+  public Customer getCustomer(String id) {
+    return CustomerApi.get(this.auth, id);
   }
 
 }

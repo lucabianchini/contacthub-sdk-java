@@ -1,4 +1,4 @@
-package com.contactlab.hub;
+package it.contactlab.hub.sdk.java;
 
 /**
  * ContactHub Authentication params.

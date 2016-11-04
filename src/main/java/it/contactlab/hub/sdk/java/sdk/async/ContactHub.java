@@ -1,8 +1,8 @@
-package com.contactlab.hub.sdk.async;
+package it.contactlab.hub.sdk.java.async;
 
-import com.contactlab.hub.Auth;
-import com.contactlab.hub.api.CustomerApi;
-import com.contactlab.hub.models.Customer;
+import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.CustomerApi;
+import it.contactlab.hub.sdk.java.models.Customer;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -26,6 +26,15 @@ public class ContactHub {
   public CompletionStage<List<Customer>> getCustomers() {
     return CompletableFuture.supplyAsync(() -> {
       return CustomerApi.get(this.auth);
+    });
+  }
+
+  /**
+   * Retrieves a Customer by id.
+   */
+  public CompletionStage<Customer> getCustomer(String id) {
+    return CompletableFuture.supplyAsync(() -> {
+      return CustomerApi.get(this.auth, id);
     });
   }
 

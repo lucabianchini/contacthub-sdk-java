@@ -5,7 +5,7 @@
 #### Maven
 ```xml
 <dependency>
-  <groupId>com.contactlab.hub</groupId>
+  <groupId>it.contactlab.hub</groupId>
   <artifactId>java-sdk</artifactId>
   <version>LATEST</version>
 </dependency>
@@ -13,20 +13,30 @@
 
 #### sbt
 ```scala
-libraryDependencies += "com.contactlab.hub" % "sdk.java" % "<LATEST>"
+libraryDependencies += "it.contactlab.hub" % "java-sdk" % "<LATEST>"
 ```
 
 ## Quickstart
 
-```java
-import com.contactlab.hub.Node;
+### Sync SDK
 
-Node node = new Node("12123123-1233-1231-1231-examplenodeid", "12123123-1233-1231-1231-exampleworkspaceid");
-node.getCustomers().whenComplete((customers, e) -> {
-  if (e != null) {
-    System.err.println(e);
-  } else {
-    System.out.println(customers);
-  }
-});
+```java
+Auth auth = new Auth(token, workspaceId, nodeId);
+
+ContactHub ch = new ContactHub(auth);
+
+List<Customer> cc = ch.getCustomers();
+System.out.println(cc);
 ```
+
+### Async SDK
+
+```java
+Auth auth = new Auth(token, workspaceId, nodeId);
+
+ContactHub ch = new ContactHub(auth);
+
+await(ch.getCustomers().whenComplete((cc, ex) -> System.out.println(cc)));
+```
+
+Check the [example](example/) folder for complete implementations.
