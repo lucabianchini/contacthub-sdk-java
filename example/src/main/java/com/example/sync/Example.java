@@ -1,13 +1,13 @@
 package com.example.sync;
 
-import com.contactlab.hub.Auth;
-import com.contactlab.hub.models.Customer;
-import com.contactlab.hub.sdk.sync.ContactHub;
+import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.sync.ContactHub;
 
 import java.util.List;
 
 /**
- * Example use of the Async SDK.
+ * Example use of the Sync SDK.
  */
 public class Example {
 
@@ -15,12 +15,15 @@ public class Example {
    * The main method.
    */
   public static void main(String[] args) {
-    Auth auth = new Auth(args[0], args[1], args[2]);
+    Auth auth = new Auth("97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d","40b6195f-e4f7-4f95-b10e-75268d850988","854f0791-c120-4e4a-9264-6dd197cb922c");
 
     ContactHub ch = new ContactHub(auth);
 
     List<Customer> cc = ch.getCustomers();
     System.out.println(cc);
+
+    Customer c = ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13");
+    System.out.println(c.getBase().getContacts().getEmail());
   }
 
 }

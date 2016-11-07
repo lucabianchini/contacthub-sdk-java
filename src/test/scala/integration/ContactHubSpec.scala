@@ -1,14 +1,14 @@
-package com.contactlab.hub.test.integration
+package it.contactlab.hub.sdk.java.test.integration;
 
 import org.scalatest.AsyncFeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 import scala.compat.java8.FutureConverters._
 
-import com.contactlab.hub.sdk.async.ContactHub
-import com.contactlab.hub.Auth
+import it.contactlab.hub.sdk.java.async.ContactHub
+import it.contactlab.hub.sdk.java.Auth
 
-class NodeSpec extends AsyncFeatureSpec with GivenWhenThen {
+class ContactHubSpec extends AsyncFeatureSpec with GivenWhenThen {
 
   implicit def toFuture[A](c: java.util.concurrent.CompletionStage[A]) = c.toScala
 

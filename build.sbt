@@ -1,4 +1,4 @@
-organization := "com.contactlab.hub"
+organization := "it.contactlab.hub"
 name := "sdk-java"
 description := "ContactHUB Java SDK"
 version := "1.0-SNAPSHOT"
@@ -18,6 +18,8 @@ lazy val testDependencies = Seq(
 
 lazy val dependencies = Seq(
   "com.mashape.unirest" % "unirest-java" % "1.4.9",
+  "io.swagger" % "swagger-annotations" % "1.5.10",
+  "commons-lang" % "commons-lang" % "2.6",
   "com.google.code.gson" % "gson" % "2.7"
 )
 
