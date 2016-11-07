@@ -11,32 +11,54 @@
 </dependency>
 ```
 
+#### Gradle
+```
+compile 'it.contactlab.hub:java-sdk:+'
+```
+
 #### sbt
 ```scala
 libraryDependencies += "it.contactlab.hub" % "java-sdk" % "<LATEST>"
 ```
 
-## Quickstart
+## Import
 
-### Sync SDK
+```java
+import it.contactlab.hub.sdk.java.sync.ContactHub;
+```
+
+We also provide a separate `async` implementation where all the methods return a
+Java8 [CompletionStage&lt;T&gt;](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletionStage.html).
+
+If you wish the use the Async api, import from the `async` package instead:
+
+```java
+import it.contactlab.hub.sdk.java.async.ContactHub;
+```
+
+All the methods documented below are available in both packages.
+
+## Authenticate
+
+Find your token, workspaceId and nodeId in the ContactHub dashboard. Then
+instantiate a new ContactHub object like this:
 
 ```java
 Auth auth = new Auth(token, workspaceId, nodeId);
 
 ContactHub ch = new ContactHub(auth);
-
-List<Customer> cc = ch.getCustomers();
-System.out.println(cc);
 ```
 
-### Async SDK
+## Customer API
+
+### getCustomer
+
+Lets you retrieve a customer by its id.
 
 ```java
-Auth auth = new Auth(token, workspaceId, nodeId);
-
-ContactHub ch = new ContactHub(auth);
-
-await(ch.getCustomers().whenComplete((cc, ex) -> System.out.println(cc)));
+Customer customer = ch.getCustomer('a-valid-customer-id');
 ```
 
-Check the [example](example/) folder for complete implementations.
+## Examples
+
+Check the [example](example/) folder for working examples.
