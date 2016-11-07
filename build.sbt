@@ -1,4 +1,4 @@
-organization := "com.contactlab.hub"
+organization := "it.contactlab.hub"
 name := "sdk-java"
 description := "ContactHUB Java SDK"
 version := "1.0-SNAPSHOT"
