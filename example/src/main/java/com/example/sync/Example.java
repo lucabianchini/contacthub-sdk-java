@@ -19,9 +19,16 @@ public class Example {
 
     ContactHub ch = new ContactHub(auth);
 
-    List<Customer> cc = ch.getCustomers();
-    System.out.println(cc);
+    System.out.println("-----------------------------------");
+    System.out.println("Retrieving customers' phone numbers");
+    System.out.println("-----------------------------------");
+    List<Customer> customers = ch.getCustomers();
+    customers.forEach(customer -> System.out.println(customer.getBase().getContacts().getPhone()));
 
+    System.out.println();
+    System.out.println("---------------------------");
+    System.out.println("Retrieving customer's email");
+    System.out.println("---------------------------");
     Customer c = ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13");
     System.out.println(c.getBase().getContacts().getEmail());
   }
