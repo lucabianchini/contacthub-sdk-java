@@ -1,5 +1,6 @@
 package it.contactlab.hub.sdk.java;
 
+import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.PostCustomer;
 
@@ -8,6 +9,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -33,18 +36,20 @@ public class CustomerApi {
   /**
    * Sends a generic GET request and returns the response JsonObject.
    */
-  private static JSONObject doGet(Auth auth, String endpoint) {
+  private static JSONObject doGet(Auth auth, String endpoint) throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
 
-      JSONObject response = Unirest
-          .get(url)
-          .asJson()
-          .getBody()
-          .getObject();
+      HttpResponse<JsonNode> response = Unirest.get(url).asJson();
 
-      return response;
+      if (response.getStatus() >= 400) {
+        throw new HttpException(response.getBody().toString());
+      }
+
+      return response.getBody().getObject();
+    } catch (HttpException httpException) {
+      throw httpException;
     } catch (Exception exception) {
       exception.printStackTrace();
 
@@ -55,7 +60,7 @@ public class CustomerApi {
   /**
    * Sends a generic POST request and returns the response JsonObject.
    */
-  private static JSONObject doPost(Auth auth, String endpoint, String payload) {
+  private static JSONObject doPost(Auth auth, String endpoint, String payload) throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
@@ -63,15 +68,19 @@ public class CustomerApi {
       PostCustomer postCustomer = gson.fromJson(payload, PostCustomer.class);
       postCustomer.setNodeId(auth.nodeId);
 
-      JSONObject response = Unirest
+      HttpResponse<JsonNode> response = Unirest
           .post(url)
           .header("Content-Type", "application/json")
           .body(gson.toJson(postCustomer))
-          .asJson()
-          .getBody()
-          .getObject();
+          .asJson();
 
-      return response;
+      if (response.getStatus() >= 400) {
+        throw new HttpException(response.getBody().toString());
+      }
+
+      return response.getBody().getObject();
+    } catch (HttpException httpException) {
+      throw httpException;
     } catch (Exception exception) {
       exception.printStackTrace();
 
@@ -82,17 +91,20 @@ public class CustomerApi {
   /**
    * Sends a generic DELETE request and returns true if successful.
    */
-  private static boolean doDelete(Auth auth, String endpoint) {
+  private static boolean doDelete(Auth auth, String endpoint) throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
 
-      int status = Unirest
-          .delete(url)
-          .asString()
-          .getStatus();
+      HttpResponse<JsonNode> response = Unirest.delete(url).asJson();
 
-      return (status == 200) ? true : false;
+      if (response.getStatus() >= 400) {
+        throw new HttpException(response.getBody().toString());
+      }
+
+      return true;
+    } catch (HttpException httpException) {
+      throw httpException;
     } catch (Exception exception) {
       exception.printStackTrace();
 
@@ -106,25 +118,19 @@ public class CustomerApi {
    * @param auth A ContactHub Auth object.
    * @return     A List of Customer objects.
    */
-  public static List<Customer> get(Auth auth) {
-    try {
-      String endpoint = "/?nodeId=" + auth.nodeId;
-      JSONObject response = doGet(auth, endpoint);
+  public static List<Customer> get(Auth auth) throws HttpException {
+    String endpoint = "/?nodeId=" + auth.nodeId;
+    JSONObject response = doGet(auth, endpoint);
 
-      Type collectionType = new TypeToken<List<Customer>>(){}.getType();
+    Type collectionType = new TypeToken<List<Customer>>(){}.getType();
 
-      List<Customer> customers = gson.fromJson(response
-          .getJSONObject("_embedded")
-          .getJSONArray("customers")
-          .toString(),
-          collectionType);
+    List<Customer> customers = gson.fromJson(response
+        .getJSONObject("_embedded")
+        .getJSONArray("customers")
+        .toString(),
+        collectionType);
 
-      return customers;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
-    }
+    return customers;
   }
 
   /**
@@ -134,17 +140,11 @@ public class CustomerApi {
    * @param id   The Customer id.
    * @return     A Customer object.
    */
-  public static Customer get(Auth auth, String id) {
-    try {
-      String endpoint = "/" + id;
-      JSONObject response = doGet(auth, endpoint);
+  public static Customer get(Auth auth, String id) throws HttpException {
+    String endpoint = "/" + id;
+    JSONObject response = doGet(auth, endpoint);
 
-      return gson.fromJson(response.toString(), Customer.class);
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
-    }
+    return gson.fromJson(response.toString(), Customer.class);
   }
 
   /**
@@ -154,24 +154,22 @@ public class CustomerApi {
    * @param externalId The Customer externalId.
    * @return           A Customer object.
    */
-  public static Customer getByExternalId(Auth auth, String externalId) {
-    try {
-      String endpoint = "/?nodeId=" + auth.nodeId + "&externalId=" + externalId;
-      JSONObject response = doGet(auth, endpoint);
+  public static Customer getByExternalId(Auth auth, String externalId) throws HttpException {
+    String endpoint = "/?nodeId=" + auth.nodeId + "&externalId=" + externalId;
+    JSONObject response = doGet(auth, endpoint);
 
-      Customer customer = gson.fromJson(response
-          .getJSONObject("_embedded")
-          .getJSONArray("customers")
-          .getJSONObject(0)
-          .toString(),
-          Customer.class);
-
-      return customer;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+    if (response.getJSONObject("page").getInt("totalElements") == 0) {
+      throw new HttpException("No customers found with external id " + externalId);
     }
+
+    Customer customer = gson.fromJson(response
+        .getJSONObject("_embedded")
+        .getJSONArray("customers")
+        .getJSONObject(0)
+        .toString(),
+        Customer.class);
+
+    return customer;
   }
 
   /**
@@ -181,18 +179,12 @@ public class CustomerApi {
    * @param customer The Customer object.
    * @return         The stored Customer object, including its id.
    */
-  public static Customer add(Auth auth, Customer customer) {
-    try {
-      String endpoint = "";
-      String payload = gson.toJson(customer);
-      JSONObject response = doPost(auth, endpoint, payload);
+  public static Customer add(Auth auth, Customer customer) throws HttpException {
+    String endpoint = "";
+    String payload = gson.toJson(customer);
+    JSONObject response = doPost(auth, endpoint, payload);
 
-      return gson.fromJson(response.toString(), Customer.class);
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
-    }
+    return gson.fromJson(response.toString(), Customer.class);
   }
 
   /**
@@ -202,16 +194,10 @@ public class CustomerApi {
    * @param customerId The id of the Customer to delete.
    * @return           True if the deletion was successful
    */
-  public static boolean delete(Auth auth, String customerId) {
-    try {
-      String endpoint = "/" + customerId;
-      boolean success = doDelete(auth, endpoint);
+  public static boolean delete(Auth auth, String customerId) throws HttpException {
+    String endpoint = "/" + customerId;
+    boolean success = doDelete(auth, endpoint);
 
-      return success;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return false;
-    }
+    return success;
   }
 }

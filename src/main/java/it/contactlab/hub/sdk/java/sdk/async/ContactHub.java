@@ -7,6 +7,8 @@ import it.contactlab.hub.sdk.java.models.Customer;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CompletionException;
+import java.util.function.Supplier;
 
 /**
  * ContactHub Java SDK (Async version).
@@ -20,15 +22,28 @@ public class ContactHub {
     this.auth = auth;
   }
 
+  @FunctionalInterface
+  private interface Thunk<T> {
+    T apply() throws Exception;
+  }
+
+  private <T> CompletionStage<T> wrapAsync(Thunk<T> f) {
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        return f.apply();
+      } catch (Exception e) {
+        throw new CompletionException(e);
+      }
+    });
+  }
+
   /**
    * Retrieve all the Customers of a Node.
    *
    * @return   A {@link CompletionStage} of a List of {@link Customer} objects.
    */
   public CompletionStage<List<Customer>> getCustomers() {
-    return CompletableFuture.supplyAsync(() -> {
-      return CustomerApi.get(this.auth);
-    });
+    return wrapAsync(() -> CustomerApi.get(this.auth));
   }
 
   /**
@@ -38,9 +53,7 @@ public class ContactHub {
    * @return   A CompletionStage of {@link Customer}.
    */
   public CompletionStage<Customer> getCustomer(String id) {
-    return CompletableFuture.supplyAsync(() -> {
-      return CustomerApi.get(this.auth, id);
-    });
+    return wrapAsync(() -> CustomerApi.get(this.auth, id));
   }
 
 }

@@ -3,6 +3,7 @@ package it.contactlab.hub.sdk.java.sync;
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.CustomerApi;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.exceptions.HttpException;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class ContactHub {
    *
    * @return     A List of {@link Customer} objects.
    */
-  public List<Customer> getCustomers() {
+  public List<Customer> getCustomers() throws HttpException {
     return CustomerApi.get(this.auth);
   }
 
@@ -32,7 +33,7 @@ public class ContactHub {
    * @param id A Customer id.
    * @return   A {@link Customer}.
    */
-  public Customer getCustomer(String id) {
+  public Customer getCustomer(String id) throws HttpException {
     return CustomerApi.get(this.auth, id);
   }
 
@@ -42,7 +43,7 @@ public class ContactHub {
    * @param externalId A Customer external id.
    * @return           A {@link Customer}.
    */
-  public Customer getCustomerByExternalId(String externalId) {
+  public Customer getCustomerByExternalId(String externalId) throws HttpException {
     return CustomerApi.getByExternalId(this.auth, externalId);
   }
 
@@ -52,7 +53,7 @@ public class ContactHub {
    * @param customer The {@link Customer} to create.
    * @return         A newly created {@link Customer}.
    */
-  public Customer addCustomer(Customer customer) {
+  public Customer addCustomer(Customer customer) throws HttpException {
     return CustomerApi.add(this.auth, customer);
   }
 
@@ -62,7 +63,7 @@ public class ContactHub {
    * @param id A Customer id.
    * @return   Whether the Customer was successfully deleted.
    */
-  public boolean deleteCustomer(String id) {
+  public boolean deleteCustomer(String id) throws HttpException {
     return CustomerApi.delete(this.auth, id);
   }
 
