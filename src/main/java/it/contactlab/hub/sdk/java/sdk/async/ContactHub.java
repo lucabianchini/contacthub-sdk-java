@@ -22,6 +22,8 @@ public class ContactHub {
 
   /**
    * Retrieve all the Customers of a Node.
+   *
+   * @return   A {@link CompletionStage} of a List of {@link Customer} objects.
    */
   public CompletionStage<List<Customer>> getCustomers() {
     return CompletableFuture.supplyAsync(() -> {
@@ -31,6 +33,9 @@ public class ContactHub {
 
   /**
    * Retrieves a Customer by id.
+   *
+   * @param id A Customer id.
+   * @return   A CompletionStage of {@link Customer}.
    */
   public CompletionStage<Customer> getCustomer(String id) {
     return CompletableFuture.supplyAsync(() -> {

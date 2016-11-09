@@ -19,6 +19,8 @@ public class ContactHub {
 
   /**
    * Retrieve all the Customers of a Node.
+   *
+   * @return     A List of {@link Customer} objects.
    */
   public List<Customer> getCustomers() {
     return CustomerApi.get(this.auth);
@@ -26,6 +28,9 @@ public class ContactHub {
 
   /**
    * Retrieves a Customer by id.
+   *
+   * @param id A Customer id.
+   * @return   A {@link Customer}.
    */
   public Customer getCustomer(String id) {
     return CustomerApi.get(this.auth, id);
@@ -33,6 +38,9 @@ public class ContactHub {
 
   /**
    * Retrieves a Customer by external id.
+   *
+   * @param externalId A Customer external id.
+   * @return           A {@link Customer}.
    */
   public Customer getCustomerByExternalId(String externalId) {
     return CustomerApi.getByExternalId(this.auth, externalId);
@@ -40,6 +48,9 @@ public class ContactHub {
 
   /**
    * Adds a new Customer.
+   *
+   * @param customer The {@link Customer} to create.
+   * @return         A newly created {@link Customer}.
    */
   public Customer addCustomer(Customer customer) {
     return CustomerApi.add(this.auth, customer);
@@ -47,9 +58,12 @@ public class ContactHub {
 
   /**
    * Deletes a Customer.
+   *
+   * @param id A Customer id.
+   * @return   Whether the Customer was successfully deleted.
    */
-  public boolean deleteCustomer(String customerId) {
-    return CustomerApi.delete(this.auth, customerId);
+  public boolean deleteCustomer(String id) {
+    return CustomerApi.delete(this.auth, id);
   }
 
 }
