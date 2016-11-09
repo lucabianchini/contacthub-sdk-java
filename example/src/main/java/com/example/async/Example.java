@@ -9,6 +9,8 @@ import it.contactlab.hub.sdk.java.models.Customer;
  */
 public class Example {
 
+  private static String cid = "f5d3932d-6cd3-4969-ace2-9fd9c87acd13";
+
   /**
    * The main method.
    */

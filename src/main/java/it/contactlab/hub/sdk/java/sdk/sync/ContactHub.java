@@ -31,4 +31,25 @@ public class ContactHub {
     return CustomerApi.get(this.auth, id);
   }
 
+  /**
+   * Retrieves a Customer by external id.
+   */
+  public Customer getCustomerByExternalId(String externalId) {
+    return CustomerApi.getByExternalId(this.auth, externalId);
+  }
+
+  /**
+   * Adds a new Customer.
+   */
+  public Customer addCustomer(Customer customer) {
+    return CustomerApi.add(this.auth, customer);
+  }
+
+  /**
+   * Deletes a Customer.
+   */
+  public boolean deleteCustomer(String customerId) {
+    return CustomerApi.delete(this.auth, customerId);
+  }
+
 }
