@@ -31,13 +31,12 @@ public class CustomerApi {
   private static String baseUrl = "https://api.contactlab.it/hub/v1";
 
   /**
-   * Sends a generic GET request and returns the response JsonObject
+   * Sends a generic GET request and returns the response JsonObject.
    */
   private static JSONObject doGet(Auth auth, String endpoint) {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers"
-        + endpoint;
+      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
 
       JSONObject response = Unirest
           .get(url)
@@ -54,13 +53,12 @@ public class CustomerApi {
   }
 
   /**
-   * Sends a generic POST request and returns the response JsonObject
+   * Sends a generic POST request and returns the response JsonObject.
    */
   private static JSONObject doPost(Auth auth, String endpoint, String payload) {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers"
-        + endpoint;
+      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
 
       PostCustomer postCustomer = gson.fromJson(payload, PostCustomer.class);
       postCustomer.setNodeId(auth.nodeId);
@@ -82,13 +80,12 @@ public class CustomerApi {
   }
 
   /**
-   * Sends a generic DELETE request and returns true if successful
+   * Sends a generic DELETE request and returns true if successful.
    */
   private static boolean doDelete(Auth auth, String endpoint) {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers"
-        + endpoint;
+      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
 
       int status = Unirest
           .delete(url)
