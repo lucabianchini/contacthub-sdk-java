@@ -12,6 +12,10 @@ public class Auth {
 
   /**
    * Creates a new Auth instance.
+   *
+   * @param token       The authorization token.
+   * @param workspaceId The workspace id.
+   * @param nodeId      The node id.
    */
   public Auth(String token, String workspaceId, String nodeId) {
     this.token = token;
