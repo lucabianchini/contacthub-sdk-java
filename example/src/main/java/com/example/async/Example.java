@@ -17,19 +17,20 @@ public class Example {
 
     ContactHub ch = new ContactHub(auth);
 
-    await(ch.getCustomers().whenComplete((cc, ex) -> System.out.println(cc)));
+    System.out.println("-----------------------------------");
+    System.out.println("Retrieving customers' phone numbers");
+    System.out.println("-----------------------------------");
+    ch.getCustomers().thenAccept(customers ->
+      customers.forEach(customer -> System.out.println(customer.getBase().getContacts().getPhone()))
+    ).toCompletableFuture().join();
 
-    await(ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13").whenComplete(
-          (c, ex) -> System.out.println(c.getBase().getContacts().getEmail()))
-        );
-  }
-
-  private static <T> T await(java.util.concurrent.CompletionStage<T> stage) {
-    try {
-      return stage.toCompletableFuture().get();
-    } catch (Exception exception) {
-      return null;
-    }
+    System.out.println();
+    System.out.println("---------------------------");
+    System.out.println("Retrieving customer's email");
+    System.out.println("---------------------------");
+    ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13").thenAccept(customer ->
+      System.out.println(customer.getBase().getContacts().getEmail())
+    ).toCompletableFuture().join();
   }
 
 }
