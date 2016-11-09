@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class ContactHub {
 
-  public Auth auth;
+  private final Auth auth;
 
   public ContactHub(Auth auth) {
     this.auth = auth;
