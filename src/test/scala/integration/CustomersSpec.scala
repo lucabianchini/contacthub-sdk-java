@@ -125,4 +125,29 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
   }
 
+  scenario("updating a customer's email address") {
+    Given("a customer previously added")
+    val customer = genCustomer.sample.get
+    val newCustomer = ch.addCustomer(customer)
+
+    When("the user updates the customer")
+    val base = newCustomer.getBase()
+    val contacts = base.getContacts()
+    val newEmail = Gen.alphaStr.sample.get + "@example.com"
+    contacts.setEmail(newEmail)
+    base.setContacts(contacts)
+    newCustomer.setBase(base)
+    println(newCustomer)
+    val updatedCustomer = ch.updateCustomer(newCustomer)
+
+    Then("the customer should be updated")
+    Then("the customer's id shoud not have changed")
+    updatedCustomer.getId shouldBe newCustomer.getId
+
+    Then("the customer's email should be updated")
+    updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+    Then("the customer's updatedAt date should be updated")
+    updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
+  }
+
 }

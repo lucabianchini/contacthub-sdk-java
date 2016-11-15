@@ -67,4 +67,14 @@ public class ContactHub {
     return CustomerApi.delete(this.auth, id);
   }
 
+  /**
+   * Updates an existing Customer.
+   *
+   * @param customer The {@link Customer} to update.
+   * @return         An updated {@link Customer}.
+   */
+  public Customer updateCustomer(Customer customer) throws HttpException {
+    return CustomerApi.update(this.auth, customer);
+  }
+
 }
