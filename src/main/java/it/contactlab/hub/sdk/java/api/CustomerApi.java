@@ -9,9 +9,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -61,7 +61,8 @@ public class CustomerApi {
   /**
    * Sends a generic POST request and returns the response JsonObject.
    */
-  private static JSONObject doPost(Auth auth, String endpoint, String payload) throws HttpException {
+  private static JSONObject doPost(Auth auth, String endpoint, String payload)
+      throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
@@ -233,6 +234,13 @@ public class CustomerApi {
     return success;
   }
 
+  /**
+   * Updates a Customer.
+   *
+   * @param auth     A ContactHub Auth object.
+   * @param customer The Customer object.
+   * @return         The updated Customer object
+   */
   public static Customer update(Auth auth, Customer customer) throws HttpException {
     String endpoint = "/" + customer.getId();
     String payload = gson.toJson(customer);

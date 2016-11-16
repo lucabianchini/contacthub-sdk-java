@@ -2,8 +2,8 @@ package it.contactlab.hub.sdk.java.sync;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.CustomerApi;
-import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
+import it.contactlab.hub.sdk.java.models.Customer;
 
 import java.util.List;
 
