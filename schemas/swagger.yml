@@ -1228,7 +1228,7 @@ paths:
           required: true
           description: Object necessary to update customer
           schema:
-            $ref: '#/definitions/PostCustomer'
+            $ref: '#/definitions/PutCustomer'
       security:
          - Bearer: []
       responses:
@@ -2398,6 +2398,31 @@ paths:
             $ref: '#/definitions/Event'
         '403':
           description: "You don't have the necessary permissions for the resource"
+      tags:
+        - event
+    delete:
+      description: |
+        Deletes a specific event
+      parameters:
+        - name: id
+          in: path
+          description: The event identifier
+          required: true
+          type: string
+        - name: id-workspace
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '204':
+          description: "Successful response"
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+        '404':
+          description: "If no event corresponds to the specified identifier"
       tags:
         - event
   '/workspaces/{id-workspace}/segments':
@@ -5314,21 +5339,13 @@ definitions:
           - Europe/Paris
           - Europe/London
         default: Europe/Rome
-      externalIdPolicy:
-        type: string
-        enum:
-          - NO_CHECK
-          - UNIQUE_NODE
-          - UNIQUE_WORKSPACE
-        description: 'the external id check policy (NO_CHECK, UNIQUE_NODE, UNIQUE_WORKSPACE)'
-        default: UNIQUE_NODE
       customerUniquenessPolicy:
           type: string
           enum:
           - NO_CHECK
-          - UNIQUE_NODE
-          description: 'the customer uniqueness check policy (NO_CHECK, UNIQUE_NODE)'
-          default: UNIQUE_NODE
+          - BLOCK
+          description: 'the customer uniqueness check policy (NO_CHECK, BLOCK)'
+          default: BLOCK
   BasePropertyConfiguration:
     type: object
     properties:
@@ -5667,6 +5684,14 @@ definitions:
         type: boolean
         description: flag for soft delete
     required: [ nodeId ]
+  PutCustomer:
+    allOf:
+      - $ref: '#/definitions/PostCustomer'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: the customer id
   PatchCustomer:
     type: object
     properties:
@@ -6143,11 +6168,11 @@ definitions:
           - OTHER
       enable:
         type: boolean
-      dateStart:
+      startDate:
         description: start date of subscription
         type: string
         format: date-time
-      dateEnd:
+      endDate:
         description: end date of subscription
         type: string
         format: date-time
