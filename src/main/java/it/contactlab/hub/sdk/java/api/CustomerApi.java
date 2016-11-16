@@ -3,14 +3,15 @@ package it.contactlab.hub.sdk.java;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.PostCustomer;
+import it.contactlab.hub.sdk.java.models.PutCustomer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -60,7 +61,8 @@ public class CustomerApi {
   /**
    * Sends a generic POST request and returns the response JsonObject.
    */
-  private static JSONObject doPost(Auth auth, String endpoint, String payload) throws HttpException {
+  private static JSONObject doPost(Auth auth, String endpoint, String payload)
+      throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
@@ -109,6 +111,37 @@ public class CustomerApi {
       exception.printStackTrace();
 
       return false;
+    }
+  }
+
+  /**
+   * Sends a generic PUT request and returns the response JsonObject.
+   */
+  private static JSONObject doPut(Auth auth, String endpoint, String payload) throws HttpException {
+    try {
+      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
+      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
+
+      PutCustomer putCustomer = gson.fromJson(payload, PutCustomer.class);
+      putCustomer.setNodeId(auth.nodeId);
+
+      HttpResponse<JsonNode> response = Unirest
+          .put(url)
+          .header("Content-Type", "application/json")
+          .body(gson.toJson(putCustomer))
+          .asJson();
+
+      if (response.getStatus() >= 400) {
+        throw new HttpException(response.getBody().toString());
+      }
+
+      return response.getBody().getObject();
+    } catch (HttpException httpException) {
+      throw httpException;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+
+      return null;
     }
   }
 
@@ -200,4 +233,20 @@ public class CustomerApi {
 
     return success;
   }
+
+  /**
+   * Updates a Customer.
+   *
+   * @param auth     A ContactHub Auth object.
+   * @param customer The Customer object.
+   * @return         The updated Customer object
+   */
+  public static Customer update(Auth auth, Customer customer) throws HttpException {
+    String endpoint = "/" + customer.getId();
+    String payload = gson.toJson(customer);
+    JSONObject response = doPut(auth, endpoint, payload);
+
+    return gson.fromJson(response.toString(), Customer.class);
+  }
+
 }

@@ -92,7 +92,9 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
       an [HttpException] should be thrownBy ch.getCustomerByExternalId("not-existing")
     }
+  }
 
+  feature("adding and deleting customers") {
     scenario("adding a customer to a node and deleting it", Integration) {
       Given("a new customer")
 
@@ -122,7 +124,43 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       Then("no customer deleted")
       an [HttpException] should be thrownBy ch.deleteCustomer(customerId)
     }
+  }
 
+  feature("updating and patching customers") {
+    scenario("updating a customer's email address") {
+      Given("a customer previously added")
+      val customer = genCustomer.sample.get
+      val newCustomer = ch.addCustomer(customer)
+
+      When("the user updates the customer")
+      val base = newCustomer.getBase()
+      val contacts = base.getContacts()
+      val newEmail = Gen.alphaStr.sample.get + "@example.com"
+      contacts.setEmail(newEmail)
+      base.setContacts(contacts)
+      newCustomer.setBase(base)
+      println(newCustomer)
+      val updatedCustomer = ch.updateCustomer(newCustomer)
+
+      Then("the customer should be updated")
+      Then("the customer's id shoud not have changed")
+      updatedCustomer.getId shouldBe newCustomer.getId
+
+      Then("the customer's email should be updated")
+      updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+      Then("the customer's updatedAt date should be updated")
+      updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
+    }
+
+    scenario("updating a non-existing customer") {
+      Given("a node")
+      When("the user tries to update a user that does not exist")
+      val customer = genCustomer.sample.get
+      customer.setId("not-existing")
+
+      Then("the update should fail")
+      an [HttpException] should be thrownBy ch.updateCustomer(customer)
+    }
   }
 
 }

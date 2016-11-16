@@ -6,8 +6,8 @@ import it.contactlab.hub.sdk.java.models.Customer;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Supplier;
 
 /**
@@ -27,12 +27,12 @@ public class ContactHub {
     T apply() throws Exception;
   }
 
-  private <T> CompletionStage<T> wrapAsync(Thunk<T> f) {
+  private <T> CompletionStage<T> wrapAsync(Thunk<T> fun) {
     return CompletableFuture.supplyAsync(() -> {
       try {
-        return f.apply();
-      } catch (Exception e) {
-        throw new CompletionException(e);
+        return fun.apply();
+      } catch (Exception ex) {
+        throw new CompletionException(ex);
       }
     });
   }

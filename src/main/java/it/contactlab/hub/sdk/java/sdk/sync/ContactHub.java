@@ -2,8 +2,8 @@ package it.contactlab.hub.sdk.java.sync;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.CustomerApi;
-import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
+import it.contactlab.hub.sdk.java.models.Customer;
 
 import java.util.List;
 
@@ -65,6 +65,16 @@ public class ContactHub {
    */
   public boolean deleteCustomer(String id) throws HttpException {
     return CustomerApi.delete(this.auth, id);
+  }
+
+  /**
+   * Updates an existing Customer.
+   *
+   * @param customer The {@link Customer} to update.
+   * @return         An updated {@link Customer}.
+   */
+  public Customer updateCustomer(Customer customer) throws HttpException {
+    return CustomerApi.update(this.auth, customer);
   }
 
 }
