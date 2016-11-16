@@ -150,4 +150,14 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
   }
 
+  scenario("updating a non-existing customer") {
+    Given("a node")
+    When("the user tries to update a user that does not exist")
+    val customer = genCustomer.sample.get
+    customer.setId("not-existing")
+
+    Then("the update should fail")
+    an [HttpException] should be thrownBy ch.updateCustomer(customer)
+  }
+
 }
