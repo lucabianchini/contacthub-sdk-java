@@ -1,5 +1,7 @@
 package it.contactlab.hub.sdk.java.models;
 
+import it.contactlab.hub.sdk.java.models.base.BaseProperties;
+
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +17,7 @@ public class PatchCustomer {
   private String externalId = null;
 
   @SerializedName("base")
-  private Object base = null;
+  private BaseProperties base = null;
 
   @SerializedName("extended")
   private Object extended = null;
@@ -47,7 +49,7 @@ public class PatchCustomer {
     this.externalId = externalId;
   }
 
-  public PatchCustomer base(Object base) {
+  public PatchCustomer base(BaseProperties base) {
     this.base = base;
     return this;
   }
@@ -57,11 +59,11 @@ public class PatchCustomer {
    * @return base
   **/
   @ApiModelProperty(example = "null", value = "properties predefined in contacthub in base to the model retrived in /models/properties/base")
-  public Object getBase() {
+  public BaseProperties getBase() {
     return base;
   }
 
-  public void setBase(Object base) {
+  public void setBase(BaseProperties base) {
     this.base = base;
   }
 
