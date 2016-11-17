@@ -2,6 +2,7 @@ package it.contactlab.hub.sdk.java;
 
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.PatchCustomer;
 import it.contactlab.hub.sdk.java.models.PostCustomer;
 import it.contactlab.hub.sdk.java.models.PutCustomer;
 
@@ -146,6 +147,35 @@ public class CustomerApi {
   }
 
   /**
+   * Sends a generic PATCH request and returns the response JsonObject.
+   */
+  private static JSONObject doPatch(Auth auth, String endpoint, PatchCustomer patchCustomer)
+      throws HttpException {
+    try {
+      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
+      String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
+
+      HttpResponse<JsonNode> response = Unirest
+          .patch(url)
+          .header("Content-Type", "application/json")
+          .body(gson.toJson(patchCustomer))
+          .asJson();
+
+      if (response.getStatus() >= 400) {
+        throw new HttpException(response.getBody().toString());
+      }
+
+      return response.getBody().getObject();
+    } catch (HttpException httpException) {
+      throw httpException;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+
+      return null;
+    }
+  }
+
+  /**
    * Retrieves all the Customers for a Node.
    *
    * @param auth A ContactHub Auth object.
@@ -245,6 +275,22 @@ public class CustomerApi {
     String endpoint = "/" + customer.getId();
     String payload = gson.toJson(customer);
     JSONObject response = doPut(auth, endpoint, payload);
+
+    return gson.fromJson(response.toString(), Customer.class);
+  }
+
+  /**
+   * Patches a Customer.
+   *
+   * @param auth          A ContactHub Auth object.
+   * @param customerId    The id of the Customer to patch.
+   * @param patchCustomer The CustomerPatch object.
+   * @return              The updated Customer object
+   */
+  public static Customer patch(Auth auth, String customerId, PatchCustomer patchCustomer)
+      throws HttpException {
+    String endpoint = "/" + customerId;
+    JSONObject response = doPatch(auth, endpoint, patchCustomer);
 
     return gson.fromJson(response.toString(), Customer.class);
   }

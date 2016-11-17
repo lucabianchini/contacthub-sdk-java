@@ -161,6 +161,41 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       Then("the update should fail")
       an [HttpException] should be thrownBy ch.updateCustomer(customer)
     }
+
+    scenario("patching a customer's email address") {
+      Given("a customer previously added")
+      val customer = genCustomer.sample.get
+      val newCustomer = ch.addCustomer(customer)
+
+      When("the user patches the customer")
+      val patchCustomer = new PatchCustomer
+      val contacts = new Contacts
+      val base = new BaseProperties
+      val newEmail = Gen.alphaStr.sample.get + "@example.com"
+      contacts.setEmail(newEmail)
+      base.setContacts(contacts)
+      patchCustomer.setBase(base);
+      val updatedCustomer = ch.patchCustomer(newCustomer.getId, patchCustomer)
+
+      Then("the customer should be updated")
+      Then("the customer's id shoud not have changed")
+      updatedCustomer.getId shouldBe newCustomer.getId
+      Then("the customer's first and last name shoud not have changed")
+      updatedCustomer.getBase.getFirstName shouldBe newCustomer.getBase.getFirstName
+      updatedCustomer.getBase.getLastName shouldBe newCustomer.getBase.getLastName
+
+      Then("the customer's email should be updated")
+      updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+      Then("the customer's updatedAt date should be updated")
+      updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
+    }
+
+    scenario("patching a non-existing customer") {
+      Given("a node")
+      When("the user tries to update a user that does not exist")
+      Then("the patch should fail")
+      an [HttpException] should be thrownBy ch.patchCustomer("non-existing", new PatchCustomer)
+    }
   }
 
 }
