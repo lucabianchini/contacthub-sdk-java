@@ -193,10 +193,12 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     }
 
     scenario("patching a non-existing customer") {
-      Given("a node")
+      Given("some customer data")
+      val newCustomer = new PatchCustomer
       When("the user tries to update a user that does not exist")
+      def patch = ch.patchCustomer("non-existing", newCustomer)
       Then("the patch should fail")
-      an [HttpException] should be thrownBy ch.patchCustomer("non-existing", new PatchCustomer)
+      an [HttpException] should be thrownBy patch
     }
   }
 
