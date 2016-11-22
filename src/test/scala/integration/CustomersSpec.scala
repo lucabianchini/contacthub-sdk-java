@@ -139,7 +139,6 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       contacts.setEmail(newEmail)
       base.setContacts(contacts)
       newCustomer.setBase(base)
-      println(newCustomer)
       val updatedCustomer = ch.updateCustomer(newCustomer)
 
       Then("the customer should be updated")
