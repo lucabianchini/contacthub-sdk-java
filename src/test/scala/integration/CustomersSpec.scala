@@ -178,8 +178,11 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val updatedCustomer = ch.patchCustomer(newCustomer.getId, patchCustomer)
 
       Then("the customer should be updated")
+      ch.getCustomer(newCustomer.getId) shouldBe updatedCustomer
+
       Then("the customer's id should not have changed")
       updatedCustomer.getId shouldBe newCustomer.getId
+
       Then("the customer's first and last name should not have changed")
       updatedCustomer.getBase.getFirstName shouldBe newCustomer.getBase.getFirstName
       updatedCustomer.getBase.getLastName shouldBe newCustomer.getBase.getLastName
