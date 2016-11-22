@@ -1,7 +1,6 @@
 organization := "it.contactlab.hub"
 name := "sdk-java"
 description := "ContactHUB Java SDK"
-version := "1.0-SNAPSHOT"
 autoScalaLibrary := false
 scalaVersion := scalaV
 libraryDependencies ++= testDependencies ++ dependencies
@@ -9,6 +8,8 @@ publishMavenStyle := true
 crossPaths := false
 publishTo := Some("buildo private maven" at "https://buildo-private-maven.appspot.com/")
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+
+enablePlugins(GitVersioning)
 
 lazy val scalaV = "2.11.8"
 
