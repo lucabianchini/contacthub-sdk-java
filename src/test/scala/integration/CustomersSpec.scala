@@ -3,7 +3,6 @@ package it.contactlab.hub.sdk.java.sync.test.integration;
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
-import scala.compat.java8.FutureConverters._
 
 import it.contactlab.hub.sdk.java.sync.ContactHub
 import it.contactlab.hub.sdk.java.Auth
@@ -29,8 +28,6 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     customer.setBase(base);
     customer
   }
-
-  implicit def toFuture[A](c: java.util.concurrent.CompletionStage[A]) = c.toScala
 
   val auth = new Auth(
     "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
