@@ -9,9 +9,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
 /**
- * PatchCustomer
+ * PatchCustomer.
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-11-16T14:42:57.242Z")
+@javax.annotation.Generated(
+    value = "class io.swagger.codegen.languages.JavaClientCodegen",
+    date = "2016-11-16T14:42:57.242Z")
 public class PatchCustomer {
   @SerializedName("externalId")
   private String externalId = null;
@@ -36,8 +38,8 @@ public class PatchCustomer {
     return this;
   }
 
-   /**
-   * the external id of customer
+  /**
+   * the external id of customer.
    * @return externalId
   **/
   @ApiModelProperty(example = "null", value = "the external id of customer")
@@ -54,11 +56,14 @@ public class PatchCustomer {
     return this;
   }
 
-   /**
-   * properties predefined in contacthub in base to the model retrived in /models/properties/base
+  /**
+   * properties predefined in contacthub in base to the model retrived in /models/properties/base.
    * @return base
   **/
-  @ApiModelProperty(example = "null", value = "properties predefined in contacthub in base to the model retrived in /models/properties/base")
+  @ApiModelProperty(
+      example = "null",
+      value = "properties predefined in contacthub in base to the model retrived in"
+        + "/models/properties/base")
   public BaseProperties getBase() {
     return base;
   }
@@ -72,11 +77,13 @@ public class PatchCustomer {
     return this;
   }
 
-   /**
-   * custom data defined by workspace based on a declarated schema
+  /**
+   * custom data defined by workspace based on a declarated schema.
    * @return extended
   **/
-  @ApiModelProperty(example = "null", value = "custom data defined by workspace based on a declarated schema")
+  @ApiModelProperty(
+      example = "null",
+      value = "custom data defined by workspace based on a declarated schema")
   public Object getExtended() {
     return extended;
   }
@@ -90,11 +97,13 @@ public class PatchCustomer {
     return this;
   }
 
-   /**
-   * custom data defined by workspace not based on a declarated schema
+  /**
+   * custom data defined by workspace not based on a declarated schema.
    * @return extra
   **/
-  @ApiModelProperty(example = "null", value = "custom data defined by workspace not based on a declarated schema")
+  @ApiModelProperty(
+      example = "null",
+      value = "custom data defined by workspace not based on a declarated schema")
   public String getExtra() {
     return extra;
   }
@@ -108,8 +117,8 @@ public class PatchCustomer {
     return this;
   }
 
-   /**
-   * Get tags
+  /**
+   * Get tags.
    * @return tags
   **/
   @ApiModelProperty(example = "null", value = "")
@@ -126,8 +135,8 @@ public class PatchCustomer {
     return this;
   }
 
-   /**
-   * flag for soft delete
+  /**
+   * flag for soft delete.
    * @return enabled
   **/
   @ApiModelProperty(example = "null", value = "flag for soft delete")
@@ -141,20 +150,20 @@ public class PatchCustomer {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
+  public boolean equals(java.lang.Object that) {
+    if (this == that) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (that == null || getClass() != that.getClass()) {
       return false;
     }
-    PatchCustomer patchCustomer = (PatchCustomer) o;
-    return Objects.equals(this.externalId, patchCustomer.externalId) &&
-        Objects.equals(this.base, patchCustomer.base) &&
-        Objects.equals(this.extended, patchCustomer.extended) &&
-        Objects.equals(this.extra, patchCustomer.extra) &&
-        Objects.equals(this.tags, patchCustomer.tags) &&
-        Objects.equals(this.enabled, patchCustomer.enabled);
+    PatchCustomer patchCustomer = (PatchCustomer) that;
+    return Objects.equals(this.externalId, patchCustomer.externalId)
+        && Objects.equals(this.base, patchCustomer.base)
+        && Objects.equals(this.extended, patchCustomer.extended)
+        && Objects.equals(this.extra, patchCustomer.extra)
+        && Objects.equals(this.tags, patchCustomer.tags)
+        && Objects.equals(this.enabled, patchCustomer.enabled);
   }
 
   @Override
@@ -182,11 +191,11 @@ public class PatchCustomer {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
+  private String toIndentedString(java.lang.Object obj) {
+    if (obj == null) {
       return "null";
     }
-    return o.toString().replace("\n", "\n    ");
+    return obj.toString().replace("\n", "\n    ");
   }
   
 }

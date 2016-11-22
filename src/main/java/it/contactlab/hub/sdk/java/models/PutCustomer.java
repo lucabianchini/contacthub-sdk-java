@@ -7,9 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
 /**
- * PutCustomer
+ * PutCustomer.
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-11-16T14:42:57.242Z")
+@javax.annotation.Generated(
+    value = "class io.swagger.codegen.languages.JavaClientCodegen",
+    date = "2016-11-16T14:42:57.242Z")
 public class PutCustomer extends PostCustomer {
   @SerializedName("id")
   private String id = null;
@@ -19,8 +21,8 @@ public class PutCustomer extends PostCustomer {
     return this;
   }
 
-   /**
-   * the customer id
+  /**
+   * the customer id.
    * @return id
   **/
   @ApiModelProperty(example = "null", value = "the customer id")
@@ -34,16 +36,16 @@ public class PutCustomer extends PostCustomer {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
+  public boolean equals(java.lang.Object that) {
+    if (this == that) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (that == null || getClass() != that.getClass()) {
       return false;
     }
-    PutCustomer putCustomer = (PutCustomer) o;
-    return Objects.equals(this.id, putCustomer.id) &&
-        super.equals(o);
+    PutCustomer putCustomer = (PutCustomer) that;
+    return Objects.equals(this.id, putCustomer.id)
+        && super.equals(that);
   }
 
   @Override
@@ -66,11 +68,11 @@ public class PutCustomer extends PostCustomer {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
+  private String toIndentedString(java.lang.Object obj) {
+    if (obj == null) {
       return "null";
     }
-    return o.toString().replace("\n", "\n    ");
+    return obj.toString().replace("\n", "\n    ");
   }
 
 }
