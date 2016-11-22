@@ -7,6 +7,8 @@ scalaVersion := scalaV
 libraryDependencies ++= testDependencies ++ dependencies
 publishMavenStyle := true
 crossPaths := false
+publishTo := Some("buildo private maven" at "https://buildo-private-maven.appspot.com/")
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
 lazy val scalaV = "2.11.8"
 
