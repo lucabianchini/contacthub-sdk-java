@@ -3,7 +3,6 @@ package it.contactlab.hub.sdk.java.sync.test.integration;
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
-import scala.compat.java8.FutureConverters._
 
 import it.contactlab.hub.sdk.java.sync.ContactHub
 import it.contactlab.hub.sdk.java.Auth
@@ -29,8 +28,6 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     customer.setBase(base);
     customer
   }
-
-  implicit def toFuture[A](c: java.util.concurrent.CompletionStage[A]) = c.toScala
 
   val auth = new Auth(
     "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
@@ -139,15 +136,17 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       contacts.setEmail(newEmail)
       base.setContacts(contacts)
       newCustomer.setBase(base)
-      println(newCustomer)
       val updatedCustomer = ch.updateCustomer(newCustomer)
 
       Then("the customer should be updated")
-      Then("the customer's id shoud not have changed")
+      ch.getCustomer(newCustomer.getId) shouldBe updatedCustomer
+
+      Then("the customer's id should not have changed")
       updatedCustomer.getId shouldBe newCustomer.getId
 
       Then("the customer's email should be updated")
       updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+
       Then("the customer's updatedAt date should be updated")
       updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
     }
@@ -160,6 +159,46 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
       Then("the update should fail")
       an [HttpException] should be thrownBy ch.updateCustomer(customer)
+    }
+
+    scenario("patching a customer's email address") {
+      Given("a customer previously added")
+      val customer = genCustomer.sample.get
+      val newCustomer = ch.addCustomer(customer)
+
+      When("the user patches the customer")
+      val patchCustomer = new PatchCustomer
+      val contacts = new Contacts
+      val base = new BaseProperties
+      val newEmail = Gen.alphaStr.sample.get + "@example.com"
+      contacts.setEmail(newEmail)
+      base.setContacts(contacts)
+      patchCustomer.setBase(base);
+      val updatedCustomer = ch.patchCustomer(newCustomer.getId, patchCustomer)
+
+      Then("the customer should be updated")
+      ch.getCustomer(newCustomer.getId) shouldBe updatedCustomer
+
+      Then("the customer's id should not have changed")
+      updatedCustomer.getId shouldBe newCustomer.getId
+
+      Then("the customer's first and last name should not have changed")
+      updatedCustomer.getBase.getFirstName shouldBe newCustomer.getBase.getFirstName
+      updatedCustomer.getBase.getLastName shouldBe newCustomer.getBase.getLastName
+
+      Then("the customer's email should be updated")
+      updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+      Then("the customer's updatedAt date should be updated")
+      updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
+    }
+
+    scenario("patching a non-existing customer") {
+      Given("some customer data")
+      val newCustomer = new PatchCustomer
+      When("the user tries to update a user that does not exist")
+      def patch = ch.patchCustomer("non-existing", newCustomer)
+      Then("the patch should fail")
+      an [HttpException] should be thrownBy patch
     }
   }
 
