@@ -142,11 +142,14 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val updatedCustomer = ch.updateCustomer(newCustomer)
 
       Then("the customer should be updated")
+      ch.getCustomer(newCustomer.getId) shouldBe updatedCustomer
+
       Then("the customer's id should not have changed")
       updatedCustomer.getId shouldBe newCustomer.getId
 
       Then("the customer's email should be updated")
       updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+
       Then("the customer's updatedAt date should be updated")
       updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
     }
