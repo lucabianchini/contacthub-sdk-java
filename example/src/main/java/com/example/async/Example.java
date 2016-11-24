@@ -23,7 +23,7 @@ public class Example {
     System.out.println("Retrieving customers' phone numbers");
     System.out.println("-----------------------------------");
     ch.getCustomers().thenAccept(customers ->
-      customers.forEach(customer -> System.out.println(customer.getBase().getContacts().getPhone()))
+      customers.forEach(customer -> System.out.println(customer.base().get().getContacts().getPhone()))
     ).toCompletableFuture().join();
 
     System.out.println();
@@ -31,7 +31,7 @@ public class Example {
     System.out.println("Retrieving customer's email");
     System.out.println("---------------------------");
     ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13").thenAccept(customer ->
-      System.out.println(customer.getBase().getContacts().getEmail())
+      System.out.println(customer.base().get().getContacts().getEmail())
     ).toCompletableFuture().join();
   }
 

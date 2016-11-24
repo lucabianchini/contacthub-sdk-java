@@ -2,9 +2,7 @@ package it.contactlab.hub.sdk.java;
 
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
-import it.contactlab.hub.sdk.java.models.PatchCustomer;
-import it.contactlab.hub.sdk.java.models.PostCustomer;
-import it.contactlab.hub.sdk.java.models.PutCustomer;
+import it.contactlab.hub.sdk.java.models.GsonAdaptersAbstractCustomer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,9 +27,10 @@ public class CustomerApi {
       (json, typeOfT, context) ->
       json == null ? null : OffsetDateTime.parse(json.getAsString(), contactlabDateFormatter);
   private static Gson gson =
-      new GsonBuilder().registerTypeAdapter(
-          OffsetDateTime.class,dateTimeJsonDeserializer
-          ).create();
+      new GsonBuilder()
+      .registerTypeAdapter(OffsetDateTime.class, dateTimeJsonDeserializer)
+      .registerTypeAdapterFactory(new GsonAdaptersAbstractCustomer())
+      .create();
 
   private static String baseUrl = "https://api.contactlab.it/hub/v1";
 
@@ -68,13 +67,10 @@ public class CustomerApi {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
 
-      PostCustomer postCustomer = gson.fromJson(payload, PostCustomer.class);
-      postCustomer.setNodeId(auth.nodeId);
-
       HttpResponse<JsonNode> response = Unirest
           .post(url)
           .header("Content-Type", "application/json")
-          .body(gson.toJson(postCustomer))
+          .body(payload)
           .asJson();
 
       if (response.getStatus() >= 400) {
@@ -123,13 +119,10 @@ public class CustomerApi {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = baseUrl + "/workspaces/" + auth.workspaceId + "/customers" + endpoint;
 
-      PutCustomer putCustomer = gson.fromJson(payload, PutCustomer.class);
-      putCustomer.setNodeId(auth.nodeId);
-
       HttpResponse<JsonNode> response = Unirest
           .put(url)
           .header("Content-Type", "application/json")
-          .body(gson.toJson(putCustomer))
+          .body(payload)
           .asJson();
 
       if (response.getStatus() >= 400) {
@@ -149,7 +142,7 @@ public class CustomerApi {
   /**
    * Sends a generic PATCH request and returns the response JsonObject.
    */
-  private static JSONObject doPatch(Auth auth, String endpoint, PatchCustomer patchCustomer)
+  private static JSONObject doPatch(Auth auth, String endpoint, Customer patchCustomer)
       throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
@@ -244,7 +237,8 @@ public class CustomerApi {
    */
   public static Customer add(Auth auth, Customer customer) throws HttpException {
     String endpoint = "";
-    String payload = gson.toJson(customer);
+    Customer expectedCustomer = customer.withNodeId(auth.nodeId);
+    String payload = gson.toJson(expectedCustomer);
     JSONObject response = doPost(auth, endpoint, payload);
 
     return gson.fromJson(response.toString(), Customer.class);
@@ -272,8 +266,9 @@ public class CustomerApi {
    * @return         The updated Customer object
    */
   public static Customer update(Auth auth, Customer customer) throws HttpException {
-    String endpoint = "/" + customer.getId();
-    String payload = gson.toJson(customer);
+    String endpoint = "/" + customer.id().get();
+    Customer expectedCustomer = customer.withNodeId(auth.nodeId);
+    String payload = gson.toJson(expectedCustomer);
     JSONObject response = doPut(auth, endpoint, payload);
 
     return gson.fromJson(response.toString(), Customer.class);
@@ -287,7 +282,7 @@ public class CustomerApi {
    * @param patchCustomer The CustomerPatch object.
    * @return              The updated Customer object
    */
-  public static Customer patch(Auth auth, String customerId, PatchCustomer patchCustomer)
+  public static Customer patch(Auth auth, String customerId, Customer patchCustomer)
       throws HttpException {
     String endpoint = "/" + customerId;
     JSONObject response = doPatch(auth, endpoint, patchCustomer);
