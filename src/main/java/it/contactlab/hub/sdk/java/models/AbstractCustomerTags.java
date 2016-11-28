@@ -1,10 +1,10 @@
 package it.contactlab.hub.sdk.java.models;
 
-import org.immutables.value.Value;
 import org.immutables.gson.Gson;
+import org.immutables.value.Value;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Customer.
@@ -14,5 +14,6 @@ import java.util.List;
 @Value.Style(typeImmutable = "*")
 abstract class AbstractCustomerTags {
   abstract Optional<List<String>> auto();
+
   abstract Optional<List<String>> manual();
 }
