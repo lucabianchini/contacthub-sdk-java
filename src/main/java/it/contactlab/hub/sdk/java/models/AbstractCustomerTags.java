@@ -12,8 +12,8 @@ import java.util.Optional;
 @Gson.TypeAdapters
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
-abstract class AbstractCustomerTags {
-  abstract Optional<List<String>> auto();
+public abstract class AbstractCustomerTags {
+  public abstract Optional<List<String>> auto();
 
-  abstract Optional<List<String>> manual();
+  public abstract Optional<List<String>> manual();
 }

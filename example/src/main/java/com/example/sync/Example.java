@@ -2,10 +2,12 @@ package com.example.sync;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.CustomerTags;
 import it.contactlab.hub.sdk.java.models.base.BaseProperties;
 import it.contactlab.hub.sdk.java.models.base.Contacts;
 import it.contactlab.hub.sdk.java.sync.ContactHub;
 
+import java.util.Arrays;
 import java.util.List;
 import java.security.SecureRandom;
 
@@ -63,6 +65,9 @@ public class Example {
 
     Customer mario = Customer.builder()
       .base(base)
+      .tags(CustomerTags.builder()
+          .manual(Arrays.asList("example-tag"))
+          .build())
       .build();
 
     String newId = ch.addCustomer(mario).id().get();
