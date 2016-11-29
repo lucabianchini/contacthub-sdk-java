@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 /**
- * Customer.
+ * A Customer.
  */
 @Gson.TypeAdapters
 @Value.Immutable
@@ -17,19 +17,43 @@ import java.util.Optional;
 public abstract class AbstractCustomer {
   public abstract Optional<String> id();
 
+  /**
+   * The registration timestamp.
+   */
   public abstract Optional<OffsetDateTime> registeredAt();
 
+  /**
+   * The customer update timestamp.
+   */
   public abstract Optional<OffsetDateTime> updatedAt();
 
+  /**
+   * The external id of the customer.
+   */
   public abstract Optional<String> externalId();
 
+  /**
+   * The {@link BaseProperties} of the customer.
+   */
   public abstract Optional<BaseProperties> base();
 
+  /**
+   * The id of the ContactHub node the customer belongs to.
+   */
   public abstract Optional<String> nodeId();
 
+  /**
+   * Custom data defined by workspace based on a declarated schema.
+   */
   public abstract Optional<Object> extended();
 
+  /**
+   * Custom data defined by workspace not based on a declarated schema.
+   */
   public abstract Optional<String> extra();
 
+  /**
+   * The {@link Tags} associated to the customer.
+   */
   public abstract Optional<CustomerTags> tags();
 }
