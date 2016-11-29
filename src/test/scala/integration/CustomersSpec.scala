@@ -18,15 +18,14 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     lastName  <- Gen.alphaStr
     email     <- Gen.alphaStr
   } yield {
-    val customer = new Customer
     val contacts = new Contacts
     val base = new BaseProperties
     base.setFirstName(firstName)
     base.setLastName(lastName)
     contacts.setEmail(s"$email@example.com")
     base.setContacts(contacts)
-    customer.setBase(base);
-    customer
+
+    Customer.builder().base(base).build()
   }
 
   val auth = new Auth(
@@ -59,7 +58,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val customer = ch.getCustomer(customerId)
 
       Then("the user should be retrieved")
-      customer.getId shouldBe customerId
+      customer.id().get() shouldBe customerId
     }
 
     scenario("retrieving a single non-existing customer of a node by id", Integration) {
@@ -78,7 +77,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val customer = ch.getCustomerByExternalId(externalId)
 
       Then("the user should be retrieved")
-      customer.getExternalId shouldBe externalId
+      customer.externalId().get() shouldBe externalId
     }
 
     scenario("retrieving a single non-existing customer of a node by external id", Integration) {
@@ -94,13 +93,13 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
   feature("adding and deleting customers") {
     scenario("adding a customer to a node and deleting it", Integration) {
       Given("a new customer")
+      val customer = genCustomer.sample.get
 
       When("the user adds a customer")
-      val customer = genCustomer.sample.get
       val newCustomer = ch.addCustomer(customer);
 
       Then("a new customer is created")
-      val id = newCustomer.getId
+      val id = newCustomer.id().get()
       id shouldNot be (null)
 
       When("the user deletes the customer")
@@ -130,32 +129,36 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val newCustomer = ch.addCustomer(customer)
 
       When("the user updates the customer")
-      val base = newCustomer.getBase()
+      val base = newCustomer.base().get()
       val contacts = base.getContacts()
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
       contacts.setEmail(newEmail)
       base.setContacts(contacts)
-      newCustomer.setBase(base)
-      val updatedCustomer = ch.updateCustomer(newCustomer)
+
+      val updatedCustomer = ch.updateCustomer(
+        Customer.builder()
+          .id(newCustomer.id())
+          .base(base)
+          .build()
+      )
 
       Then("the customer should be updated")
-      ch.getCustomer(newCustomer.getId) shouldBe updatedCustomer
+      ch.getCustomer(newCustomer.id().get()) shouldBe updatedCustomer
 
       Then("the customer's id should not have changed")
-      updatedCustomer.getId shouldBe newCustomer.getId
+      updatedCustomer.id().get() shouldBe newCustomer.id().get()
 
       Then("the customer's email should be updated")
-      updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+      updatedCustomer.base().get().getContacts.getEmail shouldBe newEmail
 
       Then("the customer's updatedAt date should be updated")
-      updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
+      updatedCustomer.updatedAt().get() should be > newCustomer.updatedAt().get()
     }
 
     scenario("updating a non-existing customer") {
       Given("a node")
       When("the user tries to update a user that does not exist")
-      val customer = genCustomer.sample.get
-      customer.setId("not-existing")
+      val customer = Customer.builder().id("not-existing").build()
 
       Then("the update should fail")
       an [HttpException] should be thrownBy ch.updateCustomer(customer)
@@ -167,34 +170,33 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val newCustomer = ch.addCustomer(customer)
 
       When("the user patches the customer")
-      val patchCustomer = new PatchCustomer
       val contacts = new Contacts
       val base = new BaseProperties
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
       contacts.setEmail(newEmail)
       base.setContacts(contacts)
-      patchCustomer.setBase(base);
-      val updatedCustomer = ch.patchCustomer(newCustomer.getId, patchCustomer)
+      val patchCustomer = Customer.builder().base(base).build();
+      val updatedCustomer = ch.patchCustomer(newCustomer.id().get(), patchCustomer)
 
       Then("the customer should be updated")
-      ch.getCustomer(newCustomer.getId) shouldBe updatedCustomer
+      ch.getCustomer(newCustomer.id().get()) shouldBe updatedCustomer
 
       Then("the customer's id should not have changed")
-      updatedCustomer.getId shouldBe newCustomer.getId
+      updatedCustomer.id() shouldBe newCustomer.id()
 
       Then("the customer's first and last name should not have changed")
-      updatedCustomer.getBase.getFirstName shouldBe newCustomer.getBase.getFirstName
-      updatedCustomer.getBase.getLastName shouldBe newCustomer.getBase.getLastName
+      updatedCustomer.base().get().getFirstName shouldBe newCustomer.base().get().getFirstName
+      updatedCustomer.base().get().getLastName shouldBe newCustomer.base().get().getLastName
 
       Then("the customer's email should be updated")
-      updatedCustomer.getBase.getContacts.getEmail shouldBe newEmail
+      updatedCustomer.base().get().getContacts.getEmail shouldBe newEmail
       Then("the customer's updatedAt date should be updated")
-      updatedCustomer.getUpdatedAt should be > newCustomer.getUpdatedAt
+      updatedCustomer.updatedAt().get() should be > newCustomer.updatedAt().get()
     }
 
     scenario("patching a non-existing customer") {
       Given("some customer data")
-      val newCustomer = new PatchCustomer
+      val newCustomer = genCustomer.sample.get
       When("the user tries to update a user that does not exist")
       def patch = ch.patchCustomer("non-existing", newCustomer)
       Then("the patch should fail")

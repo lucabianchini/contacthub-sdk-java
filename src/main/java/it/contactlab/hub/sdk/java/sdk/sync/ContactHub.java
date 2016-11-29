@@ -4,7 +4,6 @@ import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.CustomerApi;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
-import it.contactlab.hub.sdk.java.models.PatchCustomer;
 
 import java.util.List;
 
@@ -83,10 +82,10 @@ public class ContactHub {
    * Patches an existing Customer.
    *
    * @param customerId    The id of the Customer to update.
-   * @param patchCustomer The {@link PatchCustomer} object, containing all the values to patch.
+   * @param patchCustomer The {@link Customer} object, containing all the values to patch.
    * @return              An updated {@link Customer}.
    */
-  public Customer patchCustomer(String customerId, PatchCustomer patchCustomer)
+  public Customer patchCustomer(String customerId, Customer patchCustomer)
       throws HttpException {
     return CustomerApi.patch(this.auth, customerId, patchCustomer);
   }

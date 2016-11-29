@@ -2,10 +2,12 @@ package com.example.sync;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.CustomerTags;
 import it.contactlab.hub.sdk.java.models.base.BaseProperties;
 import it.contactlab.hub.sdk.java.models.base.Contacts;
 import it.contactlab.hub.sdk.java.sync.ContactHub;
 
+import java.util.Arrays;
 import java.util.List;
 import java.security.SecureRandom;
 
@@ -40,28 +42,35 @@ public class Example {
     System.out.println("Retrieving customers' phone numbers");
     System.out.println("-----------------------------------");
     List<Customer> customers = ch.getCustomers();
-    customers.forEach(customer -> System.out.println(customer.getBase().getContacts().getPhone()));
+    customers.forEach(customer -> System.out.println(customer.base().get().getContacts().getPhone()));
     System.out.println();
 
     System.out.println("---------------------------");
     System.out.println("Retrieving customer's email");
     System.out.println("---------------------------");
     Customer c = ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13");
-    System.out.println(c.getBase().getContacts().getEmail());
+    System.out.println(c.base().get().getContacts().getEmail());
     System.out.println();
 
     System.out.println("-----------------------");
     System.out.println("Creating a new customer");
     System.out.println("-----------------------");
-    Customer mario = new Customer();
+
     BaseProperties base = new BaseProperties();
     Contacts contacts = new Contacts();
     base.setFirstName("Mario");
     base.setLastName("Rossi");
     contacts.setEmail(randomString(8) + "@example.com");
     base.setContacts(contacts);
-    mario.setBase(base);
-    String newId = ch.addCustomer(mario).getId();
+
+    Customer mario = Customer.builder()
+      .base(base)
+      .tags(CustomerTags.builder()
+          .manual(Arrays.asList("example-tag"))
+          .build())
+      .build();
+
+    String newId = ch.addCustomer(mario).id().get();
     System.out.println(newId);
     System.out.println();
 
