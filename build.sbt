@@ -8,6 +8,7 @@ publishMavenStyle := true
 crossPaths := false
 publishTo := Some("buildo private maven" at "https://buildo-private-maven.appspot.com/")
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+javacOptions in doc ++= Seq("-sourcepath", "target/classes", "-subpackages", "it.contactlab")
 
 enablePlugins(GitVersioning)
 
@@ -39,5 +40,6 @@ lazy val modelsGenerator = project.in(file("models-generator")).
 lazy val generateModels = taskKey[Unit]("Generate models from swagger.yml")
 generateModels := (run in Compile in modelsGenerator).toTask("").value
 
-lazy val root = project.in(file(".")).settings(javaUnidocSettings: _*)
+lazy val root = project.in(file("."))
+
 lazy val example = project.in(file("example")).dependsOn(root)
