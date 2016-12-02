@@ -15,6 +15,9 @@ import java.util.Optional;
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractCustomer {
+  /**
+   * The customer id.
+   */
   public abstract Optional<String> id();
 
   /**
@@ -53,7 +56,7 @@ public abstract class AbstractCustomer {
   public abstract Optional<String> extra();
 
   /**
-   * The {@link Tags} associated to the customer.
+   * The {@link CustomerTags} associated to the customer.
    */
   public abstract Optional<CustomerTags> tags();
 }
