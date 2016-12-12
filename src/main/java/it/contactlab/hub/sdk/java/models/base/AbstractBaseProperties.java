@@ -1,6 +1,5 @@
 package it.contactlab.hub.sdk.java.models.base;
 
-import com.google.gson.annotations.SerializedName;
 import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 

@@ -18,9 +18,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     lastName  <- Gen.alphaStr
     email     <- Gen.alphaStr
   } yield {
-    val contacts = new Contacts
-    contacts.setEmail(s"$email@example.com")
-
+    val contacts = Contacts.builder.email(s"$email@example.com").build
 
     Customer.builder
       .base(BaseProperties.builder
@@ -90,7 +88,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       an [HttpException] should be thrownBy ch.getCustomerByExternalId("not-existing")
     }
 
-    scenario("reading all customer properties", Integration) {
+    scenario("reading top-level properties", Integration) {
       Given("a node")
 
       When("the user asks for a customer by id")
@@ -146,8 +144,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val base = newCustomer.base.get
       val contacts = base.contacts.get
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
-      contacts.setEmail(newEmail)
-      val newBase = base.withContacts(contacts)
+      val newBase = base.withContacts(contacts.withEmail(newEmail))
 
       val updatedCustomer = ch.updateCustomer(
         Customer.builder
@@ -163,7 +160,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       updatedCustomer.id.get shouldBe newCustomer.id.get
 
       Then("the customer's email should be updated")
-      updatedCustomer.base.get.contacts.get.getEmail shouldBe newEmail
+      updatedCustomer.base.get.contacts.get.email.get shouldBe newEmail
 
       Then("the customer's updatedAt date should be updated")
       updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
@@ -184,13 +181,11 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val newCustomer = ch.addCustomer(customer)
 
       When("the user patches the customer")
-      val contacts = new Contacts
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
-      contacts.setEmail(newEmail)
 
       val patchCustomer = Customer.builder
         .base(BaseProperties.builder
-          .contacts(contacts)
+          .contacts(Contacts.builder.email(newEmail).build)
           .build)
         .build;
 
@@ -207,7 +202,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       updatedCustomer.base.get.lastName shouldBe newCustomer.base.get.lastName
 
       Then("the customer's email should be updated")
-      updatedCustomer.base.get.contacts.get.getEmail shouldBe newEmail
+      updatedCustomer.base.get.contacts.get.email.get shouldBe newEmail
       Then("the customer's updatedAt date should be updated")
       updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
     }
@@ -220,6 +215,9 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       Then("the patch should fail")
       an [HttpException] should be thrownBy patch
     }
+  }
+
+  feature("creating and reading base properties") {
   }
 
 }
