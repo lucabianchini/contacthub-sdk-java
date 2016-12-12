@@ -35,7 +35,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
   )
 
   val ch = new ContactHub(auth)
-  val customerId = "f5d3932d-6cd3-4969-ace2-9fd9c87acd13"
+  val customerId = "c841ab14-b8a2-45d3-88b8-02210e2a9ebe"
   val externalId = "db55ec278cd6ca385c6d6a1ae49987c2"
 
   feature("retrieving customers") {
@@ -85,6 +85,19 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       Then("an error should be thrown")
 
       an [HttpException] should be thrownBy ch.getCustomerByExternalId("not-existing")
+    }
+
+    scenario("reading all customer properties", Integration) {
+      Given("a node")
+
+      When("the user asks for a customer by id")
+      val customer = ch.getCustomer(customerId)
+
+      Then("the customer should have the expected id")
+      customer.id.get shouldBe customerId
+
+      And("the customer should have the expected tags")
+      customer.tags.get.manual.get.toArray shouldBe Array("example-tag")
     }
   }
 
