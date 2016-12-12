@@ -19,13 +19,16 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     email     <- Gen.alphaStr
   } yield {
     val contacts = new Contacts
-    val base = new BaseProperties
-    base.setFirstName(firstName)
-    base.setLastName(lastName)
     contacts.setEmail(s"$email@example.com")
-    base.setContacts(contacts)
 
-    Customer.builder.base(base).build
+
+    Customer.builder
+      .base(BaseProperties.builder
+        .firstName(firstName)
+        .lastName(lastName)
+        .contacts(contacts)
+        .build)
+      .build
   }
 
   val auth = new Auth(
@@ -141,15 +144,15 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
       When("the user updates the customer")
       val base = newCustomer.base.get
-      val contacts = base.getContacts
+      val contacts = base.contacts.get
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
       contacts.setEmail(newEmail)
-      base.setContacts(contacts)
+      val newBase = base.withContacts(contacts)
 
       val updatedCustomer = ch.updateCustomer(
         Customer.builder
           .id(newCustomer.id)
-          .base(base)
+          .base(newBase)
           .build
       )
 
@@ -160,7 +163,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       updatedCustomer.id.get shouldBe newCustomer.id.get
 
       Then("the customer's email should be updated")
-      updatedCustomer.base.get.getContacts.getEmail shouldBe newEmail
+      updatedCustomer.base.get.contacts.get.getEmail shouldBe newEmail
 
       Then("the customer's updatedAt date should be updated")
       updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
@@ -182,11 +185,15 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
       When("the user patches the customer")
       val contacts = new Contacts
-      val base = new BaseProperties
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
       contacts.setEmail(newEmail)
-      base.setContacts(contacts)
-      val patchCustomer = Customer.builder.base(base).build;
+
+      val patchCustomer = Customer.builder
+        .base(BaseProperties.builder
+          .contacts(contacts)
+          .build)
+        .build;
+
       val updatedCustomer = ch.patchCustomer(newCustomer.id.get, patchCustomer)
 
       Then("the customer should be updated")
@@ -196,11 +203,11 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       updatedCustomer.id shouldBe newCustomer.id
 
       Then("the customer's first and last name should not have changed")
-      updatedCustomer.base.get.getFirstName shouldBe newCustomer.base.get.getFirstName
-      updatedCustomer.base.get.getLastName shouldBe newCustomer.base.get.getLastName
+      updatedCustomer.base.get.firstName shouldBe newCustomer.base.get.firstName
+      updatedCustomer.base.get.lastName shouldBe newCustomer.base.get.lastName
 
       Then("the customer's email should be updated")
-      updatedCustomer.base.get.getContacts.getEmail shouldBe newEmail
+      updatedCustomer.base.get.contacts.get.getEmail shouldBe newEmail
       Then("the customer's updatedAt date should be updated")
       updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
     }
