@@ -30,7 +30,6 @@ lazy val testDependencies = Seq(
 
 lazy val dependencies = Seq(
   "org.immutables" % "value" % "2.3.7",
-  "org.immutables" % "gson" % "2.3.7",
   "com.mashape.unirest" % "unirest-java" % "1.4.9",
   "io.swagger" % "swagger-annotations" % "1.5.10",
   "commons-lang" % "commons-lang" % "2.6",
