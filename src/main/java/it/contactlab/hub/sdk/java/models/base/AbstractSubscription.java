@@ -1,44 +1,35 @@
 package it.contactlab.hub.sdk.java.models.base;
 
-import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
-@Gson.TypeAdapters
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractSubscription {
 
-  public abstract String id();
+  public abstract Optional<String> id();
 
-  public abstract String name();
+  public abstract Optional<String> name();
 
-  public abstract String type();
+  public abstract Optional<String> type();
 
-  public abstract Kind kind();
+  public abstract Optional<SubscriptionKind> kind();
 
-  public abstract Boolean subscribed();
+  public abstract Optional<Boolean> subscribed();
 
-  public abstract OffsetDateTime dateStart();
+  public abstract Optional<OffsetDateTime> startDate();
 
-  public abstract OffsetDateTime dateEnd();
+  public abstract Optional<OffsetDateTime> endDate();
 
-  public abstract String subscriberId();
+  public abstract Optional<String> subscriberId();
 
-  public abstract OffsetDateTime registeredAt();
+  public abstract Optional<OffsetDateTime> registeredAt();
 
-  public abstract OffsetDateTime updatedAt();
+  public abstract Optional<OffsetDateTime> updatedAt();
 
-  public abstract List<Preference> preferences();
-
-  public enum Kind {
-
-    DIGITAL_MESSAGE,
-    SERVICE,
-    OTHER
-
-  }
+  public abstract Optional<List<Preference>> preferences();
 
 }

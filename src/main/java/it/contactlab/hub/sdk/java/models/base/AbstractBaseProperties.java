@@ -1,9 +1,9 @@
 package it.contactlab.hub.sdk.java.models.base;
 
-import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,6 @@ import java.util.Optional;
 /**
  * Base Properties for a Customer.
  */
-@Gson.TypeAdapters
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractBaseProperties {
@@ -56,7 +55,7 @@ public abstract class AbstractBaseProperties {
   /**
    * Date of birth.
    */
-  public abstract Optional<String> dob();
+  public abstract Optional<LocalDate> dob();
 
   /**
    * The locale.

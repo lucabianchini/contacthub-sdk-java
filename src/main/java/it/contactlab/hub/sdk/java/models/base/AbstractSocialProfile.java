@@ -1,26 +1,26 @@
 package it.contactlab.hub.sdk.java.models.base;
 
-import org.immutables.gson.Gson;
 import org.immutables.value.Value;
+
+import java.util.Optional;
 
 /**
  * Social profile.
  */
-@Gson.TypeAdapters
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractSocialProfile {
 
-  public abstract String facebook();
+  public abstract Optional<String> facebook();
 
-  public abstract String google();
+  public abstract Optional<String> google();
 
-  public abstract String instagram();
+  public abstract Optional<String> instagram();
 
-  public abstract String linkedin();
+  public abstract Optional<String> linkedin();
 
-  public abstract String qzone();
+  public abstract Optional<String> qzone();
 
-  public abstract String twitter();
+  public abstract Optional<String> twitter();
 
 }

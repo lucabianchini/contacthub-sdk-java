@@ -1,25 +1,26 @@
 package it.contactlab.hub.sdk.java.models.base;
 
-import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 
-@Gson.TypeAdapters
+import java.time.LocalDate;
+import java.util.Optional;
+
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractJob {
 
-  public abstract String id();
+  public abstract Optional<String> id();
 
-  public abstract String companyIndustry();
+  public abstract Optional<String> companyIndustry();
 
-  public abstract String companyName();
+  public abstract Optional<String> companyName();
 
-  public abstract String jobTitle();
+  public abstract Optional<String> jobTitle();
 
-  public abstract String startDate();
+  public abstract Optional<LocalDate> startDate();
 
-  public abstract String endDate();
+  public abstract Optional<LocalDate> endDate();
 
-  public abstract Boolean isCurrent();
+  public abstract Optional<Boolean> isCurrent();
 
 }

@@ -1,25 +1,17 @@
 package it.contactlab.hub.sdk.java.models.base;
 
-import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 
-@Gson.TypeAdapters
+import java.util.Optional;
+
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractOtherContact {
 
-  public abstract String name();
+  public abstract Optional<String> name();
 
-  public abstract Type type();
+  public abstract Optional<OtherContactType> type();
 
-  public abstract String value();
-
-  public enum Type {
-    MOBILE,
-    PHONE,
-    EMAIL,
-    FAX,
-    OTHER;
-  }
+  public abstract Optional<String> value();
 
 }

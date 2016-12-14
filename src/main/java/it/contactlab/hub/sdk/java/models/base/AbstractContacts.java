@@ -1,6 +1,5 @@
 package it.contactlab.hub.sdk.java.models.base;
 
-import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Optional;
 /**
  * The contact information.
  */
-@Gson.TypeAdapters
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractContacts {

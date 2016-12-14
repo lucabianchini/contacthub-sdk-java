@@ -1,15 +1,19 @@
 package it.contactlab.hub.sdk.java.sync.test.integration;
 
-import org.scalatest.FeatureSpec
-import org.scalatest.Matchers._
-import org.scalatest.GivenWhenThen
-
 import it.contactlab.hub.sdk.java.sync.ContactHub
 import it.contactlab.hub.sdk.java.Auth
 import it.contactlab.hub.sdk.java.models._, base._
 import it.contactlab.hub.sdk.java.exceptions._
 
+import java.time._
+
 import org.scalacheck.Gen
+
+import org.scalatest.FeatureSpec
+import org.scalatest.Matchers._
+import org.scalatest.GivenWhenThen
+
+import scala.collection.JavaConversions._
 
 class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
@@ -218,6 +222,104 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
   }
 
   feature("creating and reading base properties") {
+    scenario("creating a new customer with many base properties") {
+      Given("a customer with many props")
+
+      val base = BaseProperties.builder
+        .pictureUrl(new java.net.URI("http://example.com/img.png"))
+        .title("Mr")
+        .prefix("Dr")
+        .firstName("Mario")
+        .lastName("Rossi")
+        .middleName("Giacomo")
+        .gender("male")
+        .dob(LocalDate.parse("1990-12-12"))
+        .locale("it_IT")
+        .timezone(ZoneId.of("Europe/Rome"))
+        .contacts(Contacts.builder
+          .email(Gen.alphaStr.sample.get + "@example.com")
+          .fax("123456")
+          .mobilePhone("+393331234567")
+          .phone("0212345678")
+          .otherContacts(Seq(
+            OtherContact.builder
+              .`type`(OtherContactType.MOBILE).name("work").value("3337654321")
+              .build))
+          .mobileDevices(Seq(
+            MobileDevice.builder
+              .`type`(MobileDeviceType.IOS).name("iPhone").identifier("1234")
+              .build))
+          .build)
+        .address(Address.builder
+          .street("Via Malaga")
+          .city("Milano")
+          .country("Italy")
+          .province("MI")
+          .zip("20143")
+          .geo(Geo.builder.lat(45.4654).lon(9.1859).build)
+          .build)
+        .credential(Credential.builder.username("user").password("pass").build)
+        .educations(Seq(
+          Education.builder
+            .id("edu")
+            .schoolType(SchoolType.OTHER)
+            .schoolName("Politecnico di Milano")
+            .schoolConcentration("Software Engineering")
+            .startYear(2000)
+            .endYear(2005)
+            .isCurrent(false)
+            .build))
+        .likes(Seq(
+          Like.builder
+            .id("like1")
+            .category("cat1")
+            .name("foobar")
+            .createdTime(OffsetDateTime.now())
+            .build))
+        .socialProfile(SocialProfile.builder
+          .facebook("https://www.facebook.com/ContactLab")
+          .twitter("https://twitter.com/ContactLab")
+          .build)
+        .jobs(Seq(
+          Job.builder
+            .id("contactlab")
+            .companyIndustry("Marketing")
+            .companyName("ContactLab")
+            .jobTitle("Software Engineer")
+            .startDate(LocalDate.parse("2016-09-01"))
+            .isCurrent(true)
+            .build))
+        .subscriptions(Seq(
+          Subscription.builder
+            .id("sub")
+            .name("ContactLab News")
+            .`type`("Newsletter")
+            .kind(SubscriptionKind.DIGITAL_MESSAGE)
+            .subscribed(true)
+            .startDate(OffsetDateTime.parse("2016-01-01T00:00:00Z"))
+            .endDate(OffsetDateTime.parse("2018-01-01T00:00:00Z"))
+            .subscriberId("ASD123")
+            .registeredAt(OffsetDateTime.parse("2016-05-10T00:00:00Z"))
+            .updatedAt(OffsetDateTime.parse("2016-05-10T00:00:00Z"))
+            .preferences(Seq(
+              Preference.builder.key("key1").value("value1").build,
+              Preference.builder.key("key2").value("value2").build
+            ))
+            .build))
+        .build
+
+      val customer = Customer.builder
+        .base(base)
+        .build
+
+      When("the user creates and retrieves the customer")
+      val newCustomer = ch.addCustomer(customer)
+      val retrievedCustomer = ch.getCustomer(newCustomer.id.get)
+
+      Then("all the properties match")
+      retrievedCustomer.base.get shouldBe base
+      ch.deleteCustomer(retrievedCustomer.id.get)
+    }
   }
 
 }
