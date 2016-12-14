@@ -7,9 +7,9 @@ import it.contactlab.hub.sdk.java.models.base.BaseProperties;
 import it.contactlab.hub.sdk.java.models.base.Contacts;
 import it.contactlab.hub.sdk.java.sync.ContactHub;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
-import java.security.SecureRandom;
 
 /**
  * Example use of the Sync SDK.
@@ -34,41 +34,45 @@ public class Example {
    * The main method.
    */
   public static void main(String[] args) throws Exception {
-    Auth auth = new Auth("97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d","40b6195f-e4f7-4f95-b10e-75268d850988","854f0791-c120-4e4a-9264-6dd197cb922c");
+    final Auth auth = new Auth(
+        "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
+        "40b6195f-e4f7-4f95-b10e-75268d850988",
+        "854f0791-c120-4e4a-9264-6dd197cb922c"
+        );
 
-    ContactHub ch = new ContactHub(auth);
+    final ContactHub ch = new ContactHub(auth);
 
     System.out.println("-----------------------------------");
     System.out.println("Retrieving customers' phone numbers");
     System.out.println("-----------------------------------");
     List<Customer> customers = ch.getCustomers();
-    customers.forEach(customer -> System.out.println(customer.base().get().getContacts().getPhone()));
+    customers.forEach(customer -> System.out.println(
+        customer.base().get().contacts().get().phone().get()));
     System.out.println();
 
     System.out.println("---------------------------");
     System.out.println("Retrieving customer's email");
     System.out.println("---------------------------");
-    Customer c = ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13");
-    System.out.println(c.base().get().getContacts().getEmail());
+    Customer customer = ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13");
+    System.out.println(customer.base().get().contacts().get().email().get());
     System.out.println();
 
     System.out.println("-----------------------");
     System.out.println("Creating a new customer");
     System.out.println("-----------------------");
 
-    BaseProperties base = new BaseProperties();
-    Contacts contacts = new Contacts();
-    base.setFirstName("Mario");
-    base.setLastName("Rossi");
-    contacts.setEmail(randomString(8) + "@example.com");
-    base.setContacts(contacts);
-
     Customer mario = Customer.builder()
-      .base(base)
-      .tags(CustomerTags.builder()
-          .manual(Arrays.asList("example-tag"))
-          .build())
-      .build();
+        .base(BaseProperties.builder()
+            .firstName("Mario")
+            .lastName("Rossi")
+            .contacts(Contacts.builder()
+              .email(randomString(8) + "@example.com")
+              .build())
+            .build())
+        .tags(CustomerTags.builder()
+            .manual(Arrays.asList("example-tag"))
+            .build())
+        .build();
 
     String newId = ch.addCustomer(mario).id().get();
     System.out.println(newId);
