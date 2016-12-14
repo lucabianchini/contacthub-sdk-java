@@ -26,9 +26,11 @@ project/plugins/project/
 .ensime_cache/
 .ensime
 
-
 ### Java ###
 *.class
+
+# pom.xml can be generated for Vim integration, should not be committed
+pom.xml
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

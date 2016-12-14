@@ -2,7 +2,6 @@ package it.contactlab.hub.sdk.java.models;
 
 import it.contactlab.hub.sdk.java.models.base.BaseProperties;
 
-import org.immutables.gson.Gson;
 import org.immutables.value.Value;
 
 import java.time.OffsetDateTime;
@@ -11,7 +10,6 @@ import java.util.Optional;
 /**
  * A Customer.
  */
-@Gson.TypeAdapters
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractCustomer {

@@ -1,15 +1,19 @@
 package it.contactlab.hub.sdk.java.sync.test.integration;
 
-import org.scalatest.FeatureSpec
-import org.scalatest.Matchers._
-import org.scalatest.GivenWhenThen
-
 import it.contactlab.hub.sdk.java.sync.ContactHub
 import it.contactlab.hub.sdk.java.Auth
 import it.contactlab.hub.sdk.java.models._, base._
 import it.contactlab.hub.sdk.java.exceptions._
 
+import java.time._
+
 import org.scalacheck.Gen
+
+import org.scalatest.FeatureSpec
+import org.scalatest.Matchers._
+import org.scalatest.GivenWhenThen
+
+import scala.collection.JavaConversions._
 
 class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
@@ -18,14 +22,15 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
     lastName  <- Gen.alphaStr
     email     <- Gen.alphaStr
   } yield {
-    val contacts = new Contacts
-    val base = new BaseProperties
-    base.setFirstName(firstName)
-    base.setLastName(lastName)
-    contacts.setEmail(s"$email@example.com")
-    base.setContacts(contacts)
+    val contacts = Contacts.builder.email(s"$email@example.com").build
 
-    Customer.builder().base(base).build()
+    Customer.builder
+      .base(BaseProperties.builder
+        .firstName(firstName)
+        .lastName(lastName)
+        .contacts(contacts)
+        .build)
+      .build
   }
 
   val auth = new Auth(
@@ -35,12 +40,11 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
   )
 
   val ch = new ContactHub(auth)
-  val customerId = "f5d3932d-6cd3-4969-ace2-9fd9c87acd13"
+  val customerId = "c841ab14-b8a2-45d3-88b8-02210e2a9ebe"
   val externalId = "db55ec278cd6ca385c6d6a1ae49987c2"
 
   feature("retrieving customers") {
     scenario("retrieving the first page of customers of a node", Integration) {
-
       Given("a node")
 
       When("the user asks for the first page of customers")
@@ -58,7 +62,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val customer = ch.getCustomer(customerId)
 
       Then("the user should be retrieved")
-      customer.id().get() shouldBe customerId
+      customer.id.get shouldBe customerId
     }
 
     scenario("retrieving a single non-existing customer of a node by id", Integration) {
@@ -66,7 +70,6 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       When("the user asks for a user that doesn't exist")
       Then("the user should not be retrieved")
       Then("an error should be thrown")
-
       an [HttpException] should be thrownBy ch.getCustomer("not-existing")
     }
 
@@ -77,7 +80,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val customer = ch.getCustomerByExternalId(externalId)
 
       Then("the user should be retrieved")
-      customer.externalId().get() shouldBe externalId
+      customer.externalId.get shouldBe externalId
     }
 
     scenario("retrieving a single non-existing customer of a node by external id", Integration) {
@@ -87,6 +90,19 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       Then("an error should be thrown")
 
       an [HttpException] should be thrownBy ch.getCustomerByExternalId("not-existing")
+    }
+
+    scenario("reading top-level properties", Integration) {
+      Given("a node")
+
+      When("the user asks for a customer by id")
+      val customer = ch.getCustomer(customerId)
+
+      Then("the customer should have the expected id")
+      customer.id.get shouldBe customerId
+
+      And("the customer should have the expected tags")
+      customer.tags.get.manual.get.toArray shouldBe Array("example-tag")
     }
   }
 
@@ -99,7 +115,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val newCustomer = ch.addCustomer(customer);
 
       Then("a new customer is created")
-      val id = newCustomer.id().get()
+      val id = newCustomer.id.get
       id shouldNot be (null)
 
       When("the user deletes the customer")
@@ -129,36 +145,35 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val newCustomer = ch.addCustomer(customer)
 
       When("the user updates the customer")
-      val base = newCustomer.base().get()
-      val contacts = base.getContacts()
+      val base = newCustomer.base.get
+      val contacts = base.contacts.get
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
-      contacts.setEmail(newEmail)
-      base.setContacts(contacts)
+      val newBase = base.withContacts(contacts.withEmail(newEmail))
 
       val updatedCustomer = ch.updateCustomer(
-        Customer.builder()
-          .id(newCustomer.id())
-          .base(base)
-          .build()
+        Customer.builder
+          .id(newCustomer.id)
+          .base(newBase)
+          .build
       )
 
       Then("the customer should be updated")
-      ch.getCustomer(newCustomer.id().get()) shouldBe updatedCustomer
+      ch.getCustomer(newCustomer.id.get) shouldBe updatedCustomer
 
       Then("the customer's id should not have changed")
-      updatedCustomer.id().get() shouldBe newCustomer.id().get()
+      updatedCustomer.id.get shouldBe newCustomer.id.get
 
       Then("the customer's email should be updated")
-      updatedCustomer.base().get().getContacts.getEmail shouldBe newEmail
+      updatedCustomer.base.get.contacts.get.email.get shouldBe newEmail
 
       Then("the customer's updatedAt date should be updated")
-      updatedCustomer.updatedAt().get() should be > newCustomer.updatedAt().get()
+      updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
     }
 
     scenario("updating a non-existing customer") {
       Given("a node")
       When("the user tries to update a user that does not exist")
-      val customer = Customer.builder().id("not-existing").build()
+      val customer = Customer.builder.id("not-existing").build
 
       Then("the update should fail")
       an [HttpException] should be thrownBy ch.updateCustomer(customer)
@@ -170,28 +185,30 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val newCustomer = ch.addCustomer(customer)
 
       When("the user patches the customer")
-      val contacts = new Contacts
-      val base = new BaseProperties
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
-      contacts.setEmail(newEmail)
-      base.setContacts(contacts)
-      val patchCustomer = Customer.builder().base(base).build();
-      val updatedCustomer = ch.patchCustomer(newCustomer.id().get(), patchCustomer)
+
+      val patchCustomer = Customer.builder
+        .base(BaseProperties.builder
+          .contacts(Contacts.builder.email(newEmail).build)
+          .build)
+        .build;
+
+      val updatedCustomer = ch.patchCustomer(newCustomer.id.get, patchCustomer)
 
       Then("the customer should be updated")
-      ch.getCustomer(newCustomer.id().get()) shouldBe updatedCustomer
+      ch.getCustomer(newCustomer.id.get) shouldBe updatedCustomer
 
       Then("the customer's id should not have changed")
-      updatedCustomer.id() shouldBe newCustomer.id()
+      updatedCustomer.id shouldBe newCustomer.id
 
       Then("the customer's first and last name should not have changed")
-      updatedCustomer.base().get().getFirstName shouldBe newCustomer.base().get().getFirstName
-      updatedCustomer.base().get().getLastName shouldBe newCustomer.base().get().getLastName
+      updatedCustomer.base.get.firstName shouldBe newCustomer.base.get.firstName
+      updatedCustomer.base.get.lastName shouldBe newCustomer.base.get.lastName
 
       Then("the customer's email should be updated")
-      updatedCustomer.base().get().getContacts.getEmail shouldBe newEmail
+      updatedCustomer.base.get.contacts.get.email.get shouldBe newEmail
       Then("the customer's updatedAt date should be updated")
-      updatedCustomer.updatedAt().get() should be > newCustomer.updatedAt().get()
+      updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
     }
 
     scenario("patching a non-existing customer") {
@@ -201,6 +218,107 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       def patch = ch.patchCustomer("non-existing", newCustomer)
       Then("the patch should fail")
       an [HttpException] should be thrownBy patch
+    }
+  }
+
+  feature("creating and reading base properties") {
+    scenario("creating a new customer with many base properties") {
+      Given("a customer with many props")
+
+      val base = BaseProperties.builder
+        .pictureUrl(new java.net.URI("http://example.com/img.png"))
+        .title("Mr")
+        .prefix("Dr")
+        .firstName("Mario")
+        .lastName("Rossi")
+        .middleName("Giacomo")
+        .gender("male")
+        .dob(LocalDate.parse("1990-12-12"))
+        .locale("it_IT")
+        .timezone(ZoneId.of("Europe/Rome"))
+        .contacts(Contacts.builder
+          .email(Gen.alphaStr.sample.get + "@example.com")
+          .fax("123456")
+          .mobilePhone("+393331234567")
+          .phone("0212345678")
+          .otherContacts(Seq(
+            OtherContact.builder
+              .`type`(OtherContactType.MOBILE).name("work").value("3337654321")
+              .build))
+          .mobileDevices(Seq(
+            MobileDevice.builder
+              .`type`(MobileDeviceType.IOS).name("iPhone").identifier("1234")
+              .build))
+          .build)
+        .address(Address.builder
+          .street("Via Malaga")
+          .city("Milano")
+          .country("Italy")
+          .province("MI")
+          .zip("20143")
+          .geo(Geo.builder.lat(45.4654).lon(9.1859).build)
+          .build)
+        .credential(Credential.builder.username("user").password("pass").build)
+        .educations(Seq(
+          Education.builder
+            .id("edu")
+            .schoolType(SchoolType.OTHER)
+            .schoolName("Politecnico di Milano")
+            .schoolConcentration("Software Engineering")
+            .startYear(2000)
+            .endYear(2005)
+            .isCurrent(false)
+            .build))
+        .likes(Seq(
+          Like.builder
+            .id("like1")
+            .category("cat1")
+            .name("foobar")
+            .createdTime(OffsetDateTime.now())
+            .build))
+        .socialProfile(SocialProfile.builder
+          .facebook("https://www.facebook.com/ContactLab")
+          .twitter("https://twitter.com/ContactLab")
+          .build)
+        .jobs(Seq(
+          Job.builder
+            .id("contactlab")
+            .companyIndustry("Marketing")
+            .companyName("ContactLab")
+            .jobTitle("Software Engineer")
+            .startDate(LocalDate.parse("2016-09-01"))
+            .isCurrent(true)
+            .build))
+        .subscriptions(Seq(
+          Subscription.builder
+            .id("sub")
+            .name("ContactLab News")
+            .`type`("Newsletter")
+            .kind(SubscriptionKind.DIGITAL_MESSAGE)
+            .subscribed(true)
+            .startDate(OffsetDateTime.parse("2016-01-01T00:00:00Z"))
+            .endDate(OffsetDateTime.parse("2018-01-01T00:00:00Z"))
+            .subscriberId("ASD123")
+            .registeredAt(OffsetDateTime.parse("2016-05-10T00:00:00Z"))
+            .updatedAt(OffsetDateTime.parse("2016-05-10T00:00:00Z"))
+            .preferences(Seq(
+              Preference.builder.key("key1").value("value1").build,
+              Preference.builder.key("key2").value("value2").build
+            ))
+            .build))
+        .build
+
+      val customer = Customer.builder
+        .base(base)
+        .build
+
+      When("the user creates and retrieves the customer")
+      val newCustomer = ch.addCustomer(customer)
+      val retrievedCustomer = ch.getCustomer(newCustomer.id.get)
+
+      Then("all the properties match")
+      retrievedCustomer.base.get shouldBe base
+      ch.deleteCustomer(retrievedCustomer.id.get)
     }
   }
 
