@@ -218,8 +218,7 @@ public class CustomerApi {
     Type collectionType = new TypeToken<List<Customer>>(){}.getType();
 
     List<Customer> customers = gson.fromJson(response
-        .getJSONObject("_embedded")
-        .getJSONArray("customers")
+        .getJSONArray("elements")
         .toString(),
         collectionType);
 
@@ -256,8 +255,7 @@ public class CustomerApi {
     }
 
     Customer customer = gson.fromJson(response
-        .getJSONObject("_embedded")
-        .getJSONArray("customers")
+        .getJSONArray("elements")
         .getJSONObject(0)
         .toString(),
         Customer.class);
