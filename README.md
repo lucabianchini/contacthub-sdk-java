@@ -53,11 +53,93 @@ ContactHub ch = new ContactHub(auth);
 
 ### getCustomer
 
-Lets you retrieve a customer by its id.
+Retrieve a customer by its id.
 
 ```java
-Customer customer = ch.getCustomer('a-valid-customer-id');
+Customer customer = ch.getCustomer("a-valid-customer-id");
 ```
+
+### getCustomers
+
+Retrieve all the Customers in a Node.
+
+```java
+List<Customer> customers = ch.getCustomers();
+```
+
+### getCustomerByExternalId
+
+Retrieve all the Customers matching the given external id.
+
+```java
+List<Customer> customers = ch.getCustomerByExternalId("an-external-id");
+```
+
+Please note you can have more than one customer with the same external id,
+unless you include "external id" in the "matching policies" for your workspace.
+
+### addCustomer
+
+Add a new Customer. This method returns a new Customer object including the id that was
+assigned to the new customer by the API.
+
+```java
+Customer newCustomer = addCustomer(Customer customer)
+```
+
+If the "Customer uniqueness" configuration for your workspace is set to "Merge"
+and the new customer data matches an existing customer according to the
+"matching policies" for your workspace, this method will return the merged
+Customer data.
+
+To create a `Customer` instance that this method requires as its argument, use the
+builder provided by the `Customer` object.
+
+```java
+Customer.builder()
+        .base(...)
+        .extended(...)
+        // ...
+        .build();
+```
+
+### deleteCustomer
+
+Delete the Customer with the specified id.
+
+```java
+deleteCustomer("an-existing-id");
+```
+
+### updateCustomer
+
+Update an existing Customer by replacing all of its data with the data provided.
+
+```java
+Customer updatedCustomer = updateCustomer(Customer newCustomer);
+```
+
+This method will fail if the id of `newCustomer` doesn't match an existing
+customer.
+
+### patchCustomer
+
+Update an existing Customer (identified by `id`) by merging its existing data
+with the data provided.
+
+```java
+Customer updatedCustomer = patchCustomer(String id, Customer newCustomerData);
+```
+
+Customer properties that were already set and are included in the new data will
+be overwritten.
+
+Customer properties that were already set and are not specified will be left
+untouched.
+
+The merge is performed API-side. If you want more control on how the data is
+merged, retrieve the customer with `getCustomer()`, update the properties
+locally and overwrite the whole customer with `updateCustomer()`.
 
 
 ## Examples
