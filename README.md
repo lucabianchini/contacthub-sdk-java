@@ -88,7 +88,27 @@ Then add your credentials to `~/.m2/settings.xml`:
 
 ## Adding this library to your project's dependencies
 
+### sbt
+
+In your `build.sbt`:
+
+```scala
+libraryDependencies += "it.contactlab.hub" % "sdk-java" % "0.2.1"
+```
+
+### Gradle
+
+In your `build.gradle`:
+
+```
+dependencies {
+  compile 'it.contactlab.hub:sdk-java:0.2.1
+}
+```
+
 ### Maven
+
+In your `pom.xml`:
 
 ```xml
 <dependency>
@@ -96,13 +116,6 @@ Then add your credentials to `~/.m2/settings.xml`:
   <artifactId>sdk-java</artifactId>
   <version>0.2.1</version>
 </dependency>
-```
-
-### Gradle
-```
-dependencies {
-  compile 'it.contactlab.hub:sdk-java:0.2.1
-}
 ```
 
 
@@ -240,7 +253,7 @@ try out.
 sbt example/run
 ```
 
-### Running th eexample with Gradle
+### Running the example with Gradle
 
 ```sh
 cd example
