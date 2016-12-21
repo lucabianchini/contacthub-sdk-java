@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+repositories {
+  mavenCentral()
+  maven {
+    credentials {
+      username "$buildoMavenUser"
+      password "$buildoMavenPassword"
+    }
+    url "https://buildo-private-maven.appspot.com"
+  }
+}
+
+dependencies {
+  compile 'it.contactlab.hub:sdk-java:0.2.1'
+}
+
+task run(type:JavaExec) {
+   main = 'com.example.sync.Example'
+   classpath = sourceSets.main.runtimeClasspath
+}

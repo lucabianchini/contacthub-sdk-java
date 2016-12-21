@@ -1,28 +1,112 @@
 # ContactHUB Java SDK
 
-## Install
+## Private repository for beta
 
-#### Maven
+Until this library reaches 1.0, it's only available from a private Maven
+repository at https://buildo-private-maven.appspot.com/
+
+If you have a valid account for this repository, add it to your build tool
+configuration.
+
+### sbt
+
+Add the following lines to your `build.sbt`:
+
+```scala
+resolvers += "buildo private maven" at "https://buildo-private-maven.appspot.com/"
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+```
+
+Then create a file '~/.ivy2/.credentials' with the following content:
+
+```
+realm=
+host=buildo-private-maven.appspot.com
+user=user
+password=pass
+```
+
+
+### Gradle
+
+Add this to your project's `build.gradle`:
+
+```
+repositories {
+  mavenCentral()
+  maven {
+    credentials {
+      username "user"
+      password "pass"
+    }
+    url "https://buildo-private-maven.appspot.com"
+  }
+}
+```
+
+Then add your credentials to `~/.gradle/gradle.properties`:
+
+```
+buildoMavenUser=user
+buildoMavenPassword=pass
+```
+
+### Maven
+
+Add this to your project's `pom.xml`:
+
+```xml
+  <repositories>
+    <repository>
+      <id>buildo-private-maven.appspot.com</id>
+      <url>https://buildo-private-maven.appspot.com</url>
+    </repository>
+  </repositories>
+```
+
+Then add your credentials to `~/.m2/settings.xml`:
+
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>buildo-private-maven.appspot.com</id>
+      <configuration>
+        <httpHeaders>
+          <property>
+            <name>Authorization</name>
+            <!-- Encode the string "user:pass" using https://www.base64encode.org/ -->
+            <value>Basic dXNlcjpwYXNz</value>
+          </property>
+        </httpHeaders>
+      </configuration>
+    </server>
+  </servers>
+</settings>
+```
+
+
+## Adding this library to your project's dependencies
+
+### Maven
+
 ```xml
 <dependency>
   <groupId>it.contactlab.hub</groupId>
-  <artifactId>java-sdk</artifactId>
-  <version>LATEST</version>
+  <artifactId>sdk-java</artifactId>
+  <version>0.2.1</version>
 </dependency>
 ```
 
-#### Gradle
+### Gradle
 ```
-compile 'it.contactlab.hub:java-sdk:+'
-```
-
-#### sbt
-```scala
-libraryDependencies += "it.contactlab.hub" % "java-sdk" % "<LATEST>"
+dependencies {
+  compile 'it.contactlab.hub:sdk-java:0.2.1
+}
 ```
 
 
-## Import
+## Importing this library in your project
 
 ```java
 import it.contactlab.hub.sdk.java.sync.ContactHub;
@@ -40,7 +124,7 @@ import it.contactlab.hub.sdk.java.async.ContactHub;
 All the methods documented below are available in both packages.
 
 
-## Authenticate
+## Authenticating
 
 Find your token, workspaceId and nodeId in the ContactHub dashboard. Then
 instantiate a new ContactHub object like this:
@@ -154,6 +238,13 @@ try out.
 
 ```sh
 sbt example/run
+```
+
+### Running th eexample with Gradle
+
+```sh
+cd example
+gradle run
 ```
 
 ### Running the example with Maven
