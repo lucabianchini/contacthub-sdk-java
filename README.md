@@ -21,6 +21,7 @@ compile 'it.contactlab.hub:java-sdk:+'
 libraryDependencies += "it.contactlab.hub" % "java-sdk" % "<LATEST>"
 ```
 
+
 ## Import
 
 ```java
@@ -38,6 +39,7 @@ import it.contactlab.hub.sdk.java.async.ContactHub;
 
 All the methods documented below are available in both packages.
 
+
 ## Authenticate
 
 Find your token, workspaceId and nodeId in the ContactHub dashboard. Then
@@ -48,6 +50,7 @@ Auth auth = new Auth(token, workspaceId, nodeId);
 
 ContactHub ch = new ContactHub(auth);
 ```
+
 
 ## Customer API
 
@@ -146,6 +149,20 @@ locally and overwrite the whole customer with `updateCustomer()`.
 
 Check the [example](example/) folder for working examples you can download and
 try out.
+
+### Running the example with sbt
+
+```sh
+sbt example/run
+```
+
+### Running the example with Maven
+
+```sh
+cd example
+mvn compile
+mvn exec:java
+```
 
 
 ## Contributing to this library
