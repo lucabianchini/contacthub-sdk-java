@@ -77,19 +77,19 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       Given("a node")
 
       When("the user asks for a customer by external id")
-      val customer = ch.getCustomerByExternalId(externalId)
+      val customers = ch.getCustomerByExternalId(externalId)
 
       Then("the user should be retrieved")
-      customer.externalId.get shouldBe externalId
+      customers.head.externalId.get shouldBe externalId
     }
 
     scenario("retrieving a single non-existing customer of a node by external id", Integration) {
       Given("a node")
       When("the user asks for a user that doesn't exist")
-      Then("the user should not be retrieved")
-      Then("an error should be thrown")
+      val customers = ch.getCustomerByExternalId("not-existing")
 
-      an [HttpException] should be thrownBy ch.getCustomerByExternalId("not-existing")
+      Then("an empty list should be returned")
+      customers should have length 0
     }
 
     scenario("reading top-level properties", Integration) {

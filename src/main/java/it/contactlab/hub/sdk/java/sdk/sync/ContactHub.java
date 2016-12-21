@@ -43,7 +43,7 @@ public class ContactHub {
    * @param externalId A Customer external id.
    * @return           A {@link Customer}.
    */
-  public Customer getCustomerByExternalId(String externalId) throws HttpException {
+  public List<Customer> getCustomerByExternalId(String externalId) throws HttpException {
     return CustomerApi.getByExternalId(this.auth, externalId);
   }
 
