@@ -2,8 +2,10 @@ package it.contactlab.hub.sdk.java.sync;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.api.CustomerApi;
+import it.contactlab.hub.sdk.java.api.EventApi;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.Event;
 
 import java.util.List;
 
@@ -88,6 +90,15 @@ public class ContactHub {
   public Customer patchCustomer(String customerId, Customer patchCustomer)
       throws HttpException {
     return CustomerApi.patch(this.auth, customerId, patchCustomer);
+  }
+
+  /**
+   * ===========
+   *  EVENT API
+   * ===========
+   */
+  public boolean addEvent(Event newEvent) throws HttpException {
+    return EventApi.add(this.auth, newEvent);
   }
 
 }
