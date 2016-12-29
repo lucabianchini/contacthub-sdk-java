@@ -56,4 +56,15 @@ public class ContactHub {
     return wrapAsync(() -> CustomerApi.get(this.auth, id));
   }
 
+  /**
+   * Adds a new Customer.
+   *
+   * @param customer The {@link Customer} to create.
+   * @return         A CompletionStage of the newly created {@link Customer}.
+   */
+  public CompletionStage<Customer> addCustomer(Customer customer) {
+    return wrapAsync(() -> CustomerApi.add(this.auth, customer));
+  }
+
+
 }
