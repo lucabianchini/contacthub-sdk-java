@@ -9,6 +9,8 @@ import com.google.gson.JsonObject
 
 import java.time._
 
+import com.google.gson.JsonObject;
+
 import org.scalacheck.Gen
 
 import org.scalatest.FeatureSpec
@@ -26,8 +28,8 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
   )
 
   val ch = new ContactHub(auth)
-  val customerId = "4012e67d-72fd-4f84-9039-71cbc5b80078"
-  val existingId = "417464a1-215b-461e-9f9b-ef1f68b153ec"
+  val customerId = "2fc11014-7610-4db5-8f73-57ea9ea3be4e"
+  val existingId = "539e6653-39cd-4315-905f-0b7cb1e71cd8"
 
   feature("adding a new event") {
     scenario("adding a simple event", Integration) {
@@ -40,6 +42,38 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .`type`("viewedPage")
         .context("WEB")
         .properties(props)
+        .build
+
+      When("the user adds the event")
+      val success = ch.addEvent(event)
+
+      Then("the event is created successfully")
+      success should be (true)
+    }
+
+    scenario("adding an event with a sessionId", Integration) {
+      Given("a new event object with a sessionId")
+      val event = Event.builder
+        .sessionId("ses123")
+        .`type`("viewedPage")
+        .context("WEB")
+        .properties(new JsonObject)
+        .build
+
+      When("the user adds the event")
+      val success = ch.addEvent(event)
+
+      Then("the event is created successfully")
+      success should be (true)
+    }
+
+    scenario("adding an event with an externalId", Integration) {
+      Given("a new event object with a externalId")
+      val event = Event.builder
+        .externalId("ext123")
+        .`type`("viewedPage")
+        .context("WEB")
+        .properties(new JsonObject)
         .build
 
       When("the user adds the event")
@@ -63,7 +97,12 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       event.customerId.get should be (customerId)
       event.`type` should be ("viewedPage")
       event.context should be ("WEB")
-      event.date should be (OffsetDateTime.parse("2016-12-29T13:24:29.329Z"))
+      event.date should be (OffsetDateTime.parse("2016-12-29T14:36:49.339Z"))
+      event.properties.getAsJsonPrimitive("title")
+        .getAsString should be("The Title")
+      event.contextInfo.get.getAsJsonObject("client").get("userAgent")
+        .getAsString should be ("testUserAgent")
+      event.registeredAt.get shouldBe (OffsetDateTime.parse("2016-12-29T14:36:49.355Z"))
     }
   }
 

@@ -20,9 +20,19 @@ public abstract class AbstractEvent {
   public abstract Optional<String> id();
 
   /**
-   * The Customer ID for this Event.
+   * The CustomerId for this Event.
    */
   public abstract Optional<String> customerId();
+
+  /**
+   * The ExternalId for this Event.
+   */
+  public abstract Optional<String> externalId();
+
+  /**
+   * The SessionId for this Event.
+   */
+  public abstract Optional<String> sessionId();
 
   /**
    * The event type of this Event.
@@ -38,6 +48,11 @@ public abstract class AbstractEvent {
    * The properties of this Event.
    */
   public abstract JsonObject properties();
+
+  /**
+   * The context-specific properties of this Event.
+   */
+  public abstract Optional<JsonObject> contextInfo();
 
   /**
    * The moment when this Event happened.
