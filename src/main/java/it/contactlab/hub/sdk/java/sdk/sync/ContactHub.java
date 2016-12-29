@@ -93,9 +93,10 @@ public class ContactHub {
   }
 
   /**
-   * ===========
-   *  EVENT API
-   * ===========
+   * Adds a new Event.
+   *
+   * @param newEvent The {@link Event} to create.
+   * @return  Whether the Event was successfully queued for insertion.
    */
   public boolean addEvent(Event newEvent) throws HttpException {
     return EventApi.add(this.auth, newEvent);

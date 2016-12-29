@@ -20,6 +20,9 @@ public class EventApi {
 
   private static String baseUrl = "https://api.contactlab.it/hub/v1";
 
+  /**
+   * Add a new Event.
+   */
   public static Boolean add(Auth auth, Event event) throws HttpException {
     String endpoint = "/events";
     String payload = gson.toJson(event);
