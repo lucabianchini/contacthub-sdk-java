@@ -104,6 +104,18 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .getAsString should be ("testUserAgent")
       event.registeredAt.get shouldBe (OffsetDateTime.parse("2016-12-29T14:36:49.355Z"))
     }
+
+    scenario("retrieve all events for a customer", Integration) {
+      Given("a customer with some events")
+      val cid = customerId
+
+      When("the user retrieves the events for that customer")
+      val events = ch.getEvents(cid)
+
+      Then("a List of Events with that customerId should be returned")
+      events.length should be > 0
+      events(0).customerId.get should be (cid)
+    }
   }
 
 }

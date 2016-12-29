@@ -111,7 +111,7 @@ public class ContactHub {
    * Adds a new Event.
    *
    * @param newEvent The {@link Event} to create.
-   * @return  Whether the Event was successfully queued for insertion.
+   * @return Whether the Event was successfully queued for insertion.
    */
   public boolean addEvent(Event newEvent) throws HttpException {
     return EventApi.add(this.auth, newEvent);
@@ -126,4 +126,15 @@ public class ContactHub {
   public Event getEvent(String id) throws HttpException {
     return EventApi.get(this.auth, id);
   }
+
+  /**
+   * Retrieves all the Events for a Customer.
+   *
+   * @param customerid The id of a Customer with some Events.
+   * @return A {@link List} of {@link Event} objects.
+   */
+  public List<Event> getEvents(String customerId) throws HttpException {
+    return EventApi.getByCustomer(this.auth, customerId);
+  }
+
 }

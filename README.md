@@ -271,6 +271,14 @@ Retrieve an event by its id.
 Event event = ch.getEvent("a-valid-event-id");
 ```
 
+### getEvents
+
+Retrieve all the events for a customer.
+
+```java
+List<Event> events = ch.getEvents(customerId);
+```
+
 ### addEvent
 
 Add a new Event. This method returns `true` if the API has successfully queued
@@ -304,6 +312,7 @@ val eventProperties = new JsonObject;
 eventProperties.addProperty("url", "https://example.com/");
 eventProperties.addProperty("title", "Page Title");
 ```
+
 
 ## Examples
 
