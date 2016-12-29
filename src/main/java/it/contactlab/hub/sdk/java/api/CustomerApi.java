@@ -244,23 +244,20 @@ public class CustomerApi {
    *
    * @param auth       A ContactHub Auth object.
    * @param externalId The Customer externalId.
-   * @return           A Customer object.
+   * @return           A list of matching Customer objects.
    */
-  public static Customer getByExternalId(Auth auth, String externalId) throws HttpException {
+  public static List<Customer> getByExternalId(Auth auth, String externalId) throws HttpException {
     String endpoint = "/?nodeId=" + auth.nodeId + "&externalId=" + externalId;
     JSONObject response = doGet(auth, endpoint);
 
-    if (response.getJSONObject("page").getInt("totalElements") == 0) {
-      throw new HttpException("No customers found with external id " + externalId);
-    }
+    Type collectionType = new TypeToken<List<Customer>>(){}.getType();
 
-    Customer customer = gson.fromJson(response
+    List<Customer> customers = gson.fromJson(response
         .getJSONArray("elements")
-        .getJSONObject(0)
         .toString(),
-        Customer.class);
+        collectionType);
 
-    return customer;
+    return customers;
   }
 
   /**

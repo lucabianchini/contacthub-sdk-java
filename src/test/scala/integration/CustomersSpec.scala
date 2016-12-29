@@ -18,9 +18,9 @@ import scala.collection.JavaConversions._
 class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
   implicit val genCustomer: Gen[Customer] = for {
-    firstName <- Gen.alphaStr
-    lastName  <- Gen.alphaStr
-    email     <- Gen.alphaStr
+    firstName <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+    lastName  <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+    email     <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
   } yield {
     val contacts = Contacts.builder.email(s"$email@example.com").build
 
@@ -41,7 +41,8 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
 
   val ch = new ContactHub(auth)
   val customerId = "c841ab14-b8a2-45d3-88b8-02210e2a9ebe"
-  val externalId = "db55ec278cd6ca385c6d6a1ae49987c2"
+  val extIdSingle = "db55ec278cd6ca385c6d6a1ae49987c2"
+  val extIdMultiple = "multipleExternalIdTest"
 
   feature("retrieving customers") {
     scenario("retrieving the first page of customers of a node", Integration) {
@@ -73,23 +74,36 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       an [HttpException] should be thrownBy ch.getCustomer("not-existing")
     }
 
-    scenario("retrieving a single customer of a node by external id", Integration) {
+    scenario("retrieving a single customer by external id", Integration) {
       Given("a node")
 
-      When("the user asks for a customer by external id")
-      val customer = ch.getCustomerByExternalId(externalId)
+      When("the user asks for a customer matching an external id")
+      val customers = ch.getCustomerByExternalId(extIdSingle)
 
-      Then("the user should be retrieved")
-      customer.externalId.get shouldBe externalId
+      Then("the expected user should be retrieved")
+      customers should have length 1
+      customers.head.externalId.get shouldBe extIdSingle
     }
 
-    scenario("retrieving a single non-existing customer of a node by external id", Integration) {
+    scenario("retrieving multiple customers by external id", Integration) {
+      Given("a node")
+
+      When("the user asks for multiple customers matching an external id")
+      val customers = ch.getCustomerByExternalId(extIdMultiple)
+
+      Then("the expected users should be retrieved")
+      customers should have length 2
+      customers(0).externalId.get shouldBe extIdMultiple
+      customers(1).externalId.get shouldBe extIdMultiple
+    }
+
+    scenario("retrieving a non-existing customer by external id", Integration) {
       Given("a node")
       When("the user asks for a user that doesn't exist")
-      Then("the user should not be retrieved")
-      Then("an error should be thrown")
+      val customers = ch.getCustomerByExternalId("not-existing")
 
-      an [HttpException] should be thrownBy ch.getCustomerByExternalId("not-existing")
+      Then("an empty list should be returned")
+      customers should have length 0
     }
 
     scenario("reading top-level properties", Integration) {
