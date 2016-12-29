@@ -27,6 +27,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
 
   val ch = new ContactHub(auth)
   val customerId = "4012e67d-72fd-4f84-9039-71cbc5b80078"
+  val existingId = "417464a1-215b-461e-9f9b-ef1f68b153ec"
 
   feature("adding a new event") {
     scenario("adding a simple event", Integration) {
@@ -42,10 +43,27 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      val success = ch.addEvent(event);
+      val success = ch.addEvent(event)
 
       Then("the event is created successfully")
       success should be (true)
+    }
+  }
+
+  feature("retrieving events") {
+    scenario("retrieve an event by id", Integration) {
+      Given("an existing event id")
+      val id = existingId
+
+      When("the user asks for that event")
+      val event = ch.getEvent(id)
+
+      Then("the returned object contains the expected fields")
+      event.id.get should be (id)
+      event.customerId.get should be (customerId)
+      event.`type` should be ("viewedPage")
+      event.context should be ("WEB")
+      event.date should be (OffsetDateTime.parse("2016-12-29T13:24:29.329Z"))
     }
   }
 

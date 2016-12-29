@@ -15,6 +15,11 @@ import java.util.Optional;
 public abstract class AbstractEvent {
 
   /**
+   * The ID of this Event.
+   */
+  public abstract Optional<String> id();
+
+  /**
    * The Customer ID for this Event.
    */
   public abstract Optional<String> customerId();
@@ -43,4 +48,9 @@ public abstract class AbstractEvent {
   public OffsetDateTime date() {
     return OffsetDateTime.now();
   }
+
+  /**
+   * The moment when this Event was registered.
+   */
+  public abstract Optional<OffsetDateTime> registeredAt();
 }

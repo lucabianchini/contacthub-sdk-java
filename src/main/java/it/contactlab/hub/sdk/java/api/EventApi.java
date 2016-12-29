@@ -31,4 +31,14 @@ public class EventApi {
     return true;
   }
 
+  /**
+   * Retrieves an Event by id.
+   */
+  public static Event get(Auth auth, String id) throws HttpException {
+    String endpoint = "/events/" + id;
+    JSONObject response = Request.doGet(auth, endpoint);
+
+    return gson.fromJson(response.toString(), Event.class);
+  }
+
 }
