@@ -117,4 +117,13 @@ public class ContactHub {
     return EventApi.add(this.auth, newEvent);
   }
 
+  /**
+   * Retrieves an Event.
+   *
+   * @param id The id of the event
+   * @return   An {@link Event}.
+   */
+  public Event getEvent(String id) throws HttpException {
+    return EventApi.get(this.auth, id);
+  }
 }

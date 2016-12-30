@@ -263,6 +263,14 @@ locally and overwrite the whole customer with `updateCustomer()`.
 
 ## Event API
 
+### getEvent
+
+Retrieve an event by its id.
+
+```java
+Event event = ch.getEvent("a-valid-event-id");
+```
+
 ### addEvent
 
 Add a new Event. This method returns `true` if the API has successfully queued
