@@ -1,0 +1,983 @@
+{
+    "elements": [{
+        "id": "openedTicket",
+        "type": "openedTicket",
+        "mode": "ACTIVE",
+        "label": "Opened ticket",
+        "description": "opened ticket",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "ticketId": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "repliedTicket",
+        "type": "repliedTicket",
+        "mode": "PASSIVE",
+        "label": "Replied ticket",
+        "description": "replied ticket",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "ticketId": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "closedTicket",
+        "type": "closedTicket",
+        "mode": "ACTIVE",
+        "label": "Closed ticket",
+        "description": "closed ticket",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "ticketId": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "loggedIn",
+        "type": "loggedIn",
+        "mode": "ACTIVE",
+        "label": "Logged in",
+        "description": "logged in",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "loggedOut",
+        "type": "loggedOut",
+        "mode": "ACTIVE",
+        "label": "Logged out",
+        "description": "logged out",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "reviewedProduct",
+        "type": "reviewedProduct",
+        "mode": "ACTIVE",
+        "label": "Reviewed product",
+        "description": "reviewed product",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "rating": {
+                    "type": "string"
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "viewedProductCategory",
+        "type": "viewedProductCategory",
+        "mode": "ACTIVE",
+        "label": "Viewed product category",
+        "description": "viewed product category",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "viewedProduct",
+        "type": "viewedProduct",
+        "mode": "ACTIVE",
+        "label": "Viewed product",
+        "description": "viewed product",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "addedProduct",
+        "type": "addedProduct",
+        "mode": "ACTIVE",
+        "label": "Added product",
+        "description": "added product",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "removedProduct",
+        "type": "removedProduct",
+        "mode": "ACTIVE",
+        "label": "Removed product",
+        "description": "removed product",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "addedWishlist",
+        "type": "addedWishlist",
+        "mode": "ACTIVE",
+        "label": "Added wishlist",
+        "description": "added wishlist",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "removedWishlist",
+        "type": "removedWishlist",
+        "mode": "ACTIVE",
+        "label": "Removed wishlist",
+        "description": "removed wishlist",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "addedCompare",
+        "type": "addedCompare",
+        "mode": "ACTIVE",
+        "label": "Added compare",
+        "description": "added compare",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "removedCompare",
+        "type": "removedCompare",
+        "mode": "ACTIVE",
+        "label": "Removed compare",
+        "description": "removed compare",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkUrl": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "shortDescription": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "completedOrder",
+        "type": "completedOrder",
+        "mode": "ACTIVE",
+        "label": "Completed order",
+        "description": "completed order",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "orderId": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["sale", "return", "sale-return"]
+                },
+                "storeCode": {
+                    "type": "string"
+                },
+                "paymentMethod": {
+                    "type": "string",
+                    "enum": ["cash", "creditcard", "debitcard", "paypal", "other"]
+                },
+                "shippingMethod": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "total": {
+                            "type": "number"
+                        },
+                        "revenue": {
+                            "type": "number"
+                        },
+                        "shipping": {
+                            "type": "number"
+                        },
+                        "tax": {
+                            "type": "number"
+                        },
+                        "discount": {
+                            "type": "number"
+                        },
+                        "local": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "currency": {
+                                    "type": "string"
+                                },
+                                "exchangeRate": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": ["sale", "return"]
+                            },
+                            "sku": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "price": {
+                                "type": "number"
+                            },
+                            "subtotal": {
+                                "type": "number"
+                            },
+                            "quantity": {
+                                "type": "number"
+                            },
+                            "discount": {
+                                "type": "number"
+                            },
+                            "tax": {
+                                "type": "number"
+                            },
+                            "coupon": {
+                                "type": "string"
+                            },
+                            "imageUrl": {
+                                "type": "string",
+                                "format": "uri"
+                            },
+                            "linkUrl": {
+                                "type": "string",
+                                "format": "uri"
+                            },
+                            "shortDescription": {
+                                "type": "string"
+                            },
+                            "category": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "classifications": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "key": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "viewedPage",
+        "type": "viewedPage",
+        "mode": "ACTIVE",
+        "label": "Viewed page",
+        "description": "viewed page",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "referer": {
+                    "type": "string"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "pageCategories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pageTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "clickedLink",
+        "type": "clickedLink",
+        "mode": "ACTIVE",
+        "label": "Clicked link",
+        "description": "clicked link",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "referer": {
+                    "type": "string"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "linkTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "formCompiled",
+        "type": "formCompiled",
+        "mode": "ACTIVE",
+        "label": "Form compiled",
+        "description": "form compiled",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "formName": {
+                    "type": "string"
+                },
+                "formId": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object"
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "campaignSent",
+        "type": "campaignSent",
+        "mode": "PASSIVE",
+        "label": "Campaign sent",
+        "description": "campaign sent",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "subscriberId": {
+                    "type": "string"
+                },
+                "campaignSubject": {
+                    "type": "string"
+                },
+                "campaignId": {
+                    "type": "string"
+                },
+                "campaignName": {
+                    "type": "string"
+                },
+                "campaignTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "channel": {
+                    "type": "string",
+                    "enum": ["SMS", "EMAIL", "PUSH", "FAX"]
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }, {
+        "id": "campaignOpened",
+        "type": "campaignOpened",
+        "mode": "ACTIVE",
+        "label": "Campaign opened",
+        "description": "campaign opened",
+        "propertiesSchema": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "subscriberId": {
+                    "type": "string"
+                },
+                "campaignSubject": {
+                    "type": "string"
+                },
+                "campaignId": {
+                    "type": "string"
+                },
+                "campaignName": {
+                    "type": "string"
+                },
+                "campaignTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "channel": {
+                    "type": "string",
+                    "enum": ["SMS", "EMAIL", "PUSH", "FAX"]
+                },
+                "extraProperties": {
+                    "type": "object"
+                }
+            }
+        },
+        "enabled": true
+    }],
+    "page": {
+        "size": 20,
+        "totalElements": 36,
+        "totalPages": 2,
+        "number": 0
+    }
+}

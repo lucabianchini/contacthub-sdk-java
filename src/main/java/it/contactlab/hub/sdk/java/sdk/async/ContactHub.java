@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.async;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.CustomerApi;
+import it.contactlab.hub.sdk.java.api.CustomerApi;
 import it.contactlab.hub.sdk.java.models.Customer;
 
 import java.util.List;
