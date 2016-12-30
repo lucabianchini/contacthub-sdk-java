@@ -105,8 +105,8 @@ public class ContactHub {
   /**
    * Retrieves an Event.
    *
-   * @param
-   * @return
+   * @param id The id of the event
+   * @return   An {@link Event}.
    */
   public Event getEvent(String id) throws HttpException {
     return EventApi.get(this.auth, id);

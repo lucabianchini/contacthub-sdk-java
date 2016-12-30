@@ -7,7 +7,6 @@ import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Event;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
