@@ -148,6 +148,25 @@ Auth auth = new Auth(token, workspaceId, nodeId);
 ContactHub ch = new ContactHub(auth);
 ```
 
+## Session API
+
+### createSessionId
+
+Generate a new sessionId.
+
+```java
+String sessionId = ch.createSessionId();
+```
+
+### addCustomerSession
+
+Reconcile a sessionId with an existing Customer. Use this if you want to
+associate anonymous events (containing a sessionId) with an existing customerId.
+
+```java
+Boolean success = ch.addCustomerSession(customerId, sessionId);
+```
+
 
 ## Customer API
 
