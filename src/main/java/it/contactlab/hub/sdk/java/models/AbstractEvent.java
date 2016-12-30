@@ -1,5 +1,6 @@
 package it.contactlab.hub.sdk.java.models;
 
+import com.google.gson.JsonObject;
 import org.immutables.value.Value;
 
 import java.time.OffsetDateTime;
@@ -31,7 +32,7 @@ public abstract class AbstractEvent {
   /**
    * The properties of this Event.
    */
-  public abstract Object properties();
+  public abstract JsonObject properties();
 
   /**
    * The moment when this Event happened.

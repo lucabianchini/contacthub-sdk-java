@@ -242,6 +242,42 @@ merged, retrieve the customer with `getCustomer()`, update the properties
 locally and overwrite the whole customer with `updateCustomer()`.
 
 
+## Event API
+
+### addEvent
+
+Add a new Event. This method returns `true` if the API has successfully queued
+the event for insertion. The API will then process the queue asynchronously, it
+can take a few seconds for an event to be actually stored.
+
+```java
+Boolean queued = addEvent(Event event)
+```
+
+To create a `Event` instance, use the builder provided by the `Event` object.
+
+```java
+Event.builder()
+  .customerId(customerId)
+  .context("WEB")
+  .type("viewedPage")
+  .properties(eventProperties)
+  .build();
+```
+
+`eventProperties` must be an instance of `com.google.gson.JsonObject`, the
+structure of this object varies depending on the event type and always contains
+a number of optional fields, so you should only include the properties you need.
+
+For example, this would generate a valid `eventProperties` object for a
+`viewedPage` event:
+
+```java
+val eventProperties = new JsonObject;
+eventProperties.addProperty("url", "https://example.com/");
+eventProperties.addProperty("title", "Page Title");
+```
+
 ## Examples
 
 Check the [example](example/) folder for working examples you can download and

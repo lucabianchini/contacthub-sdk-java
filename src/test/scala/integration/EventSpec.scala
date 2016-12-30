@@ -5,6 +5,8 @@ import it.contactlab.hub.sdk.java.Auth
 import it.contactlab.hub.sdk.java.models._, base._
 import it.contactlab.hub.sdk.java.exceptions._
 
+import com.google.gson.JsonObject
+
 import java.time._
 
 import org.scalacheck.Gen
@@ -29,11 +31,14 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
   feature("adding a new event") {
     scenario("adding a simple event", Integration) {
       Given("a new event object")
+      val props = new JsonObject;
+      props.addProperty("url", "https://example.com/")
+      props.addProperty("title", "Page Title")
       val event = Event.builder
         .customerId(customerId)
         .`type`("viewedPage")
         .context("WEB")
-        .properties()
+        .properties(props)
         .build
 
       When("the user adds the event")
