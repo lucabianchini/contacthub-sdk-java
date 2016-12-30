@@ -3,6 +3,7 @@ package it.contactlab.hub.sdk.java.sync;
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.api.CustomerApi;
 import it.contactlab.hub.sdk.java.api.EventApi;
+import it.contactlab.hub.sdk.java.api.SessionApi;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.Event;
@@ -18,6 +19,20 @@ public class ContactHub {
 
   public ContactHub(Auth auth) {
     this.auth = auth;
+  }
+
+  /**
+   * Generate a new SessionId.
+   */
+  public String createSessionId() {
+    return SessionApi.generate();
+  }
+
+  /**
+   * Reconcile a SessionId with a Customer.
+   */
+  public boolean addCustomerSession(String customerId, String sessionId) throws HttpException {
+    return SessionApi.reconcile(this.auth, customerId, sessionId);
   }
 
   /**
