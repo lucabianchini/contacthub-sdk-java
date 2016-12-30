@@ -2,8 +2,8 @@ package it.contactlab.hub.sdk.java.models;
 
 import org.immutables.value.Value;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Customer Tags.
@@ -15,10 +15,10 @@ public abstract class AbstractCustomerTags {
   /**
   * A {@link List} of tags that were assigned automatically.
   */
-  public abstract Optional<List<String>> auto();
+  public abstract Optional<Set<String>> auto();
 
   /**
   * A {@link List} of tags that were assigned manually.
   */
-  public abstract Optional<List<String>> manual();
+  public abstract Optional<Set<String>> manual();
 }

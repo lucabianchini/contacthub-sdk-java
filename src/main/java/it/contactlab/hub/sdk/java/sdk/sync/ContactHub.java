@@ -7,6 +7,7 @@ import it.contactlab.hub.sdk.java.api.EventApi;
 import it.contactlab.hub.sdk.java.api.JobApi;
 import it.contactlab.hub.sdk.java.api.LikeApi;
 import it.contactlab.hub.sdk.java.api.SessionApi;
+import it.contactlab.hub.sdk.java.api.TagApi;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.Event;
@@ -231,6 +232,32 @@ public class ContactHub {
    */
   public Customer removeEducation(String customerId, String educationId) throws HttpException {
     return EducationApi.remove(this.auth, customerId, educationId);
+  }
+
+  /**
+   * Adds a tag to an existing Customer.
+   *
+   * <p>If the tag is already present, nothing will be done.
+   *
+   * @param customerId The id of the Customer.
+   * @param tag        The tag to be added.
+   * @return           The full Customer object after the update.
+   */
+  public Customer addTag(String customerId, String tag) throws HttpException {
+    return TagApi.add(this.auth, customerId, tag);
+  }
+
+  /**
+   * Removes a tag from an existing Customer.
+   *
+   * <p>If the tag is not present, nothing will be done.
+   *
+   * @param customerId The id of the Customer.
+   * @param tag        The tag to be removed.
+   * @return           The full Customer object after the update.
+   */
+  public Customer removeTag(String customerId, String tag) throws HttpException {
+    return TagApi.remove(this.auth, customerId, tag);
   }
 
   /**
