@@ -261,6 +261,78 @@ merged, retrieve the customer with `getCustomer()`, update the properties
 locally and overwrite the whole customer with `updateCustomer()`.
 
 
+## Education API
+
+Convenience methods to add/update/remove the Education objects of a Customer.
+You can perform the same operations also using `patchCustomer`.
+
+### addEducation
+
+```java
+Customer updatedCustomer = ch.addEducation(customerId, Education education);
+```
+
+### updateEducation
+
+```java
+Customer updatedCustomer = ch.updateEducation(customerId, Education education);
+```
+
+### removeEducation
+
+```java
+Customer updatedCustomer = ch.removeEducation(customerId, String educationId);
+```
+
+
+## Like API
+
+Convenience methods to add/update/remove the Like objects of a Customer.
+You can perform the same operations also using `patchCustomer`.
+
+### addLike
+
+```java
+Customer updatedCustomer = ch.addLike(customerId, Like like);
+```
+
+### updateLike
+
+```java
+Customer updatedCustomer = ch.updateLike(customerId, Like like);
+```
+
+### removeLike
+
+```java
+Customer updatedCustomer = ch.removeLike(customerId, String likeId);
+```
+
+
+## Job API
+
+Convenience methods to add/update/remove the Job objects of a Customer.
+You can perform the same operations also using `patchCustomer`.
+
+### addJob
+
+```java
+Customer updatedCustomer = ch.addJob(customerId, Job job);
+```
+
+### updateJob
+
+```java
+Customer updatedCustomer = ch.updateJob(customerId, Job job);
+```
+
+### removeJob
+
+```java
+Customer updatedCustomer = ch.removeJob(customerId, String jobId);
+```
+
+
 ## Event API
 
 ### getEvent
