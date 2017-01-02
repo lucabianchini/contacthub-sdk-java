@@ -333,6 +333,32 @@ Customer updatedCustomer = ch.removeJob(customerId, String jobId);
 ```
 
 
+## Tag API
+
+### addTag
+
+Add a tag to a Customer. If the tag is already present, nothing will be done.
+
+This is just a convenience method, as the same result could be achieved using
+`getCustomer` and `patchCustomer`.
+
+```java
+Customer updatedCustomer = ch.addTag(customerId, "a-new-tag");
+```
+
+### removeTag
+
+Remove a tag from a Customer. If the tag is already present, nothing will be
+done.
+
+This is just a convenience method, as the same result could be achieved using
+`getCustomer` and `patchCustomer`.
+
+```java
+Customer updatedCustomer = ch.addTag(customerId, "a-tag-to-remove");
+```
+
+
 ## Event API
 
 ### getEvent

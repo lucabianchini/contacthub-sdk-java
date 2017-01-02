@@ -7,6 +7,7 @@ import it.contactlab.hub.sdk.java.api.EventApi;
 import it.contactlab.hub.sdk.java.api.JobApi;
 import it.contactlab.hub.sdk.java.api.LikeApi;
 import it.contactlab.hub.sdk.java.api.SessionApi;
+import it.contactlab.hub.sdk.java.api.TagApi;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.Event;
@@ -234,6 +235,32 @@ public class ContactHub {
   }
 
   /**
+   * Adds a tag to an existing Customer.
+   *
+   * <p>If the tag is already present, nothing will be done.
+   *
+   * @param customerId The id of the Customer.
+   * @param tag        The tag to be added.
+   * @return           The full Customer object after the update.
+   */
+  public Customer addTag(String customerId, String tag) throws HttpException {
+    return TagApi.add(this.auth, customerId, tag);
+  }
+
+  /**
+   * Removes a tag from an existing Customer.
+   *
+   * <p>If the tag is not present, nothing will be done.
+   *
+   * @param customerId The id of the Customer.
+   * @param tag        The tag to be removed.
+   * @return           The full Customer object after the update.
+   */
+  public Customer removeTag(String customerId, String tag) throws HttpException {
+    return TagApi.remove(this.auth, customerId, tag);
+  }
+
+  /**
    * Adds a new Event.
    *
    * @param newEvent The {@link Event} to create.
@@ -256,7 +283,7 @@ public class ContactHub {
   /**
    * Retrieves all the Events for a Customer.
    *
-   * @param customerid The id of a Customer with some Events.
+   * @param customerId The id of a Customer with some Events.
    * @return A {@link List} of {@link Event} objects.
    */
   public List<Event> getEvents(String customerId) throws HttpException {

@@ -1,4 +1,4 @@
-package it.contactlab.hub.sdk.java.sync.test.integration;
+package it.contactlab.hub.sdk.java.sync.test.integration
 
 import it.contactlab.hub.sdk.java.sync.ContactHub
 import it.contactlab.hub.sdk.java.Auth
@@ -15,23 +15,7 @@ import org.scalatest.GivenWhenThen
 
 import scala.collection.JavaConversions._
 
-class CustomersSpec extends FeatureSpec with GivenWhenThen {
-
-  implicit val genCustomer: Gen[Customer] = for {
-    firstName <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
-    lastName  <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
-    email     <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
-  } yield {
-    val contacts = Contacts.builder.email(s"$email@example.com").build
-
-    Customer.builder
-      .base(BaseProperties.builder
-        .firstName(firstName)
-        .lastName(lastName)
-        .contacts(contacts)
-        .build)
-      .build
-  }
+class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
 
   val auth = new Auth(
     "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
@@ -126,7 +110,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val customer = genCustomer.sample.get
 
       When("the user adds a customer")
-      val newCustomer = ch.addCustomer(customer);
+      val newCustomer = ch.addCustomer(customer)
 
       Then("a new customer is created")
       val id = newCustomer.id.get
@@ -205,7 +189,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
         .base(BaseProperties.builder
           .contacts(Contacts.builder.email(newEmail).build)
           .build)
-        .build;
+        .build
 
       val updatedCustomer = ch.patchCustomer(newCustomer.id.get, patchCustomer)
 
