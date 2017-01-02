@@ -116,7 +116,7 @@ public class ContactHub {
   /**
    * Adds a {@link Like} to an existing Customer.
    *
-   * <p>If the Like is already present, nothing will be done.
+   * <p>If the Like is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param like       The like to be added.
@@ -129,7 +129,7 @@ public class ContactHub {
   /**
    * Update an existing {@link Like} for an existing Customer.
    *
-   * <p>If the Like is already present, nothing will be done.
+   * <p>If the Like is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param like       The like to be added.
@@ -143,7 +143,7 @@ public class ContactHub {
   /**
    * Removes a {@link Like} from an existing Customer.
    *
-   * <p>If the Like is not present, nothing will be done.
+   * <p>If the Like is not present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param likeId     The id of the Like to be removed.
@@ -156,7 +156,7 @@ public class ContactHub {
   /**
    * Adds a {@link Job} to an existing Customer.
    *
-   * <p>If the Job is already present, nothing will be done.
+   * <p>If the Job is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param job        The job to be added.
@@ -169,7 +169,7 @@ public class ContactHub {
   /**
    * Update an existing {@link Job} for an existing Customer.
    *
-   * <p>If the Job is already present, nothing will be done.
+   * <p>If the Job is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param job        The job to be added.
@@ -183,7 +183,7 @@ public class ContactHub {
   /**
    * Removes a {@link Job} from an existing Customer.
    *
-   * <p>If the Job is not present, nothing will be done.
+   * <p>If the Job is not present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param jobId     The id of the Job to be removed.
@@ -196,7 +196,7 @@ public class ContactHub {
   /**
    * Adds a {@link Education} to an existing Customer.
    *
-   * <p>If the Education is already present, nothing will be done.
+   * <p>If the Education is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param education  The education to be added.
@@ -209,7 +209,7 @@ public class ContactHub {
   /**
    * Update an existing {@link Education} for an existing Customer.
    *
-   * <p>If the Education is already present, nothing will be done.
+   * <p>If the Education is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
    * @param education  The education to be added.
@@ -223,7 +223,7 @@ public class ContactHub {
   /**
    * Removes a {@link Education} from an existing Customer.
    *
-   * <p>If the Education is not present, nothing will be done.
+   * <p>If the Education is not present, nothing will be done.</p>
    *
    * @param customerId  The id of the Customer.
    * @param educationId The id of the Education to be removed.
