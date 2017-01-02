@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import org.scalacheck.Gen
 
 import org.scalatest.FeatureSpec
+import org.scalatest.Inspectors._
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 
@@ -114,7 +115,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
 
       Then("a List of Events with that customerId should be returned")
       events.length should be > 0
-      events(0).customerId.get should be (cid)
+      forAll(events)(_.customerId.get should be (cid))
     }
   }
 
