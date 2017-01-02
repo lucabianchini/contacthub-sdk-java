@@ -283,7 +283,7 @@ public class ContactHub {
   /**
    * Retrieves all the Events for a Customer.
    *
-   * @param customerid The id of a Customer with some Events.
+   * @param customerId The id of a Customer with some Events.
    * @return A {@link List} of {@link Event} objects.
    */
   public List<Event> getEvents(String customerId) throws HttpException {
