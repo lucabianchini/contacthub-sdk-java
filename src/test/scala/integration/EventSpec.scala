@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import org.scalacheck.Gen
 
 import org.scalatest.FeatureSpec
+import org.scalatest.Inspectors._
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 
@@ -103,6 +104,18 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       event.contextInfo.get.getAsJsonObject("client").get("userAgent")
         .getAsString should be ("testUserAgent")
       event.registeredAt.get shouldBe (OffsetDateTime.parse("2016-12-29T14:36:49.355Z"))
+    }
+
+    scenario("retrieve all events for a customer", Integration) {
+      Given("a customer with some events")
+      val cid = customerId
+
+      When("the user retrieves the events for that customer")
+      val events = ch.getEvents(cid)
+
+      Then("a List of Events with that customerId should be returned")
+      events.length should be > 0
+      forAll(events)(_.customerId.get should be (cid))
     }
   }
 
