@@ -10,6 +10,7 @@ import it.contactlab.hub.sdk.java.sync.ContactHub;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashSet;
 
 /**
  * Example use of the Sync SDK.
@@ -70,7 +71,7 @@ public class Example {
               .build())
             .build())
         .tags(CustomerTags.builder()
-            .manual(Arrays.asList("example-tag"))
+            .manual(new HashSet<String>(Arrays.asList("a", "b")))
             .build())
         .build();
 
