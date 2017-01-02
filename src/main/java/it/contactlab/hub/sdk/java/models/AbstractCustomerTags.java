@@ -13,12 +13,12 @@ import java.util.Set;
 public abstract class AbstractCustomerTags {
 
   /**
-  * A {@link List} of tags that were assigned automatically.
+  * A {@link Set} of tags that were assigned automatically.
   */
   public abstract Optional<Set<String>> auto();
 
   /**
-  * A {@link List} of tags that were assigned manually.
+  * A {@link Set} of tags that were assigned manually.
   */
   public abstract Optional<Set<String>> manual();
 }
