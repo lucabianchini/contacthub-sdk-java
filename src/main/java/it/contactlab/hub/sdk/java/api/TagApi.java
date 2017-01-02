@@ -5,6 +5,8 @@ import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.CustomerTags;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 public class TagApi {
@@ -16,7 +18,7 @@ public class TagApi {
       throws HttpException {
 
     Customer customer = CustomerApi.get(auth, customerId);
-    Set<String> manualTags = customer.tags().get().manual().get();
+    Set<String> manualTags = customer.tags().flatMap(t -> t.manual()).orElse(new HashSet());
 
     boolean changed = manualTags.add(tag);
 
@@ -36,7 +38,7 @@ public class TagApi {
       throws HttpException {
 
     Customer customer = CustomerApi.get(auth, customerId);
-    Set<String> manualTags = customer.tags().get().manual().get();
+    Set<String> manualTags = customer.tags().flatMap(t -> t.manual()).orElse(new HashSet());
 
     boolean changed = manualTags.remove(tag);
 

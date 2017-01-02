@@ -1,9 +1,11 @@
-package it.contactlab.hub.sdk.java.sync.test.integration;
+package it.contactlab.hub.sdk.java.sync.test.integration
 
 import it.contactlab.hub.sdk.java.sync.ContactHub
 import it.contactlab.hub.sdk.java.Auth
 import it.contactlab.hub.sdk.java.models._, base._
 import it.contactlab.hub.sdk.java.exceptions._
+
+import org.scalacheck.Gen
 
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
@@ -13,6 +15,22 @@ import org.scalatest.BeforeAndAfter
 import scala.collection.JavaConversions._
 
 class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
+
+  implicit val genCustomer: Gen[Customer] = for {
+    firstName <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+    lastName  <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+    email     <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+  } yield {
+    val contacts = Contacts.builder.email(s"$email@example.com").build
+
+    Customer.builder
+      .base(BaseProperties.builder
+        .firstName(firstName)
+        .lastName(lastName)
+        .contacts(contacts)
+        .build)
+      .build
+  }
 
   val auth = new Auth(
     "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
@@ -61,6 +79,18 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       And("The old ones are still there")
       updated.tags.get.auto.get should contain ("existing-auto-tag")
     }
+
+    scenario("when the Customer has no other tags", Integration) {
+      Given("a new Customer with no tags")
+      val customer = genCustomer.sample.get
+      val cid = ch.addCustomer(customer).id.get
+
+      When("I add a new tag")
+      val updated = ch.addTag(cid, "new-tag")
+
+      Then("The new tag is present")
+      updated.tags.get.manual.get should contain ("new-tag")
+    }
   }
 
   feature("removing a tag") {
@@ -90,6 +120,19 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       updated.tags.get.auto.get should contain ("existing-auto-tag")
       updated.tags.get.manual.get should contain ("existing-tag")
       updated.tags.get.manual.get should contain ("another-tag")
+    }
+
+    scenario("when the Customer has no tags", Integration) {
+      Given("a new Customer with no tags")
+      val customer = genCustomer.sample.get
+
+      val cid = ch.addCustomer(customer).id.get
+
+      When("I try to remove a tag that is not present")
+      val updated = ch.removeTag(cid, "non-existing-tag")
+
+      Then("the Customer tags have not changed")
+      updated.tags.isPresent should be (false)
     }
   }
 }

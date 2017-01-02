@@ -1,4 +1,4 @@
-package it.contactlab.hub.sdk.java.sync.test.integration;
+package it.contactlab.hub.sdk.java.sync.test.integration
 
 import it.contactlab.hub.sdk.java.sync.ContactHub
 import it.contactlab.hub.sdk.java.Auth
@@ -126,7 +126,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
       val customer = genCustomer.sample.get
 
       When("the user adds a customer")
-      val newCustomer = ch.addCustomer(customer);
+      val newCustomer = ch.addCustomer(customer)
 
       Then("a new customer is created")
       val id = newCustomer.id.get
@@ -205,7 +205,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen {
         .base(BaseProperties.builder
           .contacts(Contacts.builder.email(newEmail).build)
           .build)
-        .build;
+        .build
 
       val updatedCustomer = ch.patchCustomer(newCustomer.id.get, patchCustomer)
 
