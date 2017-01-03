@@ -36,8 +36,8 @@ repositories {
   mavenCentral()
   maven {
     credentials {
-      username "user"
-      password "pass"
+      username "$buildoMavenUser"
+      password "$buildoMavenPassword"
     }
     url "https://buildo-private-maven.appspot.com"
   }
