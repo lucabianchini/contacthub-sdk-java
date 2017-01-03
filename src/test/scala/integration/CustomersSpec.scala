@@ -13,7 +13,7 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 
-import scala.collection.JavaConversions._
+import scala.collection.convert.ImplicitConversions._
 
 class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
 

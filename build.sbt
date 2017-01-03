@@ -26,7 +26,7 @@ compile in Compile := {
   (compile in Compile).value
 }
 
-lazy val scalaV = "2.11.8"
+lazy val scalaV = "2.12.1"
 
 lazy val testDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.0.0",
