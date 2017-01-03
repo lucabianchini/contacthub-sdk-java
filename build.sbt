@@ -19,6 +19,13 @@ doc in Compile := {
   (doc in Compile).value
 }
 
+// Run checkstyle when compiling
+jcheckStyleConfig := "checkstyle-config.xml"
+compile in Compile := {
+  (jcheckStyle in Compile).value
+  (compile in Compile).value
+}
+
 lazy val scalaV = "2.11.8"
 
 lazy val testDependencies = Seq(
