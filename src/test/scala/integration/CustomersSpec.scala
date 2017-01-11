@@ -299,12 +299,10 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
             .subscriberId("ASD123")
             .registeredAt(OffsetDateTime.parse("2016-05-10T00:00:00Z"))
             .updatedAt(OffsetDateTime.parse("2016-05-10T00:00:00Z"))
-            // FIXME: this is commented because of a probable API bug, see:
-            // https://trello.com/c/eSZ5fHep/28-cannot-retrieve-preferences-for-subscriptions
-            // .preferences(Seq(
-            //   Preference.builder.key("key1").value("value1").build,
-            //   Preference.builder.key("key2").value("value2").build
-            // ))
+            .preferences(Seq(
+              Preference.builder.key("key1").value("value1").build,
+              Preference.builder.key("key2").value("value2").build
+            ))
             .build))
         .build
 
