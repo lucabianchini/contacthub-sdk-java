@@ -1,5 +1,7 @@
 # ContactHUB Java SDK
 
+![Version 0.3.0 beta](https://img.shields.io/badge/version-0.3.0%20beta-0072bc.svg)
+
 ## Private repository for beta
 
 Until this library reaches 1.0, it's only available from a private Maven
