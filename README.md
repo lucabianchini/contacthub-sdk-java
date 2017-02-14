@@ -1,11 +1,13 @@
-# ContactHUB Java SDK
+# Contacthub Java SDK
 
 ![Version 0.3.0 beta](https://img.shields.io/badge/version-0.3.0%20beta-0072bc.svg)
 
 ## Private repository for beta
 
-Until this library reaches 1.0, it's only available from a private Maven
-repository at https://buildo-private-maven.appspot.com/
+Until this library reaches 1.0, it is only available as a private Maven
+repository from:
+
+* https://buildo-private-maven.appspot.com/
 
 If you have a valid account for this repository, add it to your build tool
 configuration.
@@ -88,7 +90,7 @@ Then add your credentials to `~/.m2/settings.xml`:
 ```
 
 
-## Adding this library to your project's dependencies
+## Adding this library to your project dependencies
 
 ### sbt
 
@@ -121,7 +123,7 @@ In your `pom.xml`:
 ```
 
 
-## Importing this library in your project
+## Importing this library into your project
 
 ```java
 import it.contactlab.hub.sdk.java.sync.ContactHub;
@@ -130,19 +132,19 @@ import it.contactlab.hub.sdk.java.sync.ContactHub;
 We also provide a separate `async` implementation where all the methods return a
 Java8 [CompletionStage&lt;T&gt;](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletionStage.html).
 
-If you wish the use the Async api, import from the `async` package instead:
+If you wish the use the Async API, import from the `async` package instead:
 
 ```java
 import it.contactlab.hub.sdk.java.async.ContactHub;
 ```
 
-All the methods documented below are available in both packages.
+All the following methods are available in both packages.
 
 
 ## Authenticating
 
-Find your token, workspaceId and nodeId in the ContactHub dashboard. Then
-instantiate a new ContactHub object like this:
+Find your token, workspaceId and nodeId in the Contacthub UI. Then
+instantiate a new Contacthub object as follows:
 
 ```java
 Auth auth = new Auth(token, workspaceId, nodeId);
@@ -169,12 +171,11 @@ associate anonymous events (containing a sessionId) with an existing customerId.
 Boolean success = ch.addCustomerSession(customerId, sessionId);
 ```
 
-
 ## Customer API
 
 ### getCustomer
 
-Retrieve a customer by its id.
+Retrieve a customer by their ID.
 
 ```java
 Customer customer = ch.getCustomer("a-valid-customer-id");
@@ -182,7 +183,7 @@ Customer customer = ch.getCustomer("a-valid-customer-id");
 
 ### getCustomers
 
-Retrieve all the Customers in a Node.
+Retrieve all the Customers in a node.
 
 ```java
 List<Customer> customers = ch.getCustomers();
@@ -190,18 +191,18 @@ List<Customer> customers = ch.getCustomers();
 
 ### getCustomerByExternalId
 
-Retrieve all the Customers matching the given external id.
+Retrieve all the Customers matching a specific external ID.
 
 ```java
 List<Customer> customers = ch.getCustomerByExternalId("an-external-id");
 ```
 
-Please note you can have more than one customer with the same external id,
-unless you include "external id" in the "matching policies" for your workspace.
+Please note you can have more than one customer with the same external ID,
+unless you include "external ID" in the "matching policies" for your workspace.
 
 ### addCustomer
 
-Add a new Customer. This method returns a new Customer object including the id that was
+Add a new Customer. This method returns a new Customer object including the ID that was
 assigned to the new customer by the API.
 
 ```java
@@ -210,8 +211,7 @@ Customer newCustomer = addCustomer(Customer customer)
 
 If the "Customer uniqueness" configuration for your workspace is set to "Merge"
 and the new customer data matches an existing customer according to the
-"matching policies" for your workspace, this method will return the merged
-Customer data.
+"matching policies", this method will return the merged Customer data.
 
 To create a `Customer` instance that this method requires as its argument, use the
 builder provided by the `Customer` object.
@@ -226,7 +226,7 @@ Customer.builder()
 
 ### deleteCustomer
 
-Delete the Customer with the specified id.
+Delete the Customer with the specified ID.
 
 ```java
 deleteCustomer("an-existing-id");
@@ -234,39 +234,41 @@ deleteCustomer("an-existing-id");
 
 ### updateCustomer
 
-Update an existing Customer by replacing all of its data with the data provided.
+Update an existing Customer by replacing all of their data with the data provided.
 
 ```java
 Customer updatedCustomer = updateCustomer(Customer newCustomer);
 ```
 
-This method will fail if the id of `newCustomer` doesn't match an existing
+This method will fail if the ID of the `newCustomer` does not match an existing
 customer.
 
 ### patchCustomer
 
-Update an existing Customer (identified by `id`) by merging its existing data
+Update an existing Customer (identified by `id`) by merging their existing data
 with the data provided.
 
 ```java
 Customer updatedCustomer = patchCustomer(String id, Customer newCustomerData);
 ```
 
-Customer properties that were already set and are included in the new data will
+Customer properties that were already set and are included in the new data, will
 be overwritten.
 
-Customer properties that were already set and are not specified will be left
+Customer properties that were already set, but are not included, will be left
 untouched.
 
-The merge is performed API-side. If you want more control on how the data is
-merged, retrieve the customer with `getCustomer()`, update the properties
-locally and overwrite the whole customer with `updateCustomer()`.
+The merge is performed on the API-side. If you want more control of how the data is
+merged:
 
+* Retrieve the customer with `getCustomer()`
+* Update the properties locally
+* Overwrite the whole customer with `updateCustomer()`
 
 ## Education API
 
-Convenience methods to add/update/remove the Education objects of a Customer.
-You can perform the same operations also using `patchCustomer`.
+The following methods are useful ways to add/update/remove the Education objects of a Customer.
+You can also carry out the same operations using `patchCustomer`.
 
 ### addEducation
 
@@ -286,11 +288,10 @@ Customer updatedCustomer = ch.updateEducation(customerId, Education education);
 Customer updatedCustomer = ch.removeEducation(customerId, String educationId);
 ```
 
-
 ## Like API
 
-Convenience methods to add/update/remove the Like objects of a Customer.
-You can perform the same operations also using `patchCustomer`.
+The following methods are useful ways to add/update/remove the Like objects of a Customer.
+You can also carry out the same operations using `patchCustomer`.
 
 ### addLike
 
@@ -310,11 +311,10 @@ Customer updatedCustomer = ch.updateLike(customerId, Like like);
 Customer updatedCustomer = ch.removeLike(customerId, String likeId);
 ```
 
-
 ## Job API
 
-Convenience methods to add/update/remove the Job objects of a Customer.
-You can perform the same operations also using `patchCustomer`.
+The following methods are useful ways to add/update/remove the Job objects of a Customer.
+You can also carry out the same operations using `patchCustomer`.
 
 ### addJob
 
@@ -334,14 +334,13 @@ Customer updatedCustomer = ch.updateJob(customerId, Job job);
 Customer updatedCustomer = ch.removeJob(customerId, String jobId);
 ```
 
-
 ## Tag API
 
 ### addTag
 
-Add a tag to a Customer. If the tag is already present, nothing will be done.
+Add a tag to a Customer. If the tag is already present, nothing is changed.
 
-This is just a convenience method, as the same result could be achieved using
+While this is a convenient method, the same result can be achieved using
 `getCustomer` and `patchCustomer`.
 
 ```java
@@ -350,22 +349,21 @@ Customer updatedCustomer = ch.addTag(customerId, "a-new-tag");
 
 ### removeTag
 
-Remove a tag from a Customer. If the tag is already present, nothing will be
-done.
+Remove a tag from a Customer. If the tag is already present, nothing is changed.
 
-This is just a convenience method, as the same result could be achieved using
+
+While this is a convenient method, the same result can be achieved using
 `getCustomer` and `patchCustomer`.
 
 ```java
 Customer updatedCustomer = ch.addTag(customerId, "a-tag-to-remove");
 ```
 
-
 ## Event API
 
 ### getEvent
 
-Retrieve an event by its id.
+Retrieve an event using its ID.
 
 ```java
 Event event = ch.getEvent("a-valid-event-id");
@@ -382,14 +380,14 @@ List<Event> events = ch.getEvents(customerId);
 ### addEvent
 
 Add a new Event. This method returns `true` if the API has successfully queued
-the event for insertion. The API will then process the queue asynchronously, it
-can take a few seconds for an event to be actually stored.
+the event for insertion. The API will then process the queue asynchronously, and it
+can take a few seconds for an event to actually be stored.
 
 ```java
 Boolean queued = addEvent(Event event)
 ```
 
-To create a `Event` instance, use the builder provided by the `Event` object.
+To create an `Event` instance, use the builder provided by the `Event` object.
 
 ```java
 Event.builder()
@@ -400,11 +398,13 @@ Event.builder()
   .build();
 ```
 
-`eventProperties` must be an instance of `com.google.gson.JsonObject`, the
-structure of this object varies depending on the event type and always contains
-a number of optional fields, so you should only include the properties you need.
+`eventProperties` must be an instance of `com.google.gson.JsonObject`. The
+structure of this object varies according to the event type, and always contains
+a number of optional fields. You should only include the properties that you need.
 
-For example, this would generate a valid `eventProperties` object for a
+**Example:**
+
+This will generate a valid `eventProperties` object for a
 `viewedPage` event:
 
 ```java
@@ -413,10 +413,9 @@ eventProperties.addProperty("url", "https://example.com/");
 eventProperties.addProperty("title", "Page Title");
 ```
 
-
 ## Examples
 
-Check the [example](example/) folder for working examples you can download and
+See the [example](example/) folder for working examples that you can download and
 try out.
 
 ### Running the example with sbt
@@ -440,27 +439,25 @@ mvn compile
 mvn exec:java
 ```
 
-
 ## Contributing to this library
 
-Despite this being a Java library, we use [sbt](http://www.scala-sbt.org/) as
+Althpough this is a Java library, we use [sbt](http://www.scala-sbt.org/) as
 the build tool.
 
 `sbt compile` will compile all the Java sources to `target/classes`
 
 `sbt package` will package the compiled files in a JAR file under `target`
 
-`sbt doc` will generate HTML JavaDoc in `target/api`
+`sbt doc` will generate an HTML JavaDoc in `target/api`
 
 `sbt packageDoc` will package the javadoc files in a JAR file under `target`
-
 
 ### Immutables
 
 This library uses [Immutables](http://immutables.github.io/) to generate
 high-quality, immutable implementations of the domain models.
 
-This dramatically reduces Java boilerplate code. For example, only an
+This dramatically reduces the Java boilerplate code. For example, only an
 `AbstractCustomer` model is present in the `src` folder. When you compile it,
-the `Customer` implementation will be automatically generated by Immutables and
+the `Customer` implementation is automatically generated by Immutables and
 saved as `target/classes/.../Customer.java`.
