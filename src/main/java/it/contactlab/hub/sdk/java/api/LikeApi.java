@@ -2,81 +2,52 @@ package it.contactlab.hub.sdk.java.api;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
-import it.contactlab.hub.sdk.java.models.Customer;
-import it.contactlab.hub.sdk.java.models.base.BaseProperties;
+import it.contactlab.hub.sdk.java.gson.ContactHubGson;
+import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.base.Like;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.gson.Gson;
+import org.json.JSONObject;
 
 public class LikeApi {
+
+  private static Gson gson = ContactHubGson.getInstance();
 
   /**
    * Add a new Like to a Customer.
    */
-  public static Customer add(Auth auth, String customerId, Like like)
+  public static Like add(Auth auth, String customerId, Like like)
       throws HttpException {
 
-    Customer customer = CustomerApi.get(auth, customerId);
-    List<Like> likes = customer.base().get().likes().get();
+    String endpoint = "/customers/" + customerId + "/likes";
+    String payload = gson.toJson(like);
+    JSONObject response = Request.doPost(auth, endpoint, payload);
 
-    boolean changed = likes.add(like);
-
-    if (changed) {
-      return CustomerApi.patch(auth, customerId, Customer.builder()
-          .base(BaseProperties.builder().likes(likes).build())
-          .build());
-    } else {
-      return customer;
-    }
+    return gson.fromJson(response.toString(), Like.class);
   }
 
   /**
    * Update an existing Like.
    */
-  public static Customer update(Auth auth, String customerId, Like like)
+  public static Like update(Auth auth, String customerId, Like like)
       throws HttpException {
 
-    Customer customer = CustomerApi.get(auth, customerId);
-    List<Like> likes = customer.base().get().likes().get();
+    String endpoint = "/customers/" + customerId + "/likes/" + like.id();
+    String payload = gson.toJson(like);
+    JSONObject response = Request.doPut(auth, endpoint, payload);
 
-    List<Like> updatedLikes = likes.stream()
-        .map(l -> {
-          return l.id().equals(like.id()) ? like : l;
-        })
-        .collect(Collectors.toList());
-
-    if (updatedLikes != likes) {
-      return CustomerApi.patch(auth, customerId, Customer.builder()
-          .base(BaseProperties.builder().likes(updatedLikes).build())
-          .build());
-    } else {
-      return customer;
-    }
+    return gson.fromJson(response.toString(), Like.class);
   }
 
   /**
    * Remove a tag from a Customer.
    */
-  public static Customer remove(Auth auth, String customerId, String likeId)
+  public static boolean remove(Auth auth, String customerId, String likeId)
       throws HttpException {
 
-    Customer customer = CustomerApi.get(auth, customerId);
-    List<Like> likes = customer.base().get().likes().get();
+    String endpoint = "/customers/" + customerId + "/likes/" + likeId;
+    JSONObject response = Request.doDelete(auth, endpoint);
 
-    List<Like> updatedLikes = likes.stream()
-        .filter(l -> {
-          return !l.id().get().equals(likeId);
-        })
-        .collect(Collectors.toList());
-
-    if (updatedLikes != likes) {
-      return CustomerApi.patch(auth, customerId, Customer.builder()
-          .base(BaseProperties.builder().likes(updatedLikes).build())
-          .build());
-    } else {
-      return customer;
-    }
+    return true;
   }
-
 }

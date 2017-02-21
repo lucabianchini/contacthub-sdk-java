@@ -41,7 +41,10 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I add a new like")
       val newLike = Like.builder.id("like3").name("baz").build
-      val updated = ch.addLike(cid, newLike)
+
+      ch.addLike(cid, newLike)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The new like is present")
       updated.base.get.likes.get should contain (newLike)
@@ -56,7 +59,10 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I update an existing like")
       val newLike = Like.builder.id("like2").name("baz").build
-      val updated = ch.updateLike(cid, newLike)
+
+      ch.updateLike(cid, newLike)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching like is updated")
       updated.base.get.likes.get should contain (newLike)
@@ -70,7 +76,9 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val cid = customerId
 
       When("I remove an existing like")
-      val updated = ch.removeLike(cid, "like1")
+      ch.removeLike(cid, "like1")
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching like is removed")
       updated.base.get.likes.get should not contain (like1)

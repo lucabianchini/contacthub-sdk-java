@@ -9,7 +9,7 @@ import java.util.Optional;
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractLike {
 
-  public abstract Optional<String> id();
+  public abstract String id();
 
   public abstract Optional<String> category();
 

@@ -120,10 +120,10 @@ public class ContactHub {
    * <p>If the Like is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
-   * @param like       The like to be added.
-   * @return           The full Customer object after the update.
+   * @param like       The Like to be added.
+   * @return           The Like object that was persisted by the API.
    */
-  public Customer addLike(String customerId, Like like) throws HttpException {
+  public Like addLike(String customerId, Like like) throws HttpException {
     return LikeApi.add(this.auth, customerId, like);
   }
 
@@ -133,11 +133,11 @@ public class ContactHub {
    * <p>If the Like is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
-   * @param like       The like to be added.
-   * @return           The full Customer object after the update.
+   * @param like       The updated Like object.
+   * @return           The Like object that was persisted by the API.
    */
 
-  public Customer updateLike(String customerId, Like like) throws HttpException {
+  public Like updateLike(String customerId, Like like) throws HttpException {
     return LikeApi.update(this.auth, customerId, like);
   }
 
@@ -148,9 +148,9 @@ public class ContactHub {
    *
    * @param customerId The id of the Customer.
    * @param likeId     The id of the Like to be removed.
-   * @return           The full Customer object after the update.
+   * @return           true if the removal was successful.
    */
-  public Customer removeLike(String customerId, String likeId) throws HttpException {
+  public boolean removeLike(String customerId, String likeId) throws HttpException {
     return LikeApi.remove(this.auth, customerId, likeId);
   }
 
