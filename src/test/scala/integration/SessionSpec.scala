@@ -9,10 +9,10 @@ import org.scalatest.GivenWhenThen
 class SessionSpec extends FeatureSpec with GivenWhenThen {
 
   val auth = new Auth(
-    "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
-    "40b6195f-e4f7-4f95-b10e-75268d850988",
-    "854f0791-c120-4e4a-9264-6dd197cb922c"
-  )
+    sys.env("CONTACTHUB_TEST_TOKEN"),
+    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+    sys.env("CONTACTHUB_TEST_NODE_ID")
+  );
 
   val ch = new ContactHub(auth)
   val customerId = "4012e67d-72fd-4f84-9039-71cbc5b80078"
