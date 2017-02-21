@@ -27,12 +27,19 @@ public class EventApi {
    * Add a new Event.
    */
   public static Boolean add(Auth auth, Event event) throws HttpException {
-    String endpoint = "/events";
+    final String endpoint = "/events";
     String payload = "";
+
+    JsonObject jsonPayload = (JsonObject) gson.toJsonTree(event);
+
+    // `externalId` and `sessionId` must be wrapped in a `bringBackProperties`
+    // object before being sent to the API.
+    jsonPayload.remove("externalId");
+    jsonPayload.remove("sessionId");
 
     if (event.customerId().isPresent()) {
 
-      payload = gson.toJson(event);
+      payload = jsonPayload.toString();
 
     } else if (event.externalId().isPresent()) {
 
@@ -41,9 +48,7 @@ public class EventApi {
       bringBackProperties.addProperty("value", event.externalId().get());
       bringBackProperties.addProperty("nodeId", auth.nodeId);
 
-      JsonObject jsonPayload = (JsonObject) gson.toJsonTree(event);
       jsonPayload.add("bringBackProperties", bringBackProperties);
-
       payload = jsonPayload.toString();
 
     } else if (event.sessionId().isPresent()) {
@@ -53,9 +58,7 @@ public class EventApi {
       bringBackProperties.addProperty("value", event.sessionId().get());
       bringBackProperties.addProperty("nodeId", auth.nodeId);
 
-      JsonObject jsonPayload = (JsonObject) gson.toJsonTree(event);
       jsonPayload.add("bringBackProperties", bringBackProperties);
-
       payload = jsonPayload.toString();
 
     } else {

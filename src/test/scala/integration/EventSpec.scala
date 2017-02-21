@@ -83,6 +83,26 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       Then("the event is created successfully")
       success should be (true)
     }
+
+    scenario("adding an event with sessionId and externalId", Integration) {
+      Given("a new event object with both a sessionId and a externalId")
+      val event = Event.builder
+        .sessionId("ses123")
+        .externalId("ext123")
+        .`type`("viewedPage")
+        .context("WEB")
+        .properties(new JsonObject)
+        .build
+
+      When("the user adds the event")
+      val success = ch.addEvent(event)
+
+      Then("the event is created successfully")
+      success should be (true)
+
+      And("the sessionId is ignored (externalId has precedence)")
+      // FIXME: it's not trivial to test this condition
+    }
   }
 
   feature("retrieving events") {
