@@ -15,10 +15,10 @@ import scala.collection.JavaConversions._
 class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
   val auth = new Auth(
-    "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
-    "40b6195f-e4f7-4f95-b10e-75268d850988",
-    "854f0791-c120-4e4a-9264-6dd197cb922c"
-  )
+    sys.env("CONTACTHUB_TEST_TOKEN"),
+    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+    sys.env("CONTACTHUB_TEST_NODE_ID")
+  );
 
   val ch = new ContactHub(auth)
   val customerId = "0529a1dd-1228-414c-b8a0-d62452cf0965"
@@ -41,7 +41,10 @@ class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I add a new job")
       val newJob = Job.builder.id("job3").companyName("baz").build
-      val updated = ch.addJob(cid, newJob)
+
+      ch.addJob(cid, newJob)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The new job is present")
       updated.base.get.jobs.get should contain (newJob)
@@ -56,7 +59,10 @@ class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I update an existing job")
       val newJob = Job.builder.id("job2").companyName("baz").build
-      val updated = ch.updateJob(cid, newJob)
+
+      ch.updateJob(cid, newJob)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching job is updated")
       updated.base.get.jobs.get should contain (newJob)
@@ -70,7 +76,9 @@ class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val cid = customerId
 
       When("I remove an existing job")
-      val updated = ch.removeJob(cid, "job1")
+      ch.removeJob(cid, "job1")
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching job is removed")
       updated.base.get.jobs.get should not contain (job1)

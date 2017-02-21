@@ -36,10 +36,10 @@ public class Example {
    */
   public static void main(String[] args) throws Exception {
     final Auth auth = new Auth(
-        "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
-        "40b6195f-e4f7-4f95-b10e-75268d850988",
-        "854f0791-c120-4e4a-9264-6dd197cb922c"
-        );
+      System.getenv("CONTACTHUB_TEST_TOKEN"),
+      System.getenv("CONTACTHUB_TEST_WORKSPACE_ID"),
+      System.getenv("CONTACTHUB_TEST_NODE_ID")
+    );
 
     final ContactHub ch = new ContactHub(auth);
 

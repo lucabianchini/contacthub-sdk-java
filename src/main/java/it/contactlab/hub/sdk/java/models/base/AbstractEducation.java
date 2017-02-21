@@ -8,7 +8,7 @@ import java.util.Optional;
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractEducation {
 
-  public abstract Optional<String> id();
+  public abstract String id();
 
   public abstract Optional<SchoolType> schoolType();
 

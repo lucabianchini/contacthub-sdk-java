@@ -15,10 +15,10 @@ import scala.collection.JavaConversions._
 class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
   val auth = new Auth(
-    "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
-    "40b6195f-e4f7-4f95-b10e-75268d850988",
-    "854f0791-c120-4e4a-9264-6dd197cb922c"
-  )
+    sys.env("CONTACTHUB_TEST_TOKEN"),
+    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+    sys.env("CONTACTHUB_TEST_NODE_ID")
+  );
 
   val ch = new ContactHub(auth)
   val customerId = "0533ef33-81b1-4993-9025-18edaec976d3"
@@ -41,7 +41,10 @@ class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I add a new education")
       val newEducation = Education.builder.id("education3").schoolName("baz").build
-      val updated = ch.addEducation(cid, newEducation)
+
+      ch.addEducation(cid, newEducation)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The new education is present")
       updated.base.get.educations.get should contain (newEducation)
@@ -56,7 +59,10 @@ class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I update an existing education")
       val newEducation = Education.builder.id("education2").schoolName("baz").build
-      val updated = ch.updateEducation(cid, newEducation)
+
+      ch.updateEducation(cid, newEducation)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching education is updated")
       updated.base.get.educations.get should contain (newEducation)
@@ -70,7 +76,9 @@ class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val cid = customerId
 
       When("I remove an existing education")
-      val updated = ch.removeEducation(cid, "education1")
+      ch.removeEducation(cid, "education1")
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching education is removed")
       updated.base.get.educations.get should not contain (education1)

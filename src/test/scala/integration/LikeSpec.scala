@@ -15,10 +15,10 @@ import scala.collection.JavaConversions._
 class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
   val auth = new Auth(
-    "97841617075b4b5f8ea88c30a8d2aec7647b7181df2c483fa78138c8d58aed4d",
-    "40b6195f-e4f7-4f95-b10e-75268d850988",
-    "854f0791-c120-4e4a-9264-6dd197cb922c"
-  )
+    sys.env("CONTACTHUB_TEST_TOKEN"),
+    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+    sys.env("CONTACTHUB_TEST_NODE_ID")
+  );
 
   val ch = new ContactHub(auth)
   val customerId = "052d669e-c3bc-429e-a1ce-dc50908ea078"
@@ -41,7 +41,10 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I add a new like")
       val newLike = Like.builder.id("like3").name("baz").build
-      val updated = ch.addLike(cid, newLike)
+
+      ch.addLike(cid, newLike)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The new like is present")
       updated.base.get.likes.get should contain (newLike)
@@ -56,7 +59,10 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I update an existing like")
       val newLike = Like.builder.id("like2").name("baz").build
-      val updated = ch.updateLike(cid, newLike)
+
+      ch.updateLike(cid, newLike)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching like is updated")
       updated.base.get.likes.get should contain (newLike)
@@ -70,7 +76,9 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val cid = customerId
 
       When("I remove an existing like")
-      val updated = ch.removeLike(cid, "like1")
+      ch.removeLike(cid, "like1")
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching like is removed")
       updated.base.get.likes.get should not contain (like1)
