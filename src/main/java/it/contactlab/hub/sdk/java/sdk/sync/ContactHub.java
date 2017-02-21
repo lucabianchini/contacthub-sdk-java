@@ -160,10 +160,10 @@ public class ContactHub {
    * <p>If the Job is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
-   * @param job        The job to be added.
-   * @return           The full Customer object after the update.
+   * @param job        The Job to be added.
+   * @return           The Job object that was persisted by the API.
    */
-  public Customer addJob(String customerId, Job job) throws HttpException {
+  public Job addJob(String customerId, Job job) throws HttpException {
     return JobApi.add(this.auth, customerId, job);
   }
 
@@ -173,11 +173,11 @@ public class ContactHub {
    * <p>If the Job is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
-   * @param job        The job to be added.
-   * @return           The full Customer object after the update.
+   * @param job        The updated Job object.
+   * @return           The Job object that was persisted by the API.
    */
 
-  public Customer updateJob(String customerId, Job job) throws HttpException {
+  public Job updateJob(String customerId, Job job) throws HttpException {
     return JobApi.update(this.auth, customerId, job);
   }
 
@@ -187,10 +187,10 @@ public class ContactHub {
    * <p>If the Job is not present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
-   * @param jobId     The id of the Job to be removed.
-   * @return           The full Customer object after the update.
+   * @param jobId      The id of the Job to be removed.
+   * @return           true if the removal was successful.
    */
-  public Customer removeJob(String customerId, String jobId) throws HttpException {
+  public boolean removeJob(String customerId, String jobId) throws HttpException {
     return JobApi.remove(this.auth, customerId, jobId);
   }
 
