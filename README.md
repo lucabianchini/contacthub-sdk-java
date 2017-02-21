@@ -415,29 +415,8 @@ eventProperties.addProperty("title", "Page Title");
 
 ## Examples
 
-See the [example](example/) folder for working examples that you can download and
+See the [example](example) folder for working examples that you can download and
 try out.
-
-### Running the example with sbt
-
-```sh
-sbt example/run
-```
-
-### Running the example with Gradle
-
-```sh
-cd example
-gradle run
-```
-
-### Running the example with Maven
-
-```sh
-cd example
-mvn compile
-mvn exec:java
-```
 
 ## Contributing to this library
 
@@ -451,6 +430,10 @@ the build tool.
 `sbt doc` will generate an HTML JavaDoc in `target/api`
 
 `sbt packageDoc` will package the javadoc files in a JAR file under `target`
+
+`sbt test` will run the tests. To run the tests you need a valid ContactHub
+account and a test workspace, refer to the notes in the [example](example) to
+set the correct environment variables.
 
 ### Immutables
 
