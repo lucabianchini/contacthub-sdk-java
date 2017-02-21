@@ -200,10 +200,10 @@ public class ContactHub {
    * <p>If the Education is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
-   * @param education  The education to be added.
-   * @return           The full Customer object after the update.
+   * @param education  The Education to be added.
+   * @return           The Education object that was persisted by the API.
    */
-  public Customer addEducation(String customerId, Education education) throws HttpException {
+  public Education addEducation(String customerId, Education education) throws HttpException {
     return EducationApi.add(this.auth, customerId, education);
   }
 
@@ -213,11 +213,11 @@ public class ContactHub {
    * <p>If the Education is already present, nothing will be done.</p>
    *
    * @param customerId The id of the Customer.
-   * @param education  The education to be added.
-   * @return           The full Customer object after the update.
+   * @param education  The updated Education object.
+   * @return           The Education object that was persisted by the API.
    */
 
-  public Customer updateEducation(String customerId, Education education) throws HttpException {
+  public Education updateEducation(String customerId, Education education) throws HttpException {
     return EducationApi.update(this.auth, customerId, education);
   }
 
@@ -228,9 +228,9 @@ public class ContactHub {
    *
    * @param customerId  The id of the Customer.
    * @param educationId The id of the Education to be removed.
-   * @return            The full Customer object after the update.
+   * @return            true if the removal was successful.
    */
-  public Customer removeEducation(String customerId, String educationId) throws HttpException {
+  public boolean removeEducation(String customerId, String educationId) throws HttpException {
     return EducationApi.remove(this.auth, customerId, educationId);
   }
 

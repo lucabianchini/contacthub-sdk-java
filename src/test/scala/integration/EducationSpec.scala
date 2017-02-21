@@ -41,7 +41,10 @@ class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I add a new education")
       val newEducation = Education.builder.id("education3").schoolName("baz").build
-      val updated = ch.addEducation(cid, newEducation)
+
+      ch.addEducation(cid, newEducation)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The new education is present")
       updated.base.get.educations.get should contain (newEducation)
@@ -56,7 +59,10 @@ class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
 
       When("I update an existing education")
       val newEducation = Education.builder.id("education2").schoolName("baz").build
-      val updated = ch.updateEducation(cid, newEducation)
+
+      ch.updateEducation(cid, newEducation)
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching education is updated")
       updated.base.get.educations.get should contain (newEducation)
@@ -70,7 +76,9 @@ class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val cid = customerId
 
       When("I remove an existing education")
-      val updated = ch.removeEducation(cid, "education1")
+      ch.removeEducation(cid, "education1")
+
+      val updated = ch.getCustomer(cid)
 
       Then("The matching education is removed")
       updated.base.get.educations.get should not contain (education1)
