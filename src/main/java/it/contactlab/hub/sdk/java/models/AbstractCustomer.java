@@ -1,7 +1,5 @@
 package it.contactlab.hub.sdk.java.models;
 
-import it.contactlab.hub.sdk.java.models.base.BaseProperties;
-
 import org.immutables.value.Value;
 
 import java.time.OffsetDateTime;

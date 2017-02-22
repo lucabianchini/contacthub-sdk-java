@@ -1,4 +1,4 @@
-package it.contactlab.hub.sdk.java.models.base;
+package it.contactlab.hub.sdk.java.models;
 
 import org.immutables.value.Value;
 

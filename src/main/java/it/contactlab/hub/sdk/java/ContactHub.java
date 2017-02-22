@@ -9,10 +9,10 @@ import it.contactlab.hub.sdk.java.internal.api.LikeApi;
 import it.contactlab.hub.sdk.java.internal.api.SessionApi;
 import it.contactlab.hub.sdk.java.internal.api.TagApi;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.Education;
 import it.contactlab.hub.sdk.java.models.Event;
-import it.contactlab.hub.sdk.java.models.base.Education;
-import it.contactlab.hub.sdk.java.models.base.Job;
-import it.contactlab.hub.sdk.java.models.base.Like;
+import it.contactlab.hub.sdk.java.models.Job;
+import it.contactlab.hub.sdk.java.models.Like;
 
 import java.util.List;
 

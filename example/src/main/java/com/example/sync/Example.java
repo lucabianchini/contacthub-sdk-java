@@ -2,10 +2,10 @@ package com.example.sync;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.ContactHub;
+import it.contactlab.hub.sdk.java.models.BaseProperties;
+import it.contactlab.hub.sdk.java.models.Contacts;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.CustomerTags;
-import it.contactlab.hub.sdk.java.models.base.BaseProperties;
-import it.contactlab.hub.sdk.java.models.base.Contacts;
 
 import java.security.SecureRandom;
 import java.util.Arrays;

@@ -2,7 +2,7 @@ package it.contactlab.hub.sdk.java.test.integration
 
 import it.contactlab.hub.sdk.java.ContactHub
 import it.contactlab.hub.sdk.java.Auth
-import it.contactlab.hub.sdk.java.models._, base._
+import it.contactlab.hub.sdk.java.models._
 import it.contactlab.hub.sdk.java.exceptions._
 
 import org.scalacheck.Gen

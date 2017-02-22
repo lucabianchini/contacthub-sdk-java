@@ -1,6 +1,6 @@
 package it.contactlab.hub.sdk.java.test.integration
 
-import it.contactlab.hub.sdk.java.models._, base._
+import it.contactlab.hub.sdk.java.models._
 
 import org.scalacheck.Gen
 
