@@ -43,14 +43,6 @@ public class Example {
 
     final ContactHub ch = new ContactHub(auth);
 
-    System.out.println("-----------------------------------");
-    System.out.println("Retrieving customers' phone numbers");
-    System.out.println("-----------------------------------");
-    List<Customer> customers = ch.getCustomers();
-    customers.forEach(customer -> System.out.println(
-        customer.base().get().contacts().get().phone().get()));
-    System.out.println();
-
     System.out.println("---------------------------");
     System.out.println("Retrieving customer's email");
     System.out.println("---------------------------");

@@ -23,15 +23,6 @@ public class Example {
 
     final AsyncContactHub ch = new AsyncContactHub(auth);
 
-    System.out.println("-----------------------------------");
-    System.out.println("Retrieving customers' phone numbers");
-    System.out.println("-----------------------------------");
-    ch.getCustomers().thenAccept(customers ->
-      customers.forEach(customer -> System.out.println(
-          customer.base().get().contacts().get().phone().get())
-        )
-    ).toCompletableFuture().join();
-
     System.out.println();
     System.out.println("---------------------------");
     System.out.println("Retrieving customer's email");
