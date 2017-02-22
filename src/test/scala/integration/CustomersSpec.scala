@@ -1,6 +1,6 @@
-package it.contactlab.hub.sdk.java.sync.test.integration
+package it.contactlab.hub.sdk.java.test.integration
 
-import it.contactlab.hub.sdk.java.sync.ContactHub
+import it.contactlab.hub.sdk.java.ContactHub
 import it.contactlab.hub.sdk.java.Auth
 import it.contactlab.hub.sdk.java.models._, base._
 import it.contactlab.hub.sdk.java.exceptions._
