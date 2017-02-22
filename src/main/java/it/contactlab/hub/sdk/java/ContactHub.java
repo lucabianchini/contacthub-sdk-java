@@ -1,19 +1,18 @@
-package it.contactlab.hub.sdk.java.sync;
+package it.contactlab.hub.sdk.java;
 
-import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.api.CustomerApi;
-import it.contactlab.hub.sdk.java.api.EducationApi;
-import it.contactlab.hub.sdk.java.api.EventApi;
-import it.contactlab.hub.sdk.java.api.JobApi;
-import it.contactlab.hub.sdk.java.api.LikeApi;
-import it.contactlab.hub.sdk.java.api.SessionApi;
-import it.contactlab.hub.sdk.java.api.TagApi;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
+import it.contactlab.hub.sdk.java.internal.api.CustomerApi;
+import it.contactlab.hub.sdk.java.internal.api.EducationApi;
+import it.contactlab.hub.sdk.java.internal.api.EventApi;
+import it.contactlab.hub.sdk.java.internal.api.JobApi;
+import it.contactlab.hub.sdk.java.internal.api.LikeApi;
+import it.contactlab.hub.sdk.java.internal.api.SessionApi;
+import it.contactlab.hub.sdk.java.internal.api.TagApi;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.Education;
 import it.contactlab.hub.sdk.java.models.Event;
-import it.contactlab.hub.sdk.java.models.base.Education;
-import it.contactlab.hub.sdk.java.models.base.Job;
-import it.contactlab.hub.sdk.java.models.base.Like;
+import it.contactlab.hub.sdk.java.models.Job;
+import it.contactlab.hub.sdk.java.models.Like;
 
 import java.util.List;
 

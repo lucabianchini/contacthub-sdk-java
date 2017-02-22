@@ -1,24 +1,23 @@
-package it.contactlab.hub.sdk.java.async;
+package it.contactlab.hub.sdk.java;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.api.CustomerApi;
+import it.contactlab.hub.sdk.java.internal.api.CustomerApi;
 import it.contactlab.hub.sdk.java.models.Customer;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
-import java.util.function.Supplier;
 
 /**
  * ContactHub Java SDK (Async version).
  */
 
-public class ContactHub {
+public class AsyncContactHub {
 
   public Auth auth;
 
-  public ContactHub(Auth auth) {
+  public AsyncContactHub(Auth auth) {
     this.auth = auth;
   }
 

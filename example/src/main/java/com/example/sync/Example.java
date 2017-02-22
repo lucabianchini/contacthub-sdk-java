@@ -1,11 +1,11 @@
 package com.example.sync;
 
 import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.ContactHub;
+import it.contactlab.hub.sdk.java.models.BaseProperties;
+import it.contactlab.hub.sdk.java.models.Contacts;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.CustomerTags;
-import it.contactlab.hub.sdk.java.models.base.BaseProperties;
-import it.contactlab.hub.sdk.java.models.base.Contacts;
-import it.contactlab.hub.sdk.java.sync.ContactHub;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -42,14 +42,6 @@ public class Example {
     );
 
     final ContactHub ch = new ContactHub(auth);
-
-    System.out.println("-----------------------------------");
-    System.out.println("Retrieving customers' phone numbers");
-    System.out.println("-----------------------------------");
-    List<Customer> customers = ch.getCustomers();
-    customers.forEach(customer -> System.out.println(
-        customer.base().get().contacts().get().phone().get()));
-    System.out.println();
 
     System.out.println("---------------------------");
     System.out.println("Retrieving customer's email");

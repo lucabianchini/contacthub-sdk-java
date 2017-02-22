@@ -1,4 +1,4 @@
-package it.contactlab.hub.sdk.java.sync.test
+package it.contactlab.hub.sdk.java.test
 
 package object integration {
   import org.scalatest.Tag

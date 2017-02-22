@@ -1,10 +1,10 @@
-package it.contactlab.hub.sdk.java.api;
+package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
-import it.contactlab.hub.sdk.java.models.base.Education;
+import it.contactlab.hub.sdk.java.models.Education;
 
 import com.google.gson.Gson;
 import org.json.JSONObject;

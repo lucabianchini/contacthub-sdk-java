@@ -1,7 +1,7 @@
 package com.example.async;
 
+import it.contactlab.hub.sdk.java.AsyncContactHub;
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.async.ContactHub;
 import it.contactlab.hub.sdk.java.models.Customer;
 
 /**
@@ -21,16 +21,7 @@ public class Example {
       System.getenv("CONTACTHUB_TEST_NODE_ID")
     );
 
-    final ContactHub ch = new ContactHub(auth);
-
-    System.out.println("-----------------------------------");
-    System.out.println("Retrieving customers' phone numbers");
-    System.out.println("-----------------------------------");
-    ch.getCustomers().thenAccept(customers ->
-      customers.forEach(customer -> System.out.println(
-          customer.base().get().contacts().get().phone().get())
-        )
-    ).toCompletableFuture().join();
+    final AsyncContactHub ch = new AsyncContactHub(auth);
 
     System.out.println();
     System.out.println("---------------------------");
