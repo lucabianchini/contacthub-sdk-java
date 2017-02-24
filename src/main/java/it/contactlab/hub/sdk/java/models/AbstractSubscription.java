@@ -31,6 +31,12 @@ public abstract class AbstractSubscription {
 
   public abstract Optional<OffsetDateTime> updatedAt();
 
+  /**
+  * A {@link List} of {@link Preference} objects.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
+  */
   @Nullable public abstract List<Preference> preferences();
 
 }

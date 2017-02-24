@@ -35,11 +35,17 @@ public abstract class AbstractContacts {
 
   /**
    * Other contacts.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
   @Nullable public abstract List<OtherContact> otherContacts();
 
   /**
    * Mobile devices.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
   @Nullable public abstract List<MobileDevice> mobileDevices();
 
