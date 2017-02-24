@@ -4,6 +4,7 @@ import org.immutables.value.Value;
 
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * The contact information.
@@ -35,11 +36,11 @@ public abstract class AbstractContacts {
   /**
    * Other contacts.
    */
-  public abstract Optional<List<OtherContact>> otherContacts();
+  @Nullable public abstract List<OtherContact> otherContacts();
 
   /**
    * Mobile devices.
    */
-  public abstract Optional<List<MobileDevice>> mobileDevices();
+  @Nullable public abstract List<MobileDevice> mobileDevices();
 
 }

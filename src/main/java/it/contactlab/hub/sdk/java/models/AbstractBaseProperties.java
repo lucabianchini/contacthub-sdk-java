@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * Base Properties for a Customer.
@@ -85,12 +86,12 @@ public abstract class AbstractBaseProperties {
   /**
    * Educations.
    */
-  public abstract Optional<List<Education>> educations();
+  @Nullable public abstract List<Education> educations();
 
   /**
    * Likes.
    */
-  public abstract Optional<List<Like>> likes();
+  @Nullable public abstract List<Like> likes();
 
   /**
    * Social profile.
@@ -100,11 +101,11 @@ public abstract class AbstractBaseProperties {
   /**
    * Jobs.
    */
-  public abstract Optional<List<Job>> jobs();
+  @Nullable public abstract List<Job> jobs();
 
   /**
    * Subscriptions.
    */
-  public abstract Optional<List<Subscription>> subscriptions();
+  @Nullable public abstract List<Subscription> subscriptions();
 
 }

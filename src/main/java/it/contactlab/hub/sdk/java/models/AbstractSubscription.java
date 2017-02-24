@@ -5,6 +5,7 @@ import org.immutables.value.Value;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
@@ -30,6 +31,6 @@ public abstract class AbstractSubscription {
 
   public abstract Optional<OffsetDateTime> updatedAt();
 
-  public abstract Optional<List<Preference>> preferences();
+  @Nullable public abstract List<Preference> preferences();
 
 }
