@@ -18,7 +18,7 @@ public class TagApi {
       throws HttpException {
 
     Customer customer = CustomerApi.get(auth, customerId);
-    Set<String> manualTags = customer.tags().flatMap(t -> t.manual()).orElse(new HashSet());
+    Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet());
 
     boolean changed = manualTags.add(tag);
 
@@ -38,7 +38,7 @@ public class TagApi {
       throws HttpException {
 
     Customer customer = CustomerApi.get(auth, customerId);
-    Set<String> manualTags = customer.tags().flatMap(t -> t.manual()).orElse(new HashSet());
+    Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet());
 
     boolean changed = manualTags.remove(tag);
 

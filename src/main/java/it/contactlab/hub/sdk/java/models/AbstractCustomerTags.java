@@ -15,10 +15,10 @@ public abstract class AbstractCustomerTags {
   /**
   * A {@link Set} of tags that were assigned automatically.
   */
-  public abstract Optional<Set<String>> auto();
+  public abstract Set<String> auto();
 
   /**
   * A {@link Set} of tags that were assigned manually.
   */
-  public abstract Optional<Set<String>> manual();
+  public abstract Set<String> manual();
 }
