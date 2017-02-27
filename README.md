@@ -1,6 +1,6 @@
 # Contacthub Java SDK
 
-![Version 0.3.0 beta](https://img.shields.io/badge/version-0.3.0%20beta-0072bc.svg)
+[![Latest tag](https://img.shields.io/github/tag/contactlab/contacthub-sdk-java.svg)](https://github.com/contactlab/contacthub-sdk-java/releases/)
 
 ## Private repository for beta
 
@@ -97,7 +97,7 @@ Then add your credentials to `~/.m2/settings.xml`:
 In your `build.sbt`:
 
 ```scala
-libraryDependencies += "it.contactlab.hub" % "sdk-java" % "0.3.0"
+libraryDependencies += "it.contactlab.hub" % "sdk-java" % "0.4.0"
 ```
 
 ### Gradle
@@ -106,7 +106,7 @@ In your `build.gradle`:
 
 ```
 dependencies {
-  compile 'it.contactlab.hub:sdk-java:0.3.0
+  compile 'it.contactlab.hub:sdk-java:0.4.0
 }
 ```
 
@@ -118,7 +118,7 @@ In your `pom.xml`:
 <dependency>
   <groupId>it.contactlab.hub</groupId>
   <artifactId>sdk-java</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
 </dependency>
 ```
 
