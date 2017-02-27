@@ -42,16 +42,6 @@ lazy val dependencies = Seq(
   "com.google.code.findbugs" % "jsr305" % "3.0.0"
 )
 
-lazy val modelsGenerator = project.in(file("models-generator")).
-  settings(Seq(
-    libraryDependencies ++= Seq(
-      "net.jcazevedo" %% "moultingyaml" % "0.3.0"
-    )
-  ))
-
-lazy val generateModels = taskKey[Unit]("Generate models from swagger.yml")
-generateModels := (run in Compile in modelsGenerator).toTask("").value
-
 lazy val root = project.in(file("."))
 
 lazy val example = project.in(file("example")).dependsOn(root)
