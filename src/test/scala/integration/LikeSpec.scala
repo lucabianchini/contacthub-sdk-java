@@ -47,10 +47,10 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val updated = ch.getCustomer(cid)
 
       Then("The new like is present")
-      updated.base.get.likes.get should contain (newLike)
+      updated.base.get.likes should contain (newLike)
 
       And("The old ones are still there")
-      updated.base.get.likes.get should contain (like1)
+      updated.base.get.likes should contain (like1)
     }
 
     scenario("updating a like", Integration) {
@@ -65,10 +65,10 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val updated = ch.getCustomer(cid)
 
       Then("The matching like is updated")
-      updated.base.get.likes.get should contain (newLike)
+      updated.base.get.likes should contain (newLike)
 
       And("The other likes are still there")
-      updated.base.get.likes.get should contain (like1)
+      updated.base.get.likes should contain (like1)
     }
 
     scenario("removing a like", Integration) {
@@ -81,7 +81,7 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val updated = ch.getCustomer(cid)
 
       Then("The matching like is removed")
-      updated.base.get.likes.get should not contain (like1)
+      updated.base.get.likes should not contain (like1)
     }
   }
 }

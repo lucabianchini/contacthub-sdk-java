@@ -4,6 +4,7 @@ import org.immutables.value.Value;
 
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * The contact information.
@@ -34,12 +35,18 @@ public abstract class AbstractContacts {
 
   /**
    * Other contacts.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
-  public abstract Optional<List<OtherContact>> otherContacts();
+  @Nullable public abstract List<OtherContact> otherContacts();
 
   /**
    * Mobile devices.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
-  public abstract Optional<List<MobileDevice>> mobileDevices();
+  @Nullable public abstract List<MobileDevice> mobileDevices();
 
 }

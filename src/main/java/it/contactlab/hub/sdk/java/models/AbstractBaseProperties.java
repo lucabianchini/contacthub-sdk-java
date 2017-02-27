@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * Base Properties for a Customer.
@@ -84,13 +85,19 @@ public abstract class AbstractBaseProperties {
 
   /**
    * Educations.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
-  public abstract Optional<List<Education>> educations();
+  @Nullable public abstract List<Education> educations();
 
   /**
    * Likes.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
-  public abstract Optional<List<Like>> likes();
+  @Nullable public abstract List<Like> likes();
 
   /**
    * Social profile.
@@ -99,12 +106,18 @@ public abstract class AbstractBaseProperties {
 
   /**
    * Jobs.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
-  public abstract Optional<List<Job>> jobs();
+  @Nullable public abstract List<Job> jobs();
 
   /**
    * Subscriptions.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
    */
-  public abstract Optional<List<Subscription>> subscriptions();
+  @Nullable public abstract List<Subscription> subscriptions();
 
 }

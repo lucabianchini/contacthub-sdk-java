@@ -206,7 +206,7 @@ Add a new Customer. This method returns a new Customer object including the ID t
 assigned to the new customer by the API.
 
 ```java
-Customer newCustomer = addCustomer(Customer customer)
+Customer newCustomer = ch.addCustomer(Customer customer)
 ```
 
 If the "Customer uniqueness" configuration for your workspace is set to "Merge"
@@ -237,7 +237,7 @@ deleteCustomer("an-existing-id");
 Update an existing Customer by replacing all of their data with the data provided.
 
 ```java
-Customer updatedCustomer = updateCustomer(Customer newCustomer);
+Customer updatedCustomer = ch.updateCustomer(Customer newCustomer);
 ```
 
 This method will fail if the ID of the `newCustomer` does not match an existing
@@ -249,7 +249,7 @@ Update an existing Customer (identified by `id`) by merging their existing data
 with the data provided.
 
 ```java
-Customer updatedCustomer = patchCustomer(String id, Customer newCustomerData);
+Customer updatedCustomer = ch.patchCustomer(String id, Customer modifiedCustomer);
 ```
 
 Customer properties that were already set and are included in the new data, will
@@ -258,17 +258,50 @@ be overwritten.
 Customer properties that were already set, but are not included, will be left
 untouched.
 
-The merge is performed on the API-side. If you want more control of how the data is
-merged:
+For example, if you want to update the email of a customer and nothing else, you
+can use:
 
-* Retrieve the customer with `getCustomer()`
-* Update the properties locally
-* Overwrite the whole customer with `updateCustomer()`
+```java
+Customer patchCustomer = Customer.builder()
+                         .base(BaseProperties.builder()
+                               .contacts(Contacts.builder()
+                                         .email(newEmail)
+                                         .build())
+                               .build())
+                         .build();
+
+Customer updatedCustomer = ch.patchCustomer(customerId, patchCustomer);
+```
+
+### How to use the Customer class
+
+When you **create** a new `Customer`, you have to set at least one between
+`base`, `extended` and `externalId` using `Customer.builder()`. Nested objects
+must be created with their own `builder()` methods. Most properties are
+optional.
+
+When you **read** a `Customer` from the API, you get an immutable instance of
+`Customer` with a few additional properties:
+
+* an `id`
+* a `registedAt` property
+* an `updatedAt` property
+
+All optional properties are wrapped in an `Optional<T>` to statically check you
+cannot run into a NullPointerException.
+
+To **update** a `Customer`, you need to retrieve it and create a modified
+immutable copy using the `withX()` methods (e.g. `withExternalId()`).
+
+To **patch** a `Customer`, you create a "patch" instance with the same
+`Customer.builder()` you use to create a new `Customer`, but you set only the
+fields you want to patch. All the fields that are not explicitly set in the
+"patch" object will be left untouched.
+
 
 ## Education API
 
 The following methods are useful ways to add/update/remove the Education objects of a Customer.
-You can also carry out the same operations using `patchCustomer`.
 
 ### addEducation
 
@@ -291,7 +324,6 @@ Customer updatedCustomer = ch.removeEducation(customerId, String educationId);
 ## Like API
 
 The following methods are useful ways to add/update/remove the Like objects of a Customer.
-You can also carry out the same operations using `patchCustomer`.
 
 ### addLike
 
@@ -314,7 +346,6 @@ Customer updatedCustomer = ch.removeLike(customerId, String likeId);
 ## Job API
 
 The following methods are useful ways to add/update/remove the Job objects of a Customer.
-You can also carry out the same operations using `patchCustomer`.
 
 ### addJob
 
@@ -340,9 +371,6 @@ Customer updatedCustomer = ch.removeJob(customerId, String jobId);
 
 Add a tag to a Customer. If the tag is already present, nothing is changed.
 
-While this is a convenient method, the same result can be achieved using
-`getCustomer` and `patchCustomer`.
-
 ```java
 Customer updatedCustomer = ch.addTag(customerId, "a-new-tag");
 ```
@@ -350,10 +378,6 @@ Customer updatedCustomer = ch.addTag(customerId, "a-new-tag");
 ### removeTag
 
 Remove a tag from a Customer. If the tag is already present, nothing is changed.
-
-
-While this is a convenient method, the same result can be achieved using
-`getCustomer` and `patchCustomer`.
 
 ```java
 Customer updatedCustomer = ch.addTag(customerId, "a-tag-to-remove");
@@ -384,7 +408,7 @@ the event for insertion. The API will then process the queue asynchronously, and
 can take a few seconds for an event to actually be stored.
 
 ```java
-Boolean queued = addEvent(Event event)
+Boolean queued = ch.addEvent(Event event)
 ```
 
 To create an `Event` instance, use the builder provided by the `Event` object.

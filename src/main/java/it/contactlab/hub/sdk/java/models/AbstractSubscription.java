@@ -5,6 +5,7 @@ import org.immutables.value.Value;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
@@ -30,6 +31,12 @@ public abstract class AbstractSubscription {
 
   public abstract Optional<OffsetDateTime> updatedAt();
 
-  public abstract Optional<List<Preference>> preferences();
+  /**
+  * A {@link List} of {@link Preference} objects.
+   *
+   * <p>Marked as @Nullable so that you can create a `patchCustomer` object with
+   * this field set to null. It is never `null` when it is persisted.</p>
+  */
+  @Nullable public abstract List<Preference> preferences();
 
 }

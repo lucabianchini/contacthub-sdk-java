@@ -100,7 +100,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       customer.id.get shouldBe customerId
 
       And("the customer should have the expected tags")
-      customer.tags.get.manual.get.toArray shouldBe Array("example-tag")
+      customer.tags.get.manual.toArray shouldBe Array("example-tag")
     }
   }
 

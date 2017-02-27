@@ -43,11 +43,11 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
       val updated = ch.addTag(cid, "new-tag")
 
       Then("The new tag is present")
-      updated.tags.get.manual.get should contain ("new-tag")
+      updated.tags.get.manual should contain ("new-tag")
 
       And("The old ones are still there")
-      updated.tags.get.manual.get should contain ("existing-tag")
-      updated.tags.get.auto.get should contain ("existing-auto-tag")
+      updated.tags.get.manual should contain ("existing-tag")
+      updated.tags.get.auto should contain ("existing-auto-tag")
     }
 
     scenario("when the tag is already present", Integration) {
@@ -58,10 +58,10 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
       val updated = ch.addTag(cid, "existing-tag")
 
       Then("The existing tag is not removed")
-      updated.tags.get.manual.get should contain ("existing-tag")
+      updated.tags.get.manual should contain ("existing-tag")
 
       And("The old ones are still there")
-      updated.tags.get.auto.get should contain ("existing-auto-tag")
+      updated.tags.get.auto should contain ("existing-auto-tag")
     }
 
     scenario("when the Customer has no other tags", Integration) {
@@ -73,7 +73,7 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
       val updated = ch.addTag(cid, "new-tag")
 
       Then("The new tag is present")
-      updated.tags.get.manual.get should contain ("new-tag")
+      updated.tags.get.manual should contain ("new-tag")
     }
   }
 
@@ -86,11 +86,11 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
       val updated = ch.removeTag(cid, "existing-tag")
 
       Then("The existing tag is no longer present")
-      updated.tags.get.manual.get should not contain ("existing-tag")
+      updated.tags.get.manual should not contain ("existing-tag")
 
       And("The other ones are still there")
-      updated.tags.get.manual.get should contain ("another-tag")
-      updated.tags.get.auto.get should contain ("existing-auto-tag")
+      updated.tags.get.manual should contain ("another-tag")
+      updated.tags.get.auto should contain ("existing-auto-tag")
     }
 
     scenario("when the tag is not present", Integration) {
@@ -101,9 +101,9 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
       val updated = ch.removeTag(cid, "non-existing-tag")
 
       Then("The existing ones are still there")
-      updated.tags.get.auto.get should contain ("existing-auto-tag")
-      updated.tags.get.manual.get should contain ("existing-tag")
-      updated.tags.get.manual.get should contain ("another-tag")
+      updated.tags.get.auto should contain ("existing-auto-tag")
+      updated.tags.get.manual should contain ("existing-tag")
+      updated.tags.get.manual should contain ("another-tag")
     }
 
     scenario("when the Customer has no tags", Integration) {

@@ -47,10 +47,10 @@ class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val updated = ch.getCustomer(cid)
 
       Then("The new job is present")
-      updated.base.get.jobs.get should contain (newJob)
+      updated.base.get.jobs should contain (newJob)
 
       And("The old ones are still there")
-      updated.base.get.jobs.get should contain (job1)
+      updated.base.get.jobs should contain (job1)
     }
 
     scenario("updating a job", Integration) {
@@ -65,10 +65,10 @@ class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val updated = ch.getCustomer(cid)
 
       Then("The matching job is updated")
-      updated.base.get.jobs.get should contain (newJob)
+      updated.base.get.jobs should contain (newJob)
 
       And("The other jobs are still there")
-      updated.base.get.jobs.get should contain (job1)
+      updated.base.get.jobs should contain (job1)
     }
 
     scenario("removing a job", Integration) {
@@ -81,7 +81,7 @@ class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
       val updated = ch.getCustomer(cid)
 
       Then("The matching job is removed")
-      updated.base.get.jobs.get should not contain (job1)
+      updated.base.get.jobs should not contain (job1)
     }
   }
 }
