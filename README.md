@@ -152,6 +152,19 @@ Auth auth = new Auth(token, workspaceId, nodeId);
 ContactHub ch = new ContactHub(auth);
 ```
 
+### Custom API url
+
+If you want to use a non-standard baseUrl for the API (for example to connect to
+a staging environment), you can add the API base URL as an optional parameter:
+
+
+```java
+Auth auth = new Auth(token, workspaceId, nodeId, apiUrl);
+```
+
+If not specified, the SDK will use the default URL for the Contacthub API:
+https://api.contactlab.it/hub/v1
+
 ## Session API
 
 ### createSessionId
