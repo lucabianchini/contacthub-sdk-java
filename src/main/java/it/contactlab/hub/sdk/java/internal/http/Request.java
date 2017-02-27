@@ -10,15 +10,13 @@ import org.json.JSONObject;
 
 public class Request {
 
-  private static String baseUrl = "https://api.contactlab.it/hub/v1";
-
   /**
    * Sends a generic GET request and returns the response JsonObject.
    */
   public static JSONObject doGet(Auth auth, String endpoint) throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + endpoint;
+      String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<JsonNode> response = Unirest.get(url).asJson();
 
@@ -43,7 +41,7 @@ public class Request {
       throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + endpoint;
+      String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<JsonNode> response = Unirest
           .post(url)
@@ -71,7 +69,7 @@ public class Request {
   public static JSONObject doDelete(Auth auth, String endpoint) throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + endpoint;
+      String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<JsonNode> response = Unirest.delete(url).asJson();
 
@@ -95,7 +93,7 @@ public class Request {
   public static JSONObject doPut(Auth auth, String endpoint, String payload) throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + endpoint;
+      String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<JsonNode> response = Unirest
           .put(url)
@@ -124,7 +122,7 @@ public class Request {
       throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = baseUrl + "/workspaces/" + auth.workspaceId + endpoint;
+      String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<JsonNode> response = Unirest
           .patch(url)
