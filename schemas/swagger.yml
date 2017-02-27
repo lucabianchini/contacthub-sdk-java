@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  version: 0.0.1
-  title: contacthub
+  version: 1.0.0
+  title: Contacthub
   description: >-
     The platform to collect, store, conserve, update and export all the digital
     identity data of your customers.
@@ -197,9 +197,11 @@ paths:
         - configuration
     put:
       description: >
-        Modify extended properties configurated. The json schema of extended
-        property (including for every elements the contactlabProperties object
-        with property `label`, `enabled` and `mergePolicy` with value
+        Modify extended properties configurated. 
+                                              
+        The json schema of extended property (including for every elements 
+        the contactlabProperties object with property `label`, `enabled` 
+        and `mergePolicy` with value
         OBJ_PRIORITY, OBJ_CONCATENATE, ARRAY_UNION, ARRAY_INTERSECTION,
         MATH_SUM, MATH_AVG, MATH_DIFF, MATH_MIN, MATH_MAX).
 
@@ -397,8 +399,8 @@ paths:
       security:
          - Bearer: []
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: Created new entry node
           schema:
             $ref: '#/definitions/EntryNodeConfiguration'
         '403':
@@ -512,7 +514,7 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Successful response
+          description: Created new view node
           schema:
             $ref: '#/definitions/ViewNodeConfiguration'
         '403':
@@ -1097,8 +1099,8 @@ paths:
       security:
          - Bearer: []
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: Created new customer
           schema:
             $ref: '#/definitions/Customer'
         '403':
@@ -1691,8 +1693,8 @@ paths:
       security:
          - Bearer: []
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: Created new customer subscription
           schema:
             $ref: '#/definitions/Subscription'
         '403':
@@ -1865,7 +1867,8 @@ paths:
         - automation
     post:
       description: |
-        Creates a new automation configuration
+        Creates a new automation configuration  
+                        
         #### EXAMPLE
         ```json
         {
@@ -1950,8 +1953,8 @@ paths:
       security:
          - Bearer: []
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: Created new automation
           schema:
             $ref: '#/definitions/AutomationConfiguration'
         '403':
@@ -1986,7 +1989,8 @@ paths:
         - automation
     put:
       description: |
-        Updates a specific automation
+        Updates a specific automation   
+                                              
         #### EXAMPLE
         ```json
         {
@@ -2168,8 +2172,8 @@ paths:
       security:
          - Bearer: []
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: Created new session of customer
           schema:
             $ref: '#/definitions/Session'
         '403':
@@ -2392,6 +2396,7 @@ paths:
     post:
       description: |
         insert a new segments
+                                              
         #### EXAMPLE
         ```json
         {
@@ -2435,8 +2440,8 @@ paths:
       security:
          - Bearer: []
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: Created new segment
           schema:
             type: array
             items:
@@ -2449,6 +2454,7 @@ paths:
     get:
       description: |
         Details of specific segment
+                                              
         #### EXAMPLE
         ```json
         {
@@ -2559,8 +2565,9 @@ paths:
   '/workspaces/{id-workspace}/segments/{id}/customers':
     get:
       description: >
-        List of customer in a specific segment. The output it's a list of id.
-        For other property specify with paramenters fields
+        List of customer in a specific segment. 
+                                              
+        The output it's a list of id. For other property specify with paramenters fields
       parameters:
         - name: id-workspace
           in: path
@@ -2597,6 +2604,7 @@ paths:
     get:
       description: |
         Trend of customer base
+                                              
         #### EXAMPLE
         ```json
         {
@@ -2706,6 +2714,7 @@ paths:
     get:
       description: |
         Trend of events.
+                                              
         #### EXAMPLE
         ```json
         {
@@ -2819,6 +2828,7 @@ paths:
     get:
       description: |
         Get composition by gender for one o multiple node
+                                              
         #### EXAMPLE
         ```json
         {
@@ -2894,6 +2904,7 @@ paths:
     get:
       description: |
         Get composition by age range for one o multiple node
+                                              
         #### EXAMPLE
         ```json
         {
@@ -2973,6 +2984,7 @@ paths:
     get:
       description: |
         Get composition by country for one o multiple node
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3052,6 +3064,7 @@ paths:
     get:
       description: |
         Get composition by city for one o multiple node
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3133,6 +3146,7 @@ paths:
     get:
       description: |
         Distribution of new customers, aggregated for nodes.
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3205,6 +3219,7 @@ paths:
     get:
       description: |
         Distribution of new customers, aggregated for nodes and sources.
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3294,6 +3309,7 @@ paths:
     get:
       description: |
         Distribution of new customers, aggregated for nodes and time.
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3418,6 +3434,7 @@ paths:
     get:
       description: |
         Distribution of events, aggregated for nodes.
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3499,6 +3516,7 @@ paths:
     get:
       description: |
         Distribution of events, aggregated for nodes and sources.
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3598,6 +3616,7 @@ paths:
     get:
       description: |
         Distribution of events, aggregated for nodes and time.
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3726,6 +3745,99 @@ paths:
           description: "You don't have the necessary permissions for the resource"
       tags:
         - analytic
+  '/workspaces/{workspace-id}/analytics/query/distribution/customer/acquisition':
+    get:
+      description: |
+        Analytic customer acquisition distribution.
+                                              
+        #### EXAMPLE
+        ```json
+        {
+        	"nodeId": "027634e8-5aa1-4436-a543-568f476b3f04",
+        	"startDate": "2015-01-01",
+        	"endDate": "2016-03-31",
+        	"eventType": "completedOrder",
+        	"aggregation": {
+        		"operator": "SUM",
+        		"fieldPath": "properties.amount.total"
+        	}
+        }
+        ```
+      parameters:
+        - name: workspace-id
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+        - name: query
+          in: query
+          description: Distribution Query object
+          type: string
+          required: true
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/AnalyticQueryCustomerAcquisitionDistribution'
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+      tags:
+        - analytic
+
+  '/workspaces/{workspace-id}/analytics/query/distribution/customer':
+    get:
+      description: |
+        Analytic customer distribution.
+                                              
+        #### EXAMPLE
+        ```json
+        {
+        	"nodeId": "027634e8-5aa1-4436-a543-568f476b3f04",
+        	"startDate": "2015-01-01",
+        	"endDate": "2016-03-31",
+        	"eventType": "completedOrder",
+        	"aggregation": {
+        		"operator": "SUM",
+        		"fieldPath": "properties.products.price"
+        	},
+          "distributionFieldPath": "properties.products.sku",
+          "customerDistributionFieldPath": "base.gender"
+        }
+        ```
+      parameters:
+        - name: workspace-id
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+        - name: query
+          in: query
+          description: Distribution Query object
+          type: string
+          required: true
+        - name: size
+          in: query
+          description: Distribution size
+          type: integer
+          required: false
+        - name: sort
+          in: query
+          description: Distribution sort direction
+          type: string
+          required: false
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/AnalyticQueryCustomerDistribution'
+        '403':
+          description: "You don't have the necessary permissions for the resource"
+      tags:
+        - analytic
   '/workspaces/{id-workspace}/analytics/query/numeric':
     get:
       description: |
@@ -3805,7 +3917,9 @@ paths:
   '/workspaces/{id-workspace}/dashboards':
     get:
       description: |
-        Gets all dashboards. If the 'industry' parameter is supplied
+        Gets all dashboards. 
+                                              
+        If the 'industry' parameter is supplied
         returns all dashboards that have the relative industry type.
       parameters:
         - name: id-workspace
@@ -3834,6 +3948,8 @@ paths:
                     $ref: '#/definitions/Dashboard'
         '403':
           description: "You don't have the necessary permissions for the resource"
+      tags:
+        - analytic
 
   '/workspaces/{id-workspace}/dashboards/{id}':
     get:
@@ -3859,6 +3975,8 @@ paths:
             $ref: '#/definitions/Dashboard'
         '403':
           description: "You don't have the necessary permissions for the resource"
+      tags:
+        - analytic
 
   '/workspaces/{id-workspace}/models/properties/base':
     get:
@@ -3887,6 +4005,7 @@ paths:
     get:
       description: |
         Gets list of merge policies defined in contacthub
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3934,6 +4053,7 @@ paths:
     get:
       description: |
         Gets list of providers defined in contacthub
+                                              
         #### EXAMPLE
         ```json
         {
@@ -3999,6 +4119,7 @@ paths:
     get:
       description: |
         Gets list of event contexts defined in contacthub
+                                              
         #### EXAMPLE
         ```json
         {
@@ -4062,6 +4183,7 @@ paths:
 
 ########################################################## DEFINITIONS ###############################################################
 definitions:
+
   # [BEGIN] EVENT AUTOMATION DEFINITION TYPES
   EventContext:
     type: string
@@ -5174,6 +5296,75 @@ definitions:
                 value:
                   description: metric value
                   type: number
+  AnalyticQueryCustomerAcquisitionDistribution:
+    type: "object"
+    properties:
+      name:
+        type: object
+        description: Description for this object
+      parameters:
+        type: object
+        description: Object that reports request parameters
+      headers:
+        type: object
+        description: A JSON schema object for 'data' object
+      data:
+        type: object
+        properties:
+          nodeId:
+            description: Node identifier
+            type: string
+          distribution:
+            description: Distribution list
+            type: array
+            items:
+                properties:
+                  name:
+                    description: Name of distribution field
+                    type: string
+                  value:
+                    description: Value of metric aggregation
+                    type: number
+
+  AnalyticQueryCustomerDistribution:
+    type: "object"
+    properties:
+      name:
+        type: object
+        description: Description for this object
+      parameters:
+        type: object
+        description: Object that reports request parameters
+      headers:
+        type: object
+        description: A JSON schema object for 'data' object
+      data:
+        type: object
+        properties:
+          nodeId:
+            description: Node identifier
+            type: string
+          distribution:
+            description: Distribution list
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  description: Name of distribution field
+                  type: string
+                distribution:
+                  description: Sub-distribution list
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: Name of distribution field
+                        type: string
+                      value:
+                        description: Value of metric aggregation
+                        type: number
 
   PostSegment:
     type: object
