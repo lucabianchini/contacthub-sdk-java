@@ -5,37 +5,20 @@ import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomerApi {
 
   private static Gson gson = ContactHubGson.getInstance();
-
-  /**
-   * Retrieves all the Customers for a Node.
-   *
-   * @param auth A ContactHub Auth object.
-   * @return     A List of Customer objects.
-   */
-  public static List<Customer> get(Auth auth) throws HttpException {
-    String endpoint = "/customers?nodeId=" + auth.nodeId;
-    JSONObject response = Request.doGet(auth, endpoint);
-
-    Type collectionType = new TypeToken<List<Customer>>(){}.getType();
-
-    List<Customer> customers = gson.fromJson(response
-        .getJSONArray("elements")
-        .toString(),
-        collectionType);
-
-    return customers;
-  }
 
   /**
    * Retrieves a Customer by id.
@@ -52,15 +35,44 @@ public class CustomerApi {
   }
 
   /**
-   * Retrieves a Customer by externalId.
+   * Retrieves all the Customers for a Node.
+   *
+   * @param auth A ContactHub Auth object.
+   * @return     A List of Customer objects.
+   */
+  public static List<Customer> get(Auth auth) throws HttpException {
+    return get(auth, GetCustomersOptions.builder().build());
+  }
+
+  /**
+   * Retrieves all the Customers for a Node, with options
    *
    * @param auth       A ContactHub Auth object.
-   * @param externalId The Customer externalId.
+   * @param options    An instance of {@link GetCustomersOptions}.
    * @return           A list of matching Customer objects.
    */
-  public static List<Customer> getByExternalId(Auth auth, String externalId) throws HttpException {
-    String endpoint = "/customers?nodeId=" + auth.nodeId + "&externalId=" + externalId;
-    JSONObject response = Request.doGet(auth, endpoint);
+  public static List<Customer> get(Auth auth, GetCustomersOptions options)
+      throws HttpException {
+    Map<String, Object> queryString = new HashMap<>();
+
+    final String endpoint = "/customers";
+
+    queryString.put("nodeId", auth.nodeId);
+
+    options.externalId().ifPresent(id -> queryString.put("externalId", id));
+
+    if (!options.fields().isEmpty()) {
+      queryString.put("fields", String.join(",", options.fields()));
+    }
+
+    options.query().ifPresent(query -> queryString.put("query", query.toString()));
+
+    options.sort().ifPresent(sortField -> {
+      queryString.put("sort",
+          sortField + options.direction().map(dir -> "," + dir).orElse(""));
+    });
+
+    JSONObject response = Request.doGet(auth, endpoint, queryString);
 
     Type collectionType = new TypeToken<List<Customer>>(){}.getType();
 

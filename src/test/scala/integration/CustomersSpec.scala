@@ -5,6 +5,8 @@ import it.contactlab.hub.sdk.java.Auth
 import it.contactlab.hub.sdk.java.models._
 import it.contactlab.hub.sdk.java.exceptions._
 
+import com.google.gson.JsonParser
+
 import java.time._
 
 import org.scalacheck.Gen
@@ -101,6 +103,48 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
 
       And("the customer should have the expected tags")
       customer.tags.get.manual.toArray shouldBe Array("example-tag")
+    }
+
+    scenario("specifying a whitelist of fields") {
+      Given("a whitelist")
+      val options = GetCustomersOptions.builder
+                    .fields(Set("base.firstName"))
+                    .sort("base.firstName")
+                    .direction("asc")
+                    .build
+
+      When("the user retrieves a list of customers")
+      val customers = ch.getCustomers(options)
+
+      Then("the returned objects should not include other fields")
+      customers.head.base.get.lastName.isPresent shouldBe false
+    }
+
+    scenario("specifying a query") {
+      Given("a query")
+      val parser = new JsonParser
+      val query = parser.parse("""{
+        "name": "",
+        "query": {
+          "name": "mario",
+          "type": "simple",
+          "are": {
+            "condition": {
+              "type": "atomic",
+              "attribute": "base.firstName",
+              "operator": "EQUALS",
+              "value": "Mario"
+            }
+          }
+        }
+      }""").getAsJsonObject
+      val options = GetCustomersOptions.builder.query(query).build
+
+      When("the user retrieves a list of customers")
+      val customers = ch.getCustomers(options)
+
+      Then("the returned objects should not include other fields")
+      customers.head.base.get.firstName.get shouldBe "Mario"
     }
   }
 

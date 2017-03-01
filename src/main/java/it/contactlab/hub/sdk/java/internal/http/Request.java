@@ -8,17 +8,25 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Request {
 
   /**
    * Sends a generic GET request and returns the response JsonObject.
    */
-  public static JSONObject doGet(Auth auth, String endpoint) throws HttpException {
+  public static JSONObject doGet(
+      Auth auth, String endpoint, Map<String, Object> queryString
+  ) throws HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest.get(url).asJson();
+      HttpResponse<JsonNode> response = Unirest.get(url)
+                                               .queryString(queryString)
+                                               .asJson();
 
       if (response.getStatus() >= 400) {
         throw new HttpException(response.getBody().toString());
@@ -32,6 +40,11 @@ public class Request {
 
       return null;
     }
+  }
+
+  public static JSONObject doGet(Auth auth, String endpoint)
+      throws HttpException {
+    return doGet(auth, endpoint, Collections.emptyMap());
   }
 
   /**

@@ -11,6 +11,7 @@ import it.contactlab.hub.sdk.java.internal.api.TagApi;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.Education;
 import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
 
@@ -42,15 +43,6 @@ public class ContactHub {
   }
 
   /**
-   * Retrieve all the Customers of a Node.
-   *
-   * @return     A List of {@link Customer} objects.
-   */
-  public List<Customer> getCustomers() throws HttpException {
-    return CustomerApi.get(this.auth);
-  }
-
-  /**
    * Retrieves a Customer by id.
    *
    * @param id A Customer id.
@@ -61,13 +53,36 @@ public class ContactHub {
   }
 
   /**
-   * Retrieves a Customer by external id.
+   * Retrieve all the Customers of a Node.
+   *
+   * @return     A List of {@link Customer} objects.
+   */
+  public List<Customer> getCustomers() throws HttpException {
+    return CustomerApi.get(this.auth);
+  }
+
+  /**
+   * Retrieve all the Customers of a Node, filtered and ordered with 'options'
+   *
+   * @param options An instance of {@link GetCustomersOptions}.
+   * @return        A List of {@link Customer} objects.
+   */
+  public List<Customer> getCustomers(GetCustomersOptions options)
+      throws HttpException {
+    return CustomerApi.get(this.auth, options);
+  }
+
+  /**
+   * Retrieves Customers by external id.
    *
    * @param externalId A Customer external id.
-   * @return           A {@link Customer}.
+   * @return           A List of {@link Customer} objects.
    */
-  public List<Customer> getCustomerByExternalId(String externalId) throws HttpException {
-    return CustomerApi.getByExternalId(this.auth, externalId);
+  public List<Customer> getCustomerByExternalId(String externalId)
+      throws HttpException {
+    GetCustomersOptions options = GetCustomersOptions.builder()
+                                  .externalId(externalId).build();
+    return CustomerApi.get(this.auth, options);
   }
 
   /**
