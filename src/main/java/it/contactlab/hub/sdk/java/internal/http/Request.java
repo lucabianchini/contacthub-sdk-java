@@ -8,6 +8,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class Request {
 
   public static JSONObject doGet(Auth auth, String endpoint)
       throws HttpException {
-    return doGet(auth, endpoint, new HashMap<String, Object>());
+    return doGet(auth, endpoint, Collections.emptyMap());
   }
 
   /**

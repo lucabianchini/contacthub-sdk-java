@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomerApi {
 
@@ -62,33 +63,27 @@ public class CustomerApi {
    */
   public static List<Customer> get( Auth auth, GetCustomersOptions options)
       throws HttpException {
-    HashMap<String, Object> queryString = new HashMap<String, Object>();
+    Map<String, Object> queryString = new HashMap<>();
 
     final String endpoint = "/customers";
 
     queryString.put("nodeId", auth.nodeId);
 
-    if (options.externalId().isPresent()) {
-      queryString.put("externalId", options.externalId().get());
-    }
+    options.externalId().ifPresent(id -> queryString.put("externalId", id));
 
-    if (options.fields().toArray().length > 0) {
+    if (!options.fields().isEmpty()) {
       queryString.put("fields", String.join(",", options.fields()));
     }
 
-    if (options.query().isPresent()) {
-      queryString.put("query", options.query().get().toString());
-    }
+    options.query().ifPresent(query -> queryString.put("query", query.toString()));
 
-    if (options.sort().isPresent()) {
-      String sort = options.sort().get();
-
+    options.sort().ifPresent(sortField -> {
       if (options.direction().isPresent()) {
-        sort += "," + options.direction().get();
+        queryString.put("sort", sortField  + "," + options.direction().get());
+      } else {
+        queryString.put("sort", sortField);
       }
-
-      queryString.put("sort", sort);
-    }
+    });
 
     JSONObject response = Request.doGet(auth, endpoint, queryString);
 
