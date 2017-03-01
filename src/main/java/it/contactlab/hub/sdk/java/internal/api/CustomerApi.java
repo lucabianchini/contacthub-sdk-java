@@ -41,17 +41,7 @@ public class CustomerApi {
    * @return     A List of Customer objects.
    */
   public static List<Customer> get(Auth auth) throws HttpException {
-    String endpoint = "/customers?nodeId=" + auth.nodeId;
-    JSONObject response = Request.doGet(auth, endpoint);
-
-    Type collectionType = new TypeToken<List<Customer>>(){}.getType();
-
-    List<Customer> customers = gson.fromJson(response
-        .getJSONArray("elements")
-        .toString(),
-        collectionType);
-
-    return customers;
+    return get(auth, GetCustomersOptions.builder().build());
   }
 
   /**
@@ -61,7 +51,7 @@ public class CustomerApi {
    * @param options    An instance of {@link GetCustomersOptions}.
    * @return           A list of matching Customer objects.
    */
-  public static List<Customer> get( Auth auth, GetCustomersOptions options)
+  public static List<Customer> get(Auth auth, GetCustomersOptions options)
       throws HttpException {
     Map<String, Object> queryString = new HashMap<>();
 
