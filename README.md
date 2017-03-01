@@ -429,8 +429,8 @@ To create an `Event` instance, use the builder provided by the `Event` object.
 ```java
 Event.builder()
   .customerId(customerId)
-  .context("WEB")
-  .type("viewedPage")
+  .context(EventContext.WEB)
+  .type(EventType.viewedPage)
   .properties(eventProperties)
   .build();
 ```
