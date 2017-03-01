@@ -78,11 +78,8 @@ public class CustomerApi {
     options.query().ifPresent(query -> queryString.put("query", query.toString()));
 
     options.sort().ifPresent(sortField -> {
-      if (options.direction().isPresent()) {
-        queryString.put("sort", sortField  + "," + options.direction().get());
-      } else {
-        queryString.put("sort", sortField);
-      }
+      queryString.put("sort",
+          sortField + options.direction().map(dir -> "," + dir).orElse(""));
     });
 
     JSONObject response = Request.doGet(auth, endpoint, queryString);
