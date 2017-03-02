@@ -11,6 +11,7 @@ import it.contactlab.hub.sdk.java.internal.api.TagApi;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.Education;
 import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
@@ -302,6 +303,18 @@ public class ContactHub {
    */
   public List<Event> getEvents(String customerId) throws HttpException {
     return EventApi.getByCustomer(this.auth, customerId);
+  }
+
+  /**
+   * Retrieves all the Events for a Customer, with filters.
+   *
+   * @param customerId The id of a Customer with some Events.
+   * @param filters    An instance of {@link EventFilters}.
+   * @return A {@link List} of {@link Event} objects.
+   */
+  public List<Event> getEvents(String customerId, EventFilters filters)
+      throws HttpException {
+    return EventApi.getByCustomer(this.auth, customerId, filters);
   }
 
 }

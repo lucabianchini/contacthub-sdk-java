@@ -1,10 +1,9 @@
 package it.contactlab.hub.sdk.java.models;
 
-import com.google.gson.JsonObject;
 import org.immutables.value.Value;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -37,22 +36,22 @@ public abstract class AbstractEvent {
   /**
    * The event type of this Event.
    */
-  public abstract String type();
+  public abstract EventType type();
 
   /**
    * The event context of this Event.
    */
-  public abstract String context();
+  public abstract EventContext context();
 
   /**
    * The properties of this Event.
    */
-  public abstract JsonObject properties();
+  public abstract Map<String, Object> properties();
 
   /**
    * The context-specific properties of this Event.
    */
-  public abstract Optional<JsonObject> contextInfo();
+  public abstract Map<String, Object> contextInfo();
 
   /**
    * The moment when this Event happened.

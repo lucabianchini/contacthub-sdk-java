@@ -6,10 +6,14 @@ import it.contactlab.hub.sdk.java.models.BaseProperties;
 import it.contactlab.hub.sdk.java.models.Contacts;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.CustomerTags;
+import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventContext;
+import it.contactlab.hub.sdk.java.models.EventType;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -69,6 +73,23 @@ public class Example {
 
     String newId = ch.addCustomer(mario).id().get();
     System.out.println(newId);
+    System.out.println();
+
+
+    System.out.println("---------------");
+    System.out.println("Adding an event");
+    System.out.println("---------------");
+
+    HashMap<String, Object> eventProperties = new HashMap<String, Object>();
+    eventProperties.put("url", "https://example.com/");
+    eventProperties.put("title", "Page Title");
+    Event event = Event.builder()
+                       .customerId(newId)
+                       .context(EventContext.WEB)
+                       .type(EventType.viewedPage)
+                       .build();
+    ch.addEvent(event);
+    System.out.println("Event queued successfully.");
     System.out.println();
 
     System.out.println("-------------------");

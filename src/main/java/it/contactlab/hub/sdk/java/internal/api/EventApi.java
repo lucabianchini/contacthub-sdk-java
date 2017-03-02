@@ -5,6 +5,7 @@ import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventFilters;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -15,7 +16,9 @@ import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EventApi {
 
@@ -85,9 +88,34 @@ public class EventApi {
   /**
    * Retrieves all Events for a Customer.
    */
-  public static List<Event> getByCustomer(Auth auth, String customerId) throws HttpException {
-    String endpoint = "/events?customerId=" + customerId;
-    JSONObject response = Request.doGet(auth, endpoint);
+  public static List<Event> getByCustomer(Auth auth, String customerId)
+      throws HttpException {
+    return getByCustomer(auth, customerId, EventFilters.builder().build());
+  }
+
+  /**
+   * Retrieves all Events for a Customer, with filters.
+   */
+  public static List<Event> getByCustomer(
+      Auth auth, String customerId, EventFilters filters
+  ) throws HttpException {
+    final String endpoint = "/events";
+
+    Map<String, Object> queryString = new HashMap<>();
+
+    queryString.put("customerId", customerId);
+
+    filters.type().ifPresent(type -> queryString.put("type", type.toString()));
+    filters.context().ifPresent(context -> queryString.put("context", context.toString()));
+    filters.mode().ifPresent(mode -> queryString.put("mode", mode.toString()));
+    filters.dateFrom().ifPresent(date -> queryString.put(
+          "dateFrom", ContactHubGson.formatDate(date)
+    ));
+    filters.dateTo().ifPresent(date -> queryString.put(
+          "dateTo", ContactHubGson.formatDate(date)
+    ));
+
+    JSONObject response = Request.doGet(auth, endpoint, queryString);
 
     Type collectionType = new TypeToken<List<Event>>(){}.getType();
 

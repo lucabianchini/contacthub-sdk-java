@@ -429,13 +429,13 @@ To create an `Event` instance, use the builder provided by the `Event` object.
 ```java
 Event.builder()
   .customerId(customerId)
-  .context("WEB")
-  .type("viewedPage")
+  .context(EventContext.WEB)
+  .type(EventType.viewedPage)
   .properties(eventProperties)
   .build();
 ```
 
-`eventProperties` must be an instance of `com.google.gson.JsonObject`. The
+`eventProperties` must be of type `Map<String, Object>`. The
 structure of this object varies according to the event type, and always contains
 a number of optional fields. You should only include the properties that you need.
 
@@ -445,9 +445,9 @@ This will generate a valid `eventProperties` object for a
 `viewedPage` event:
 
 ```java
-val eventProperties = new JsonObject;
-eventProperties.addProperty("url", "https://example.com/");
-eventProperties.addProperty("title", "Page Title");
+HashMap<String, Object> eventProperties = new HashMap<String, Object>();
+eventProperties.put("url", "https://example.com/");
+eventProperties.put("title", "Page Title");
 ```
 
 ## Examples
