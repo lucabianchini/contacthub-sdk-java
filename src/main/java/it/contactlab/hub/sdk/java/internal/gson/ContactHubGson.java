@@ -3,7 +3,6 @@ package it.contactlab.hub.sdk.java.gson;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 
@@ -17,7 +16,7 @@ public class ContactHubGson {
   /**
    * Handling java.time.OffsetDateTime
    */
-  public static DateTimeFormatter dateTimeFormatter =
+  private static DateTimeFormatter dateTimeFormatter =
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
   private static JsonSerializer<OffsetDateTime> dateTimeJsonSerializer =
@@ -62,4 +61,10 @@ public class ContactHubGson {
     return gsonBuilder.create();
   }
 
+  /**
+   * Public method to use the same date formatting in other contexts.
+   */
+  public static String formatDate(OffsetDateTime date) {
+    return date.format(dateTimeFormatter);
+  }
 }

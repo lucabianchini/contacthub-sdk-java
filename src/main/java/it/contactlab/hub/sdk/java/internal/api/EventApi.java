@@ -109,10 +109,10 @@ public class EventApi {
     filters.context().ifPresent(context -> queryString.put("context", context.toString()));
     filters.mode().ifPresent(mode -> queryString.put("mode", mode.toString()));
     filters.dateFrom().ifPresent(date -> queryString.put(
-          "dateFrom", date.format(ContactHubGson.dateTimeFormatter)
+          "dateFrom", ContactHubGson.formatDate(date)
     ));
     filters.dateTo().ifPresent(date -> queryString.put(
-          "dateTo", date.format(ContactHubGson.dateTimeFormatter)
+          "dateTo", ContactHubGson.formatDate(date)
     ));
 
     JSONObject response = Request.doGet(auth, endpoint, queryString);
