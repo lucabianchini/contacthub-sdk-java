@@ -8,8 +8,6 @@ import it.contactlab.hub.sdk.java.exceptions._
 import java.time._
 import java.time.temporal.ChronoUnit._
 
-import com.google.gson.JsonObject
-
 import org.scalacheck.Gen
 
 import org.scalatest.FeatureSpec
