@@ -1,6 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
@@ -29,7 +30,8 @@ public class EventApi {
   /**
    * Add a new Event.
    */
-  public static Boolean add(Auth auth, Event event) throws HttpException {
+  public static Boolean add(Auth auth, Event event)
+      throws ContactHubException, HttpException {
     final String endpoint = "/events";
     String payload = "";
 
@@ -78,7 +80,8 @@ public class EventApi {
   /**
    * Retrieves an Event by id.
    */
-  public static Event get(Auth auth, String id) throws HttpException {
+  public static Event get(Auth auth, String id)
+      throws ContactHubException, HttpException {
     String endpoint = "/events/" + id;
     JSONObject response = Request.doGet(auth, endpoint);
 
@@ -89,7 +92,7 @@ public class EventApi {
    * Retrieves all Events for a Customer.
    */
   public static List<Event> getByCustomer(Auth auth, String customerId)
-      throws HttpException {
+      throws ContactHubException, HttpException {
     return getByCustomer(auth, customerId, EventFilters.builder().build());
   }
 
@@ -98,7 +101,7 @@ public class EventApi {
    */
   public static List<Event> getByCustomer(
       Auth auth, String customerId, EventFilters filters
-  ) throws HttpException {
+  ) throws ContactHubException, HttpException {
     final String endpoint = "/events";
 
     Map<String, Object> queryString = new HashMap<>();

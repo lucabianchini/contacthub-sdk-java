@@ -1,11 +1,13 @@
 package it.contactlab.hub.sdk.java.http;
 
 import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 
 import java.util.Collections;
@@ -19,31 +21,28 @@ public class Request {
    */
   public static JSONObject doGet(
       Auth auth, String endpoint, Map<String, Object> queryString
-  ) throws HttpException {
-    try {
-      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
+  ) throws ContactHubException, HttpException {
+    Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
+    String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
+    try {
       HttpResponse<JsonNode> response = Unirest.get(url)
-                                               .queryString(queryString)
-                                               .asJson();
+          .queryString(queryString)
+          .asJson();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        throw new ContactHubException(response.getStatus(),
+                                      response.getBody().toString());
       }
 
       return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
   public static JSONObject doGet(Auth auth, String endpoint)
-      throws HttpException {
+      throws ContactHubException, HttpException {
     return doGet(auth, endpoint, Collections.emptyMap());
   }
 
@@ -51,7 +50,7 @@ public class Request {
    * Sends a generic POST request and returns the response JsonObject.
    */
   public static JSONObject doPost(Auth auth, String endpoint, String payload)
-      throws HttpException {
+      throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -63,23 +62,21 @@ public class Request {
           .asJson();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        throw new ContactHubException(response.getStatus(),
+                                      response.getBody().toString());
       }
 
       return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
   /**
    * Sends a generic DELETE request and returns true if successful.
    */
-  public static JSONObject doDelete(Auth auth, String endpoint) throws HttpException {
+  public static JSONObject doDelete(Auth auth, String endpoint)
+      throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -87,23 +84,21 @@ public class Request {
       HttpResponse<JsonNode> response = Unirest.delete(url).asJson();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        throw new ContactHubException(response.getStatus(),
+                                      response.getBody().toString());
       }
 
       return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
   /**
    * Sends a generic PUT request and returns the response JsonObject.
    */
-  public static JSONObject doPut(Auth auth, String endpoint, String payload) throws HttpException {
+  public static JSONObject doPut(Auth auth, String endpoint, String payload)
+      throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -115,16 +110,13 @@ public class Request {
           .asJson();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        throw new ContactHubException(response.getStatus(),
+                                      response.getBody().toString());
       }
 
       return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
@@ -132,7 +124,7 @@ public class Request {
    * Sends a generic PATCH request and returns the response JsonObject.
    */
   public static JSONObject doPatch(Auth auth, String endpoint, String payload)
-      throws HttpException {
+      throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -144,16 +136,13 @@ public class Request {
           .asJson();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        throw new ContactHubException(response.getStatus(),
+                                      response.getBody().toString());
       }
 
       return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
