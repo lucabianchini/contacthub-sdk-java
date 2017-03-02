@@ -16,40 +16,40 @@ public class ContactHubGson {
   /**
    * Handling java.time.OffsetDateTime
    */
-  private static DateTimeFormatter dateTimeFormatter =
+  private static final DateTimeFormatter dateTimeFormatter =
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
-  private static JsonSerializer<OffsetDateTime> dateTimeJsonSerializer =
+  private static final JsonSerializer<OffsetDateTime> dateTimeJsonSerializer =
       (src, typeOfSrc, context) -> new JsonPrimitive(src.format(dateTimeFormatter));
-  private static JsonDeserializer<OffsetDateTime> dateTimeJsonDeserializer =
+  private static final JsonDeserializer<OffsetDateTime> dateTimeJsonDeserializer =
       (json, typeOfT, context) ->
       json == null ? null : OffsetDateTime.parse(json.getAsString(), dateTimeFormatter);
 
   /**
    * Handling java.time.LocalDate
    */
-  private static DateTimeFormatter dateFormatter =
+  private static final DateTimeFormatter dateFormatter =
       DateTimeFormatter.ISO_LOCAL_DATE; // "yyyy-MM-dd"
 
-  private static JsonSerializer<LocalDate> dateJsonSerializer =
+  private static final JsonSerializer<LocalDate> dateJsonSerializer =
       (src, typeOfSrc, context) -> new JsonPrimitive(src.format(dateFormatter));
-  private static JsonDeserializer<LocalDate> dateJsonDeserializer =
+  private static final JsonDeserializer<LocalDate> dateJsonDeserializer =
       (json, typeOfT, context) ->
       json == null ? null : LocalDate.parse(json.getAsString(), dateFormatter);
 
   /**
    * Handling java.time.ZoneId
    */
-  private static JsonSerializer<ZoneId> zoneIdJsonSerializer =
+  private static final JsonSerializer<ZoneId> zoneIdJsonSerializer =
       (src, typeofSrc, context) -> new JsonPrimitive(src.getId());
-  private static JsonDeserializer<ZoneId> zoneIdJsonDeserializer =
+  private static final JsonDeserializer<ZoneId> zoneIdJsonDeserializer =
       (json, typeOfT, context) ->
       json == null ? null : ZoneId.of(json.getAsString());
 
   /**
    * Registering all (de)serializers.
    */
-  public static Gson getInstance() {
+  public static final Gson getInstance() {
     GsonBuilder gsonBuilder = new GsonBuilder()
         .registerTypeAdapter(OffsetDateTime.class, dateTimeJsonDeserializer)
         .registerTypeAdapter(OffsetDateTime.class, dateTimeJsonSerializer)
@@ -64,7 +64,7 @@ public class ContactHubGson {
   /**
    * Public method to use the same date formatting in other contexts.
    */
-  public static String formatDate(OffsetDateTime date) {
+  public static final String formatDate(OffsetDateTime date) {
     return date.format(dateTimeFormatter);
   }
 }
