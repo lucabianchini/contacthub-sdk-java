@@ -184,7 +184,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       val cid = customerId
 
       And("a date range filter")
-      val dateFrom = OffsetDateTime.now.minus(1, DAYS)
+      val dateFrom = OffsetDateTime.now.minus(7, DAYS)
       val dateTo = OffsetDateTime.now.minus(1, HOURS)
       val filters = EventFilters.builder.dateFrom(dateFrom).dateTo(dateTo).build
 
