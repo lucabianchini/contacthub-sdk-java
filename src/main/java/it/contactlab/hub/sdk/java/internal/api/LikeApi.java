@@ -8,7 +8,6 @@ import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Like;
 
 import com.google.gson.Gson;
-import org.json.JSONObject;
 
 public class LikeApi {
 
@@ -22,9 +21,9 @@ public class LikeApi {
 
     String endpoint = "/customers/" + customerId + "/likes";
     String payload = gson.toJson(like);
-    JSONObject response = Request.doPost(auth, endpoint, payload);
+    String response = Request.doPost(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Like.class);
+    return gson.fromJson(response, Like.class);
   }
 
   /**
@@ -35,9 +34,9 @@ public class LikeApi {
 
     String endpoint = "/customers/" + customerId + "/likes/" + like.id();
     String payload = gson.toJson(like);
-    JSONObject response = Request.doPut(auth, endpoint, payload);
+    String response = Request.doPut(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Like.class);
+    return gson.fromJson(response, Like.class);
   }
 
   /**
@@ -47,7 +46,7 @@ public class LikeApi {
       throws ContactHubException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes/" + likeId;
-    JSONObject response = Request.doDelete(auth, endpoint);
+    String response = Request.doDelete(auth, endpoint);
 
     return true;
   }

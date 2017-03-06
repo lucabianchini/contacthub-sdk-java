@@ -8,7 +8,6 @@ import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Education;
 
 import com.google.gson.Gson;
-import org.json.JSONObject;
 
 public class EducationApi {
 
@@ -22,9 +21,9 @@ public class EducationApi {
 
     String endpoint = "/customers/" + customerId + "/educations";
     String payload = gson.toJson(education);
-    JSONObject response = Request.doPost(auth, endpoint, payload);
+    String response = Request.doPost(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Education.class);
+    return gson.fromJson(response, Education.class);
   }
 
   /**
@@ -35,9 +34,9 @@ public class EducationApi {
 
     String endpoint = "/customers/" + customerId + "/educations/" + education.id();
     String payload = gson.toJson(education);
-    JSONObject response = Request.doPut(auth, endpoint, payload);
+    String response = Request.doPut(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Education.class);
+    return gson.fromJson(response, Education.class);
   }
 
   /**
@@ -47,7 +46,7 @@ public class EducationApi {
       throws ContactHubException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/educations/" + educationId;
-    JSONObject response = Request.doDelete(auth, endpoint);
+    String response = Request.doDelete(auth, endpoint);
 
     return true;
   }

@@ -8,7 +8,6 @@ import it.contactlab.hub.sdk.java.http.Request;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.json.JSONObject;
 
 import java.util.UUID;
 
@@ -35,7 +34,7 @@ public class SessionApi {
     session.addProperty("value", sessionId);
 
     String payload = gson.toJson(session);
-    JSONObject response = Request.doPost(auth, endpoint, payload);
+    Request.doPost(auth, endpoint, payload);
 
     return true;
   }

@@ -5,10 +5,8 @@ import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.JSONObject;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,56 +15,56 @@ import java.util.Map;
 public class Request {
 
   /**
-   * Sends a generic GET request and returns the response JsonObject.
+   * Sends a generic GET request and returns the response String.
    */
-  public static JSONObject doGet(
+  public static String doGet(
       Auth auth, String endpoint, Map<String, Object> queryString
   ) throws ContactHubException, HttpException {
     Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
     String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
     try {
-      HttpResponse<JsonNode> response = Unirest.get(url)
+      HttpResponse<String> response = Unirest.get(url)
           .queryString(queryString)
-          .asJson();
+          .asString();
 
       if (response.getStatus() >= 400) {
         throw new ContactHubException(response.getStatus(),
                                       response.getBody().toString());
       }
 
-      return response.getBody().getObject();
+      return response.getBody().toString();
     } catch (UnirestException ex) {
       throw new HttpException(ex);
     }
   }
 
-  public static JSONObject doGet(Auth auth, String endpoint)
+  public static String doGet(Auth auth, String endpoint)
       throws ContactHubException, HttpException {
     return doGet(auth, endpoint, Collections.emptyMap());
   }
 
   /**
-   * Sends a generic POST request and returns the response JsonObject.
+   * Sends a generic POST request and returns the response String.
    */
-  public static JSONObject doPost(Auth auth, String endpoint, String payload)
+  public static String doPost(Auth auth, String endpoint, String payload)
       throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest
+      HttpResponse<String> response = Unirest
           .post(url)
           .header("Content-Type", "application/json")
           .body(payload)
-          .asJson();
+          .asString();
 
       if (response.getStatus() >= 400) {
         throw new ContactHubException(response.getStatus(),
                                       response.getBody().toString());
       }
 
-      return response.getBody().getObject();
+      return response.getBody().toString();
     } catch (UnirestException ex) {
       throw new HttpException(ex);
     }
@@ -75,72 +73,72 @@ public class Request {
   /**
    * Sends a generic DELETE request and returns true if successful.
    */
-  public static JSONObject doDelete(Auth auth, String endpoint)
+  public static String doDelete(Auth auth, String endpoint)
       throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest.delete(url).asJson();
+      HttpResponse<String> response = Unirest.delete(url).asString();
 
       if (response.getStatus() >= 400) {
         throw new ContactHubException(response.getStatus(),
                                       response.getBody().toString());
       }
 
-      return response.getBody().getObject();
+      return response.getBody().toString();
     } catch (UnirestException ex) {
       throw new HttpException(ex);
     }
   }
 
   /**
-   * Sends a generic PUT request and returns the response JsonObject.
+   * Sends a generic PUT request and returns the response String.
    */
-  public static JSONObject doPut(Auth auth, String endpoint, String payload)
+  public static String doPut(Auth auth, String endpoint, String payload)
       throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest
+      HttpResponse<String> response = Unirest
           .put(url)
           .header("Content-Type", "application/json")
           .body(payload)
-          .asJson();
+          .asString();
 
       if (response.getStatus() >= 400) {
         throw new ContactHubException(response.getStatus(),
                                       response.getBody().toString());
       }
 
-      return response.getBody().getObject();
+      return response.getBody().toString();
     } catch (UnirestException ex) {
       throw new HttpException(ex);
     }
   }
 
   /**
-   * Sends a generic PATCH request and returns the response JsonObject.
+   * Sends a generic PATCH request and returns the response String.
    */
-  public static JSONObject doPatch(Auth auth, String endpoint, String payload)
+  public static String doPatch(Auth auth, String endpoint, String payload)
       throws ContactHubException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest
+      HttpResponse<String> response = Unirest
           .patch(url)
           .header("Content-Type", "application/json")
           .body(payload)
-          .asJson();
+          .asString();
 
       if (response.getStatus() >= 400) {
         throw new ContactHubException(response.getStatus(),
                                       response.getBody().toString());
       }
 
-      return response.getBody().getObject();
+      return response.getBody().toString();
     } catch (UnirestException ex) {
       throw new HttpException(ex);
     }

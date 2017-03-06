@@ -10,13 +10,13 @@ import it.contactlab.hub.sdk.java.models.EventFilters;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonParser;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class EventApi {
 
     }
 
-    JSONObject response = Request.doPost(auth, endpoint, payload);
+    Request.doPost(auth, endpoint, payload);
 
     return true;
   }
@@ -83,9 +83,9 @@ public class EventApi {
   public static Event get(Auth auth, String id)
       throws ContactHubException, HttpException {
     String endpoint = "/events/" + id;
-    JSONObject response = Request.doGet(auth, endpoint);
+    String response = Request.doGet(auth, endpoint);
 
-    return gson.fromJson(response.toString(), Event.class);
+    return gson.fromJson(response, Event.class);
   }
 
   /**
@@ -118,16 +118,13 @@ public class EventApi {
           "dateTo", ContactHubGson.formatDate(date)
     ));
 
-    JSONObject response = Request.doGet(auth, endpoint, queryString);
+    String response = Request.doGet(auth, endpoint, queryString);
 
-    Type collectionType = new TypeToken<List<Event>>(){}.getType();
+    JsonParser parser = new JsonParser();
+    JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
+    Event[] events = gson.fromJson(jsonResponse.get("elements"), Event[].class);
 
-    List<Event> events = gson.fromJson(response
-        .getJSONArray("elements")
-        .toString(),
-        collectionType);
-
-    return events;
+    return Arrays.asList(events);
   }
 
 }

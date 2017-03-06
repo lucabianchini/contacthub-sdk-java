@@ -8,7 +8,6 @@ import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Job;
 
 import com.google.gson.Gson;
-import org.json.JSONObject;
 
 public class JobApi {
 
@@ -22,9 +21,9 @@ public class JobApi {
 
     String endpoint = "/customers/" + customerId + "/jobs";
     String payload = gson.toJson(job);
-    JSONObject response = Request.doPost(auth, endpoint, payload);
+    String response = Request.doPost(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Job.class);
+    return gson.fromJson(response, Job.class);
   }
 
   /**
@@ -35,9 +34,9 @@ public class JobApi {
 
     String endpoint = "/customers/" + customerId + "/jobs/" + job.id();
     String payload = gson.toJson(job);
-    JSONObject response = Request.doPut(auth, endpoint, payload);
+    String response = Request.doPut(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Job.class);
+    return gson.fromJson(response, Job.class);
   }
 
   /**
@@ -47,7 +46,7 @@ public class JobApi {
       throws ContactHubException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/jobs/" + jobId;
-    JSONObject response = Request.doDelete(auth, endpoint);
+    String response = Request.doDelete(auth, endpoint);
 
     return true;
   }

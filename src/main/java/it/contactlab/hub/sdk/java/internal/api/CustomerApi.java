@@ -9,10 +9,10 @@ import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +31,9 @@ public class CustomerApi {
   public static Customer get(Auth auth, String id)
       throws ContactHubException, HttpException {
     String endpoint = "/customers/" + id;
-    JSONObject response = Request.doGet(auth, endpoint);
+    String response = Request.doGet(auth, endpoint);
 
-    return gson.fromJson(response.toString(), Customer.class);
+    return gson.fromJson(response, Customer.class);
   }
 
   /**
@@ -75,16 +75,13 @@ public class CustomerApi {
           sortField + options.direction().map(dir -> "," + dir).orElse(""));
     });
 
-    JSONObject response = Request.doGet(auth, endpoint, queryString);
+    String response = Request.doGet(auth, endpoint, queryString);
 
-    Type collectionType = new TypeToken<List<Customer>>(){}.getType();
+    JsonParser parser = new JsonParser();
+    JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
+    Customer[] customers = gson.fromJson(jsonResponse.get("elements"), Customer[].class);
 
-    List<Customer> customers = gson.fromJson(response
-        .getJSONArray("elements")
-        .toString(),
-        collectionType);
-
-    return customers;
+    return Arrays.asList(customers);
   }
 
   /**
@@ -99,9 +96,9 @@ public class CustomerApi {
     String endpoint = "/customers";
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
-    JSONObject response = Request.doPost(auth, endpoint, payload);
+    String response = Request.doPost(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Customer.class);
+    return gson.fromJson(response, Customer.class);
   }
 
   /**
@@ -114,7 +111,7 @@ public class CustomerApi {
   public static boolean delete(Auth auth, String customerId)
       throws ContactHubException, HttpException {
     String endpoint = "/customers/" + customerId;
-    JSONObject response = Request.doDelete(auth, endpoint);
+    String response = Request.doDelete(auth, endpoint);
 
     return true;
   }
@@ -131,7 +128,7 @@ public class CustomerApi {
     String endpoint = "/customers/" + customer.id().get();
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
-    JSONObject response = Request.doPut(auth, endpoint, payload);
+    String response = Request.doPut(auth, endpoint, payload);
 
     return gson.fromJson(response.toString(), Customer.class);
   }
@@ -148,9 +145,9 @@ public class CustomerApi {
       throws ContactHubException, HttpException {
     String endpoint = "/customers/" + customerId;
     String payload = gson.toJson(patchCustomer);
-    JSONObject response = Request.doPatch(auth, endpoint, payload);
+    String response = Request.doPatch(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Customer.class);
+    return gson.fromJson(response, Customer.class);
   }
 
 }
