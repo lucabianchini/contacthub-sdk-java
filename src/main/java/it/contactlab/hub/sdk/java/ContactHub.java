@@ -2,6 +2,7 @@ package it.contactlab.hub.sdk.java;
 
 import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
+import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.internal.api.CustomerApi;
 import it.contactlab.hub.sdk.java.internal.api.EducationApi;
 import it.contactlab.hub.sdk.java.internal.api.EventApi;
@@ -41,7 +42,7 @@ public class ContactHub {
    * Reconcile a SessionId with a Customer.
    */
   public boolean addCustomerSession(String customerId, String sessionId)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return SessionApi.reconcile(this.auth, customerId, sessionId);
   }
 
@@ -52,7 +53,7 @@ public class ContactHub {
    * @return   A {@link Customer}.
    */
   public Customer getCustomer(String id)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return CustomerApi.get(this.auth, id);
   }
 
@@ -62,7 +63,7 @@ public class ContactHub {
    * @return     A List of {@link Customer} objects.
    */
   public List<Customer> getCustomers()
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return CustomerApi.get(this.auth);
   }
 
@@ -73,7 +74,7 @@ public class ContactHub {
    * @return        A List of {@link Customer} objects.
    */
   public List<Customer> getCustomers(GetCustomersOptions options)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return CustomerApi.get(this.auth, options);
   }
 
@@ -84,7 +85,7 @@ public class ContactHub {
    * @return           A List of {@link Customer} objects.
    */
   public List<Customer> getCustomerByExternalId(String externalId)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     GetCustomersOptions options = GetCustomersOptions.builder()
                                   .externalId(externalId).build();
     return CustomerApi.get(this.auth, options);
@@ -97,7 +98,7 @@ public class ContactHub {
    * @return         A newly created {@link Customer}.
    */
   public Customer addCustomer(Customer customer)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return CustomerApi.add(this.auth, customer);
   }
 
@@ -108,7 +109,7 @@ public class ContactHub {
    * @return   Whether the Customer was successfully deleted.
    */
   public boolean deleteCustomer(String id)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return CustomerApi.delete(this.auth, id);
   }
 
@@ -119,7 +120,7 @@ public class ContactHub {
    * @return         An updated {@link Customer}.
    */
   public Customer updateCustomer(Customer customer)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return CustomerApi.update(this.auth, customer);
   }
 
@@ -132,7 +133,7 @@ public class ContactHub {
    * @return              An updated {@link Customer}.
    */
   public Customer patchCustomer(String customerId, Customer patchCustomer)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return CustomerApi.patch(this.auth, customerId, patchCustomer);
   }
 
@@ -146,7 +147,7 @@ public class ContactHub {
    * @return           The Like object that was persisted by the API.
    */
   public Like addLike(String customerId, Like like)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return LikeApi.add(this.auth, customerId, like);
   }
 
@@ -161,7 +162,7 @@ public class ContactHub {
    */
 
   public Like updateLike(String customerId, Like like)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return LikeApi.update(this.auth, customerId, like);
   }
 
@@ -175,7 +176,7 @@ public class ContactHub {
    * @return           true if the removal was successful.
    */
   public boolean removeLike(String customerId, String likeId)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return LikeApi.remove(this.auth, customerId, likeId);
   }
 
@@ -189,7 +190,7 @@ public class ContactHub {
    * @return           The Job object that was persisted by the API.
    */
   public Job addJob(String customerId, Job job)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return JobApi.add(this.auth, customerId, job);
   }
 
@@ -204,7 +205,7 @@ public class ContactHub {
    */
 
   public Job updateJob(String customerId, Job job)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return JobApi.update(this.auth, customerId, job);
   }
 
@@ -218,7 +219,7 @@ public class ContactHub {
    * @return           true if the removal was successful.
    */
   public boolean removeJob(String customerId, String jobId)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return JobApi.remove(this.auth, customerId, jobId);
   }
 
@@ -232,7 +233,7 @@ public class ContactHub {
    * @return           The Education object that was persisted by the API.
    */
   public Education addEducation(String customerId, Education education)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return EducationApi.add(this.auth, customerId, education);
   }
 
@@ -247,7 +248,7 @@ public class ContactHub {
    */
 
   public Education updateEducation(String customerId, Education education)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return EducationApi.update(this.auth, customerId, education);
   }
 
@@ -261,7 +262,7 @@ public class ContactHub {
    * @return            true if the removal was successful.
    */
   public boolean removeEducation(String customerId, String educationId)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return EducationApi.remove(this.auth, customerId, educationId);
   }
 
@@ -275,7 +276,7 @@ public class ContactHub {
    * @return           The full Customer object after the update.
    */
   public Customer addTag(String customerId, String tag)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return TagApi.add(this.auth, customerId, tag);
   }
 
@@ -289,7 +290,7 @@ public class ContactHub {
    * @return           The full Customer object after the update.
    */
   public Customer removeTag(String customerId, String tag)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return TagApi.remove(this.auth, customerId, tag);
   }
 
@@ -300,7 +301,7 @@ public class ContactHub {
    * @return Whether the Event was successfully queued for insertion.
    */
   public boolean addEvent(Event newEvent)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return EventApi.add(this.auth, newEvent);
   }
 
@@ -311,7 +312,7 @@ public class ContactHub {
    * @return   An {@link Event}.
    */
   public Event getEvent(String id)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return EventApi.get(this.auth, id);
   }
 
@@ -322,7 +323,7 @@ public class ContactHub {
    * @return A {@link List} of {@link Event} objects.
    */
   public List<Event> getEvents(String customerId)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return EventApi.getByCustomer(this.auth, customerId);
   }
 
@@ -334,7 +335,7 @@ public class ContactHub {
    * @return A {@link List} of {@link Event} objects.
    */
   public List<Event> getEvents(String customerId, EventFilters filters)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return EventApi.getByCustomer(this.auth, customerId, filters);
   }
 

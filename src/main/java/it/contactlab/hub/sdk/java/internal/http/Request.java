@@ -3,6 +3,7 @@ package it.contactlab.hub.sdk.java.http;
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
+import it.contactlab.hub.sdk.java.exceptions.ServerException;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -19,7 +20,7 @@ public class Request {
    */
   public static String doGet(
       Auth auth, String endpoint, Map<String, Object> queryString
-  ) throws ContactHubException, HttpException {
+  ) throws ContactHubException, ServerException, HttpException {
     Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
     String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
@@ -40,7 +41,7 @@ public class Request {
   }
 
   public static String doGet(Auth auth, String endpoint)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     return doGet(auth, endpoint, Collections.emptyMap());
   }
 
@@ -48,7 +49,7 @@ public class Request {
    * Sends a generic POST request and returns the response String.
    */
   public static String doPost(Auth auth, String endpoint, String payload)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -74,7 +75,7 @@ public class Request {
    * Sends a generic DELETE request and returns true if successful.
    */
   public static String doDelete(Auth auth, String endpoint)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -96,7 +97,7 @@ public class Request {
    * Sends a generic PUT request and returns the response String.
    */
   public static String doPut(Auth auth, String endpoint, String payload)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -122,7 +123,7 @@ public class Request {
    * Sends a generic PATCH request and returns the response String.
    */
   public static String doPatch(Auth auth, String endpoint, String payload)
-      throws ContactHubException, HttpException {
+      throws ContactHubException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;

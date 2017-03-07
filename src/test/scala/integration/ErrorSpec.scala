@@ -47,10 +47,100 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("I request a resource")
       def request = ch.getCustomers()
 
-      Then("A ContactHubException is thrown")
+      Then("a ContactHubException is thrown")
       val e = the [ContactHubException] thrownBy request
-      And("The exception statusCode is 401")
+      And("the exception statusCode is 401")
       e.getStatusCode shouldBe 401
+      And("the exception errorMessage should be the one sent by the API")
+      e.getErrorMessage shouldBe "The client is not authorized to access the API"
+    }
+  }
+
+  feature("Not found errors") {
+    scenario("Customer not found") {
+      Given("a non-existent customer id")
+      val customerId = "123"
+
+      When("I try to retrieve the Customer by id")
+      def getCustomer = ch.getCustomer(customerId)
+
+      Then("a ContactHubException is thrown")
+      val e = the [ContactHubException] thrownBy getCustomer
+      And("The exception statusCode is 404")
+      e.getStatusCode shouldBe 404
+    }
+  }
+
+  feature("Invalid data") {
+    scenario("Submitting invalid data") {
+      Given("a customer without required data")
+      val customer = Customer.builder.build
+
+      When("I try to add the Customer")
+      def addCustomer = ch.addCustomer(customer)
+
+      Then("a ContactHubException is thrown")
+      val e = the [ContactHubException] thrownBy addCustomer
+      And("The exception statusCode is 400")
+      e.getStatusCode shouldBe 400
+    }
+  }
+
+  feature("Unexpected server errors") {
+    scenario("HTTP failure") {
+      Given("I simulate an HTTP failure")
+      val auth = new Auth(
+        "a",
+        "b",
+        "c",
+        "https://ioadhuiqohwdiubceiub.com"
+      )
+      val ch = new ContactHub(auth)
+
+      When("I request a resource")
+      def request = ch.getCustomers()
+
+      Then("an HttpException is thrown")
+      val e = the [HttpException] thrownBy request
+      println(e.getMessage)
+    }
+
+    scenario("50x error") {
+      Given("I simulate a 500 error")
+      val auth = new Auth(
+        "a",
+        "b",
+        "c",
+        "https://httpbin.org/status/500?"
+      )
+      val ch = new ContactHub(auth)
+
+      When("I request a resource")
+      def request = ch.getCustomers()
+
+      Then("a ContactHubException is thrown")
+      val e = the [ServerException] thrownBy request
+      And("the exception statusCode is 500")
+      e.getStatusCode shouldBe 500
+    }
+
+    scenario("40x error without a JSON body") {
+      Given("I simulate a 404 error with a non-JSON body")
+      val auth = new Auth(
+        "a",
+        "b",
+        "c",
+        "https://httpbin.org"
+      )
+      val ch = new ContactHub(auth)
+
+      When("I request a resource")
+      def request = ch.getCustomers()
+
+      Then("a ContactHubException is thrown")
+      val e = the [ServerException] thrownBy request
+      And("the exception statusCode is 404")
+      e.getStatusCode shouldBe 404
     }
   }
 

@@ -1,25 +1,38 @@
 package it.contactlab.hub.sdk.java.exceptions;
 
-public class ContactHubException extends BaseException {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
-  private int statusCode;
-  private String responseBody;
+public class ContactHubException extends ServerException {
+
+  private final String errorMessage;
 
   /**
-   * ContactHubException is thrown when the Contacthub API returns an error.
+   * ContactHubException is thrown when the Contacthub API returns an error with
+   * a JSON-serialized error message.
    */
-  public ContactHubException(int statusCode, String responseBody) {
-    super("ContactHub API returned " + statusCode + " " + responseBody);
+  public ContactHubException(int statusCode, String responseBody)
+      throws ServerException {
+    super(statusCode, responseBody);
 
-    this.statusCode = statusCode;
-    this.responseBody = responseBody;
+    try {
+      JsonParser parser = new JsonParser();
+      JsonElement jsonResponse = parser.parse(responseBody);
+
+      if (!jsonResponse.isJsonObject()) {
+        throw new ServerException(statusCode, responseBody);
+      }
+
+      this.errorMessage = jsonResponse.getAsJsonObject()
+                                      .get("message").getAsString();
+    } catch (JsonSyntaxException jsonException) {
+      throw new ServerException(statusCode, responseBody);
+    }
   }
 
-  public int getStatusCode() {
-    return statusCode;
-  }
-
-  public String getResponseBody() {
-    return responseBody;
+  public String getErrorMessage() {
+    return errorMessage;
   }
 }
