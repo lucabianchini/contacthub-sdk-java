@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.models.Customer;
@@ -17,7 +17,7 @@ public class TagApi {
    * Add a new tag to a Customer.
    */
   public static Customer add(Auth auth, String customerId, String tag)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
 
     Customer customer = CustomerApi.get(auth, customerId);
     Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet());
@@ -37,7 +37,7 @@ public class TagApi {
    * Remove a tag from a Customer.
    */
   public static Customer remove(Auth auth, String customerId, String tag)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
 
     Customer customer = CustomerApi.get(auth, customerId);
     Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet());

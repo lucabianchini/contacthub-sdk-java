@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
@@ -30,7 +30,7 @@ public class CustomerApi {
    * @return     A Customer object.
    */
   public static Customer get(Auth auth, String id)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + id;
     String response = Request.doGet(auth, endpoint);
 
@@ -44,7 +44,7 @@ public class CustomerApi {
    * @return     A List of Customer objects.
    */
   public static List<Customer> get(Auth auth)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return get(auth, GetCustomersOptions.builder().build());
   }
 
@@ -56,7 +56,7 @@ public class CustomerApi {
    * @return           A list of matching Customer objects.
    */
   public static List<Customer> get(Auth auth, GetCustomersOptions options)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     Map<String, Object> queryString = new HashMap<>();
 
     final String endpoint = "/customers";
@@ -93,7 +93,7 @@ public class CustomerApi {
    * @return         The stored Customer object, including its id.
    */
   public static Customer add(Auth auth, Customer customer)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers";
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
@@ -110,7 +110,7 @@ public class CustomerApi {
    * @return           True if the deletion was successful
    */
   public static boolean delete(Auth auth, String customerId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
     String response = Request.doDelete(auth, endpoint);
 
@@ -125,7 +125,7 @@ public class CustomerApi {
    * @return         The updated Customer object
    */
   public static Customer update(Auth auth, Customer customer)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customer.id().get();
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
@@ -143,7 +143,7 @@ public class CustomerApi {
    * @return              The updated Customer object
    */
   public static Customer patch(Auth auth, String customerId, Customer patchCustomer)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
     String payload = gson.toJson(patchCustomer);
     String response = Request.doPatch(auth, endpoint, payload);

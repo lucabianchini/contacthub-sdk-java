@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.http;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 
@@ -20,7 +20,7 @@ public class Request {
    */
   public static String doGet(
       Auth auth, String endpoint, Map<String, Object> queryString
-  ) throws ContactHubException, ServerException, HttpException {
+  ) throws ApiException, ServerException, HttpException {
     Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
     String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
@@ -30,7 +30,7 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ContactHubException(response.getStatus(),
+        throw new ApiException(response.getStatus(),
                                       response.getBody().toString());
       }
 
@@ -41,7 +41,7 @@ public class Request {
   }
 
   public static String doGet(Auth auth, String endpoint)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return doGet(auth, endpoint, Collections.emptyMap());
   }
 
@@ -49,7 +49,7 @@ public class Request {
    * Sends a generic POST request and returns the response String.
    */
   public static String doPost(Auth auth, String endpoint, String payload)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -61,7 +61,7 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ContactHubException(response.getStatus(),
+        throw new ApiException(response.getStatus(),
                                       response.getBody().toString());
       }
 
@@ -75,7 +75,7 @@ public class Request {
    * Sends a generic DELETE request and returns true if successful.
    */
   public static String doDelete(Auth auth, String endpoint)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -83,7 +83,7 @@ public class Request {
       HttpResponse<String> response = Unirest.delete(url).asString();
 
       if (response.getStatus() >= 400) {
-        throw new ContactHubException(response.getStatus(),
+        throw new ApiException(response.getStatus(),
                                       response.getBody().toString());
       }
 
@@ -97,7 +97,7 @@ public class Request {
    * Sends a generic PUT request and returns the response String.
    */
   public static String doPut(Auth auth, String endpoint, String payload)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -109,7 +109,7 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ContactHubException(response.getStatus(),
+        throw new ApiException(response.getStatus(),
                                       response.getBody().toString());
       }
 
@@ -123,7 +123,7 @@ public class Request {
    * Sends a generic PATCH request and returns the response String.
    */
   public static String doPatch(Auth auth, String endpoint, String payload)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
@@ -135,7 +135,7 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ContactHubException(response.getStatus(),
+        throw new ApiException(response.getStatus(),
                                       response.getBody().toString());
       }
 

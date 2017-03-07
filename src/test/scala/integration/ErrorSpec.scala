@@ -47,8 +47,8 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("I request a resource")
       def request = ch.getCustomers()
 
-      Then("a ContactHubException is thrown")
-      val e = the [ContactHubException] thrownBy request
+      Then("an ApiException is thrown")
+      val e = the [ApiException] thrownBy request
       And("the exception statusCode is 401")
       e.getStatusCode shouldBe 401
       And("the exception errorMessage should be the one sent by the API")
@@ -64,8 +64,8 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("I try to retrieve the Customer by id")
       def getCustomer = ch.getCustomer(customerId)
 
-      Then("a ContactHubException is thrown")
-      val e = the [ContactHubException] thrownBy getCustomer
+      Then("an ApiException is thrown")
+      val e = the [ApiException] thrownBy getCustomer
       And("The exception statusCode is 404")
       e.getStatusCode shouldBe 404
     }
@@ -79,8 +79,8 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("I try to add the Customer")
       def addCustomer = ch.addCustomer(customer)
 
-      Then("a ContactHubException is thrown")
-      val e = the [ContactHubException] thrownBy addCustomer
+      Then("an ApiException is thrown")
+      val e = the [ApiException] thrownBy addCustomer
       And("The exception statusCode is 400")
       e.getStatusCode shouldBe 400
     }
@@ -118,7 +118,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("I request a resource")
       def request = ch.getCustomers()
 
-      Then("a ContactHubException is thrown")
+      Then("an ApiException is thrown")
       val e = the [ServerException] thrownBy request
       And("the exception statusCode is 500")
       e.getStatusCode shouldBe 500
@@ -137,7 +137,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("I request a resource")
       def request = ch.getCustomers()
 
-      Then("a ContactHubException is thrown")
+      Then("an ApiException is thrown")
       val e = the [ServerException] thrownBy request
       And("the exception statusCode is 404")
       e.getStatusCode shouldBe 404

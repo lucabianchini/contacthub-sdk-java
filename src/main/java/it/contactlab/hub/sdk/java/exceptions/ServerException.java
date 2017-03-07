@@ -1,6 +1,6 @@
 package it.contactlab.hub.sdk.java.exceptions;
 
-public class ServerException extends BaseException {
+public class ServerException extends ContactHubException {
 
   private final int statusCode;
   private final String responseBody;
