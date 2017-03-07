@@ -42,6 +42,14 @@ public class Auth {
       String nodeId,
       String apiUrl
   ) {
+    if (token == null || token == ""
+        || workspaceId == null || workspaceId == ""
+        || nodeId == null || nodeId == ""
+        || apiUrl == null || apiUrl == ""
+    ) {
+      throw new IllegalArgumentException("Auth params cannot be null or empty");
+    }
+
     this.token = token;
     this.workspaceId = workspaceId;
     this.nodeId = nodeId;

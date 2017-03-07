@@ -20,7 +20,22 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
   val ch = new ContactHub(auth)
 
   feature("Authentication errors") {
-    scenario("invalid auth") {
+    scenario("Empty auth token") {
+      Given("I try to use an empty string as a token")
+      val emptyToken = ""
+
+      When("I create the Auth instance")
+      def auth = new Auth(
+        emptyToken,
+        sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+        sys.env("CONTACTHUB_TEST_NODE_ID")
+      )
+
+      Then("IllegalArgumentException is thrown immediately")
+      an [IllegalArgumentException] should be thrownBy auth
+    }
+
+    scenario("Invalid token") {
       Given("I authenticate with an invalid token")
       val auth = new Auth(
         "f4k3-t0k3n",
