@@ -1,12 +1,14 @@
 package it.contactlab.hub.sdk.java.http;
 
 import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
+import it.contactlab.hub.sdk.java.exceptions.ServerException;
+import it.contactlab.hub.sdk.java.models.ApiErrorResponse;
 
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import org.json.JSONObject;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,145 +17,137 @@ import java.util.Map;
 public class Request {
 
   /**
-   * Sends a generic GET request and returns the response JsonObject.
+   * Sends a generic GET request and returns the response String.
    */
-  public static JSONObject doGet(
+  public static String doGet(
       Auth auth, String endpoint, Map<String, Object> queryString
-  ) throws HttpException {
-    try {
-      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
-      String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
+  ) throws ApiException, ServerException, HttpException {
+    Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
+    String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest.get(url)
-                                               .queryString(queryString)
-                                               .asJson();
+    try {
+      HttpResponse<String> response = Unirest.get(url)
+          .queryString(queryString)
+          .asString();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
-      return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+      return response.getBody().toString();
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
-  public static JSONObject doGet(Auth auth, String endpoint)
-      throws HttpException {
+  public static String doGet(Auth auth, String endpoint)
+      throws ApiException, ServerException, HttpException {
     return doGet(auth, endpoint, Collections.emptyMap());
   }
 
   /**
-   * Sends a generic POST request and returns the response JsonObject.
+   * Sends a generic POST request and returns the response String.
    */
-  public static JSONObject doPost(Auth auth, String endpoint, String payload)
-      throws HttpException {
+  public static String doPost(Auth auth, String endpoint, String payload)
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest
+      HttpResponse<String> response = Unirest
           .post(url)
           .header("Content-Type", "application/json")
           .body(payload)
-          .asJson();
+          .asString();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
-      return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+      return response.getBody().toString();
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
   /**
    * Sends a generic DELETE request and returns true if successful.
    */
-  public static JSONObject doDelete(Auth auth, String endpoint) throws HttpException {
+  public static String doDelete(Auth auth, String endpoint)
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest.delete(url).asJson();
+      HttpResponse<String> response = Unirest.delete(url).asString();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
-      return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+      return response.getBody().toString();
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
   /**
-   * Sends a generic PUT request and returns the response JsonObject.
+   * Sends a generic PUT request and returns the response String.
    */
-  public static JSONObject doPut(Auth auth, String endpoint, String payload) throws HttpException {
+  public static String doPut(Auth auth, String endpoint, String payload)
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest
+      HttpResponse<String> response = Unirest
           .put(url)
           .header("Content-Type", "application/json")
           .body(payload)
-          .asJson();
+          .asString();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
-      return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+      return response.getBody().toString();
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 
   /**
-   * Sends a generic PATCH request and returns the response JsonObject.
+   * Sends a generic PATCH request and returns the response String.
    */
-  public static JSONObject doPatch(Auth auth, String endpoint, String payload)
-      throws HttpException {
+  public static String doPatch(Auth auth, String endpoint, String payload)
+      throws ApiException, ServerException, HttpException {
     try {
       Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<JsonNode> response = Unirest
+      HttpResponse<String> response = Unirest
           .patch(url)
           .header("Content-Type", "application/json")
           .body(payload)
-          .asJson();
+          .asString();
 
       if (response.getStatus() >= 400) {
-        throw new HttpException(response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
-      return response.getBody().getObject();
-    } catch (HttpException httpException) {
-      throw httpException;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-
-      return null;
+      return response.getBody().toString();
+    } catch (UnirestException ex) {
+      throw new HttpException(ex);
     }
   }
 

@@ -1,17 +1,19 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
+import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +29,12 @@ public class CustomerApi {
    * @param id   The Customer id.
    * @return     A Customer object.
    */
-  public static Customer get(Auth auth, String id) throws HttpException {
+  public static Customer get(Auth auth, String id)
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + id;
-    JSONObject response = Request.doGet(auth, endpoint);
+    String response = Request.doGet(auth, endpoint);
 
-    return gson.fromJson(response.toString(), Customer.class);
+    return gson.fromJson(response, Customer.class);
   }
 
   /**
@@ -40,7 +43,8 @@ public class CustomerApi {
    * @param auth A ContactHub Auth object.
    * @return     A List of Customer objects.
    */
-  public static List<Customer> get(Auth auth) throws HttpException {
+  public static List<Customer> get(Auth auth)
+      throws ApiException, ServerException, HttpException {
     return get(auth, GetCustomersOptions.builder().build());
   }
 
@@ -52,7 +56,7 @@ public class CustomerApi {
    * @return           A list of matching Customer objects.
    */
   public static List<Customer> get(Auth auth, GetCustomersOptions options)
-      throws HttpException {
+      throws ApiException, ServerException, HttpException {
     Map<String, Object> queryString = new HashMap<>();
 
     final String endpoint = "/customers";
@@ -72,16 +76,13 @@ public class CustomerApi {
           sortField + options.direction().map(dir -> "," + dir).orElse(""));
     });
 
-    JSONObject response = Request.doGet(auth, endpoint, queryString);
+    String response = Request.doGet(auth, endpoint, queryString);
 
-    Type collectionType = new TypeToken<List<Customer>>(){}.getType();
+    JsonParser parser = new JsonParser();
+    JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
+    Customer[] customers = gson.fromJson(jsonResponse.get("elements"), Customer[].class);
 
-    List<Customer> customers = gson.fromJson(response
-        .getJSONArray("elements")
-        .toString(),
-        collectionType);
-
-    return customers;
+    return Arrays.asList(customers);
   }
 
   /**
@@ -91,13 +92,14 @@ public class CustomerApi {
    * @param customer The Customer object.
    * @return         The stored Customer object, including its id.
    */
-  public static Customer add(Auth auth, Customer customer) throws HttpException {
+  public static Customer add(Auth auth, Customer customer)
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers";
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
-    JSONObject response = Request.doPost(auth, endpoint, payload);
+    String response = Request.doPost(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Customer.class);
+    return gson.fromJson(response, Customer.class);
   }
 
   /**
@@ -107,9 +109,10 @@ public class CustomerApi {
    * @param customerId The id of the Customer to delete.
    * @return           True if the deletion was successful
    */
-  public static boolean delete(Auth auth, String customerId) throws HttpException {
+  public static boolean delete(Auth auth, String customerId)
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
-    JSONObject response = Request.doDelete(auth, endpoint);
+    String response = Request.doDelete(auth, endpoint);
 
     return true;
   }
@@ -121,11 +124,12 @@ public class CustomerApi {
    * @param customer The Customer object.
    * @return         The updated Customer object
    */
-  public static Customer update(Auth auth, Customer customer) throws HttpException {
+  public static Customer update(Auth auth, Customer customer)
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customer.id().get();
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
-    JSONObject response = Request.doPut(auth, endpoint, payload);
+    String response = Request.doPut(auth, endpoint, payload);
 
     return gson.fromJson(response.toString(), Customer.class);
   }
@@ -139,12 +143,12 @@ public class CustomerApi {
    * @return              The updated Customer object
    */
   public static Customer patch(Auth auth, String customerId, Customer patchCustomer)
-      throws HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
     String payload = gson.toJson(patchCustomer);
-    JSONObject response = Request.doPatch(auth, endpoint, payload);
+    String response = Request.doPatch(auth, endpoint, payload);
 
-    return gson.fromJson(response.toString(), Customer.class);
+    return gson.fromJson(response, Customer.class);
   }
 
 }

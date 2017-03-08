@@ -42,6 +42,19 @@ public class Auth {
       String nodeId,
       String apiUrl
   ) {
+    if (token == null || token.trim().equals("")) {
+      throw new IllegalArgumentException("token cannot be null or empty");
+    }
+    if (workspaceId == null || workspaceId.trim().equals("")) {
+      throw new IllegalArgumentException("workspaceId cannot be null or empty");
+    }
+    if (nodeId == null || nodeId.trim().equals("")) {
+      throw new IllegalArgumentException("nodeId cannot be null or empty");
+    }
+    if (apiUrl == null || apiUrl.trim().equals("")) {
+      throw new IllegalArgumentException("apiUrl cannot be null or empty");
+    }
+
     this.token = token;
     this.workspaceId = workspaceId;
     this.nodeId = nodeId;
