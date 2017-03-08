@@ -52,7 +52,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       And("the exception statusCode is 401")
       e.getStatusCode shouldBe 401
       And("the exception errorMessage should be the one sent by the API")
-      e.getErrorMessage shouldBe "The client is not authorized to access the API"
+      e.getApiErrorResponse.message shouldBe "The client is not authorized to access the API"
     }
   }
 

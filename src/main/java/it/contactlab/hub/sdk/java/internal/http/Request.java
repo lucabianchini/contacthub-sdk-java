@@ -4,6 +4,7 @@ import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
+import it.contactlab.hub.sdk.java.models.ApiErrorResponse;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -30,8 +31,9 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ApiException(response.getStatus(),
-                                      response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
       return response.getBody().toString();
@@ -61,8 +63,9 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ApiException(response.getStatus(),
-                                      response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
       return response.getBody().toString();
@@ -83,8 +86,9 @@ public class Request {
       HttpResponse<String> response = Unirest.delete(url).asString();
 
       if (response.getStatus() >= 400) {
-        throw new ApiException(response.getStatus(),
-                                      response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
       return response.getBody().toString();
@@ -109,8 +113,9 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ApiException(response.getStatus(),
-                                      response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
       return response.getBody().toString();
@@ -135,8 +140,9 @@ public class Request {
           .asString();
 
       if (response.getStatus() >= 400) {
-        throw new ApiException(response.getStatus(),
-                                      response.getBody().toString());
+        ApiErrorResponse error = ApiException.parseApiErrorResponse(
+            response.getStatus(), response.getBody());
+        throw new ApiException(response.getStatus(), error);
       }
 
       return response.getBody().toString();
