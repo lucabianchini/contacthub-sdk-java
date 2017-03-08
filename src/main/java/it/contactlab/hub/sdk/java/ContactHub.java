@@ -17,8 +17,7 @@ import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
-
-import java.util.List;
+import it.contactlab.hub.sdk.java.models.Paginated;
 
 /**
  * ContactHub Java SDK (Sync version).
@@ -60,9 +59,9 @@ public class ContactHub {
   /**
    * Retrieve all the Customers of a Node.
    *
-   * @return     A List of {@link Customer} objects.
+   * @return     A {@link Paginated} List of {@link Customer} objects.
    */
-  public List<Customer> getCustomers()
+  public Paginated<Customer> getCustomers()
       throws ContactHubException, ServerException, HttpException {
     return CustomerApi.get(this.auth);
   }
@@ -71,9 +70,9 @@ public class ContactHub {
    * Retrieve all the Customers of a Node, filtered and ordered with 'options'
    *
    * @param options An instance of {@link GetCustomersOptions}.
-   * @return        A List of {@link Customer} objects.
+   * @return        A {@link Paginated} List of {@link Customer} objects.
    */
-  public List<Customer> getCustomers(GetCustomersOptions options)
+  public Paginated<Customer> getCustomers(GetCustomersOptions options)
       throws ContactHubException, ServerException, HttpException {
     return CustomerApi.get(this.auth, options);
   }
@@ -82,9 +81,9 @@ public class ContactHub {
    * Retrieves Customers by external id.
    *
    * @param externalId A Customer external id.
-   * @return           A List of {@link Customer} objects.
+   * @return           A {@link Paginated} List of {@link Customer} objects.
    */
-  public List<Customer> getCustomerByExternalId(String externalId)
+  public Paginated<Customer> getCustomerByExternalId(String externalId)
       throws ContactHubException, ServerException, HttpException {
     GetCustomersOptions options = GetCustomersOptions.builder()
                                   .externalId(externalId).build();
@@ -320,9 +319,9 @@ public class ContactHub {
    * Retrieves all the Events for a Customer.
    *
    * @param customerId The id of a Customer with some Events.
-   * @return A {@link List} of {@link Event} objects.
+   * @return A {@link Paginated} List of {@link Event} objects.
    */
-  public List<Event> getEvents(String customerId)
+  public Paginated<Event> getEvents(String customerId)
       throws ContactHubException, ServerException, HttpException {
     return EventApi.getByCustomer(this.auth, customerId);
   }
@@ -332,9 +331,9 @@ public class ContactHub {
    *
    * @param customerId The id of a Customer with some Events.
    * @param filters    An instance of {@link EventFilters}.
-   * @return A {@link List} of {@link Event} objects.
+   * @return A {@link Paginated} List of {@link Event} objects.
    */
-  public List<Event> getEvents(String customerId, EventFilters filters)
+  public Paginated<Event> getEvents(String customerId, EventFilters filters)
       throws ContactHubException, ServerException, HttpException {
     return EventApi.getByCustomer(this.auth, customerId, filters);
   }

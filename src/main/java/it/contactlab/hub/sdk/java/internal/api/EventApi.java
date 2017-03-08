@@ -8,18 +8,19 @@ import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Event;
 import it.contactlab.hub.sdk.java.models.EventFilters;
+import it.contactlab.hub.sdk.java.models.Paginated;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
-import java.util.Arrays;
+import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class EventApi {
@@ -92,7 +93,7 @@ public class EventApi {
   /**
    * Retrieves all Events for a Customer.
    */
-  public static List<Event> getByCustomer(Auth auth, String customerId)
+  public static Paginated<Event> getByCustomer(Auth auth, String customerId)
       throws ContactHubException, ServerException, HttpException {
     return getByCustomer(auth, customerId, EventFilters.builder().build());
   }
@@ -100,7 +101,7 @@ public class EventApi {
   /**
    * Retrieves all Events for a Customer, with filters.
    */
-  public static List<Event> getByCustomer(
+  public static Paginated<Event> getByCustomer(
       Auth auth, String customerId, EventFilters filters
   ) throws ContactHubException, ServerException, HttpException {
     final String endpoint = "/events";
@@ -121,11 +122,8 @@ public class EventApi {
 
     String response = Request.doGet(auth, endpoint, queryString);
 
-    JsonParser parser = new JsonParser();
-    JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
-    Event[] events = gson.fromJson(jsonResponse.get("elements"), Event[].class);
-
-    return Arrays.asList(events);
+    Type paginatedEventType = new TypeToken<Paginated<Event>>(){}.getType();
+    return gson.fromJson(response, paginatedEventType);
   }
 
 }

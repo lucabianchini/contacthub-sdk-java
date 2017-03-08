@@ -3,8 +3,8 @@ package it.contactlab.hub.sdk.java;
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.internal.api.CustomerApi;
 import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.Paginated;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
@@ -39,9 +39,9 @@ public class AsyncContactHub {
   /**
    * Retrieve all the Customers of a Node.
    *
-   * @return   A {@link CompletionStage} of a List of {@link Customer} objects.
+   * @return   A {@link Paginated} List of {@link Customer} objects.
    */
-  public CompletionStage<List<Customer>> getCustomers() {
+  public CompletionStage<Paginated<Customer>> getCustomers() {
     return wrapAsync(() -> CustomerApi.get(this.auth));
   }
 

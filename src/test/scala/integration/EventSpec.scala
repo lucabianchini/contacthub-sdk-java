@@ -128,7 +128,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       val cid = customerId
 
       When("the user retrieves the events for that customer")
-      val events = ch.getEvents(cid)
+      val events = ch.getEvents(cid).elements
 
       Then("a List of Events with that customerId should be returned")
       events.length should be > 0
@@ -144,7 +144,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       val filters = EventFilters.builder.`type`(eventType).build
 
       When("the user retrieves the events for that customer")
-      val events = ch.getEvents(cid, filters)
+      val events = ch.getEvents(cid, filters).elements
 
       Then("a List of Events with that type should be returned")
       events.length should be > 0
@@ -160,7 +160,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       val filters = EventFilters.builder.context(context).build
 
       When("the user retrieves the events for that customer")
-      val events = ch.getEvents(cid, filters)
+      val events = ch.getEvents(cid, filters).elements
 
       Then("a List of Events with that customerId should be returned")
       events.length should be > 0
@@ -176,7 +176,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       val filters = EventFilters.builder.mode(mode).build
 
       When("the user retrieves the events for that customer")
-      val events = ch.getEvents(cid, filters)
+      val events = ch.getEvents(cid, filters).elements
 
       Then("no events should be returned (no passive events in the test db)")
       events.length should be (0)
@@ -192,7 +192,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       val filters = EventFilters.builder.dateFrom(dateFrom).dateTo(dateTo).build
 
       When("the user retrieves the events for that customer")
-      val events = ch.getEvents(cid, filters)
+      val events = ch.getEvents(cid, filters).elements
 
       Then("a List of Events in that date range should be returned")
       events.length should be > 0
@@ -215,7 +215,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
                                 .build
 
       When("the user retrieves the events for that customer")
-      val events = ch.getEvents(cid, filters)
+      val events = ch.getEvents(cid, filters).elements
 
       Then("a List of Events with that customerId should be returned")
       events.length should be > 0
