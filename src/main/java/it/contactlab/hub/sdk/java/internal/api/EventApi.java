@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class EventApi {
 
@@ -110,6 +111,7 @@ public class EventApi {
 
     queryString.put("customerId", customerId);
 
+    filters.page().ifPresent(page -> queryString.put("page", page.toString()));
     filters.type().ifPresent(type -> queryString.put("type", type.toString()));
     filters.context().ifPresent(context -> queryString.put("context", context.toString()));
     filters.mode().ifPresent(mode -> queryString.put("mode", mode.toString()));
@@ -123,7 +125,17 @@ public class EventApi {
     String response = Request.doGet(auth, endpoint, queryString);
 
     Type paginatedEventType = new TypeToken<Paginated<Event>>(){}.getType();
-    return gson.fromJson(response, paginatedEventType);
+    Paginated<Event> paginatedEvents = gson.fromJson(response, paginatedEventType);
+
+    Function<Integer, Paginated<Event>> requestFunction = (Integer pageNumber) -> {
+      try {
+        return getByCustomer(auth, customerId, filters.withPage(pageNumber));
+      } catch (ContactHubException exception) {
+        throw new RuntimeException(exception);
+      }
+    };
+
+    return paginatedEvents.withRequestFunction(requestFunction);
   }
 
 }

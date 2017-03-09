@@ -6,12 +6,12 @@ import org.immutables.value.Value;
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractPage {
 
-  public abstract int number();
+  public abstract Integer number();
 
-  public abstract int size();
+  public abstract Integer size();
 
-  public abstract int totalElements();
+  public abstract Integer totalElements();
 
-  public abstract int totalPages();
+  public abstract Integer totalPages();
 
 }

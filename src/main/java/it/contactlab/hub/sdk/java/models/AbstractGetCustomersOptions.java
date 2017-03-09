@@ -19,4 +19,6 @@ public abstract class AbstractGetCustomersOptions {
   public abstract Optional<String> sort();
 
   public abstract Optional<String> direction();
+
+  public abstract Optional<Integer> page();
 }

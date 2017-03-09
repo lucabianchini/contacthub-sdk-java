@@ -2,6 +2,7 @@ package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
+import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
@@ -18,6 +19,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class CustomerApi {
 
@@ -64,6 +67,8 @@ public class CustomerApi {
 
     queryString.put("nodeId", auth.nodeId);
 
+    options.page().ifPresent(page -> queryString.put("page", page));
+
     options.externalId().ifPresent(id -> queryString.put("externalId", id));
 
     if (!options.fields().isEmpty()) {
@@ -80,7 +85,17 @@ public class CustomerApi {
     String response = Request.doGet(auth, endpoint, queryString);
 
     Type paginatedCustomerType = new TypeToken<Paginated<Customer>>(){}.getType();
-    return gson.fromJson(response, paginatedCustomerType);
+    Paginated<Customer> paginatedCustomers = gson.fromJson(response, paginatedCustomerType);
+
+    Function<Integer, Paginated<Customer>> requestFunction = (Integer pageNumber) -> {
+      try {
+        return get(auth, options.withPage(pageNumber));
+      } catch (ContactHubException exception) {
+        throw new RuntimeException(exception);
+      }
+    };
+
+    return paginatedCustomers.withRequestFunction(requestFunction);
   }
 
   /**
