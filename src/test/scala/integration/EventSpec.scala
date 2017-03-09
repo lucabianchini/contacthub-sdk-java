@@ -27,8 +27,11 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
   )
 
   val ch = new ContactHub(auth)
-  val customerId = "2fc11014-7610-4db5-8f73-57ea9ea3be4e"
-  val existingId = "539e6653-39cd-4315-905f-0b7cb1e71cd8"
+
+  // FIXME: Given it takes about 30 seconds for new events to be indexed, we
+  // rely on some existing events that were added manually to the test workspace
+  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
+  val eventId = "ee542c93-bec1-476d-bdbf-a417f342438c"
 
   feature("adding a new event") {
     scenario("adding a simple event", Integration) {
@@ -103,7 +106,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
   feature("retrieving events") {
     scenario("retrieve an event by id", Integration) {
       Given("an existing event id")
-      val id = existingId
+      val id = eventId
 
       When("the user asks for that event")
       val event = ch.getEvent(id)
@@ -117,7 +120,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       event.properties.get("title") should be("The Title")
       event.contextInfo.get("client").asInstanceOf[java.util.Map[String,Object]]
         .get("userAgent") should be ("testUserAgent")
-      event.registeredAt.get shouldBe (OffsetDateTime.parse("2016-12-29T14:36:49.355Z"))
+      event.registeredAt.get shouldBe (OffsetDateTime.parse("2017-03-09T10:34:03.547Z"))
     }
 
     scenario("retrieve all events for a customer", Integration) {

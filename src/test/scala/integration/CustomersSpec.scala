@@ -26,8 +26,8 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
   )
 
   val ch = new ContactHub(auth)
-  val customerId = "c841ab14-b8a2-45d3-88b8-02210e2a9ebe"
-  val extIdSingle = "db55ec278cd6ca385c6d6a1ae49987c2"
+  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
+  val extIdSingle = "test-extIdSingle"
   val extIdMultiple = "multipleExternalIdTest"
 
   feature("retrieving customers") {
@@ -289,7 +289,11 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
               .build))
           .mobileDevices(Seq(
             MobileDevice.builder
-              .`type`(MobileDeviceType.IOS).name("iPhone").identifier("1234")
+              .`type`(MobileDeviceType.IOS)
+              .notificationService(MobileDeviceNotificationService.APN)
+              .name("iPhone")
+              .identifier("1234")
+              .appId("some-app-id")
               .build))
           .build)
         .address(Address.builder

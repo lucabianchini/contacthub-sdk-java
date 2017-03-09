@@ -45,7 +45,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       val ch = new ContactHub(auth)
 
       When("I request a resource")
-      def request = ch.getCustomers()
+      def request = ch.getCustomers
 
       Then("an ApiException is thrown")
       val e = the [ApiException] thrownBy request
@@ -98,11 +98,10 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       val ch = new ContactHub(auth)
 
       When("I request a resource")
-      def request = ch.getCustomers()
+      def request = ch.getCustomers
 
       Then("an HttpException is thrown")
       val e = the [HttpException] thrownBy request
-      println(e.getMessage)
     }
 
     scenario("50x error") {
@@ -116,7 +115,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       val ch = new ContactHub(auth)
 
       When("I request a resource")
-      def request = ch.getCustomers()
+      def request = ch.getCustomers
 
       Then("an ApiException is thrown")
       val e = the [ServerException] thrownBy request
@@ -135,7 +134,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       val ch = new ContactHub(auth)
 
       When("I request a resource")
-      def request = ch.getCustomers()
+      def request = ch.getCustomers
 
       Then("an ApiException is thrown")
       val e = the [ServerException] thrownBy request

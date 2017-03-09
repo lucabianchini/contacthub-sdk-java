@@ -5,8 +5,6 @@ import it.contactlab.hub.sdk.java.Auth
 import it.contactlab.hub.sdk.java.models._
 import it.contactlab.hub.sdk.java.exceptions._
 
-import org.scalacheck.Gen
-
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
@@ -21,9 +19,10 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
     sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
     sys.env("CONTACTHUB_TEST_NODE_ID")
   );
-
   val ch = new ContactHub(auth)
-  val customerId = "4012e67d-72fd-4f84-9039-71cbc5b80078"
+
+  val customer = genCustomer.sample.get
+  val customerId = ch.addCustomer(customer).id.get
 
   before {
     ch.patchCustomer(customerId, Customer.builder

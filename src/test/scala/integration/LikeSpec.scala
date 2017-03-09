@@ -12,7 +12,8 @@ import org.scalatest.BeforeAndAfter
 
 import scala.collection.JavaConversions._
 
-class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
+class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with
+    DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -21,7 +22,9 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
   );
 
   val ch = new ContactHub(auth)
-  val customerId = "052d669e-c3bc-429e-a1ce-dc50908ea078"
+
+  val customer = genCustomer.sample.get
+  val customerId = ch.addCustomer(customer).id.get
 
   val like1 = Like.builder.id("like1").name("foo").build
   val like2 = Like.builder.id("like2").name("bar").build

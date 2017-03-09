@@ -22,11 +22,12 @@ public class Request {
   public static String doGet(
       Auth auth, String endpoint, Map<String, Object> queryString
   ) throws ApiException, ServerException, HttpException {
-    Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
     String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
     try {
-      HttpResponse<String> response = Unirest.get(url)
+      HttpResponse<String> response = Unirest
+          .get(url)
+          .header("Authorization", "Bearer " + auth.token)
           .queryString(queryString)
           .asString();
 
@@ -53,11 +54,11 @@ public class Request {
   public static String doPost(Auth auth, String endpoint, String payload)
       throws ApiException, ServerException, HttpException {
     try {
-      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<String> response = Unirest
           .post(url)
+          .header("Authorization", "Bearer " + auth.token)
           .header("Content-Type", "application/json")
           .body(payload)
           .asString();
@@ -80,10 +81,12 @@ public class Request {
   public static String doDelete(Auth auth, String endpoint)
       throws ApiException, ServerException, HttpException {
     try {
-      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
-      HttpResponse<String> response = Unirest.delete(url).asString();
+      HttpResponse<String> response = Unirest
+          .delete(url)
+          .header("Authorization", "Bearer " + auth.token)
+          .asString();
 
       if (response.getStatus() >= 400) {
         ApiErrorResponse error = ApiException.parseApiErrorResponse(
@@ -103,11 +106,11 @@ public class Request {
   public static String doPut(Auth auth, String endpoint, String payload)
       throws ApiException, ServerException, HttpException {
     try {
-      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<String> response = Unirest
           .put(url)
+          .header("Authorization", "Bearer " + auth.token)
           .header("Content-Type", "application/json")
           .body(payload)
           .asString();
@@ -130,11 +133,11 @@ public class Request {
   public static String doPatch(Auth auth, String endpoint, String payload)
       throws ApiException, ServerException, HttpException {
     try {
-      Unirest.setDefaultHeader("Authorization", "Bearer " + auth.token);
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
       HttpResponse<String> response = Unirest
           .patch(url)
+          .header("Authorization", "Bearer " + auth.token)
           .header("Content-Type", "application/json")
           .body(payload)
           .asString();

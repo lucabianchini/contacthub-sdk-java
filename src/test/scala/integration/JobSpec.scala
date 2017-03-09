@@ -12,7 +12,8 @@ import org.scalatest.BeforeAndAfter
 
 import scala.collection.JavaConversions._
 
-class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
+class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with
+    DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -21,7 +22,9 @@ class JobSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter {
   );
 
   val ch = new ContactHub(auth)
-  val customerId = "0529a1dd-1228-414c-b8a0-d62452cf0965"
+
+  val customer = genCustomer.sample.get
+  val customerId = ch.addCustomer(customer).id.get
 
   val job1 = Job.builder.id("job1").companyName("foo").build
   val job2 = Job.builder.id("job2").companyName("bar").build

@@ -21,9 +21,6 @@ import java.util.HashSet;
  */
 public class Example {
 
-  private static final String cid = "f5d3932d-6cd3-4969-ace2-9fd9c87acd13";
-  private static final String eid = "db55ec278cd6ca385c6d6a1ae49987c2";
-
   private static final String chars = "abcdefghijklmnopqrstuvwxyz";
   private static final SecureRandom rnd = new SecureRandom();
 
@@ -47,13 +44,6 @@ public class Example {
 
     final ContactHub ch = new ContactHub(auth);
 
-    System.out.println("---------------------------");
-    System.out.println("Retrieving customer's email");
-    System.out.println("---------------------------");
-    Customer customer = ch.getCustomer("f5d3932d-6cd3-4969-ace2-9fd9c87acd13");
-    System.out.println(customer.base().get().contacts().get().email().get());
-    System.out.println();
-
     System.out.println("-----------------------");
     System.out.println("Creating a new customer");
     System.out.println("-----------------------");
@@ -75,6 +65,12 @@ public class Example {
     System.out.println(newId);
     System.out.println();
 
+    System.out.println("-------------------------------");
+    System.out.println("Retrieving the customer's email");
+    System.out.println("-------------------------------");
+    Customer customer = ch.getCustomer(newId);
+    System.out.println(customer.base().get().contacts().get().email().get());
+    System.out.println();
 
     System.out.println("---------------");
     System.out.println("Adding an event");

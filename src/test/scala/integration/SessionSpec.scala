@@ -6,7 +6,7 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 
-class SessionSpec extends FeatureSpec with GivenWhenThen {
+class SessionSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -15,7 +15,9 @@ class SessionSpec extends FeatureSpec with GivenWhenThen {
   );
 
   val ch = new ContactHub(auth)
-  val customerId = "4012e67d-72fd-4f84-9039-71cbc5b80078"
+
+  val customer = genCustomer.sample.get
+  val customerId = ch.addCustomer(customer).id.get
 
   feature("sessions") {
     scenario("generating a new sessionId", Integration) {
