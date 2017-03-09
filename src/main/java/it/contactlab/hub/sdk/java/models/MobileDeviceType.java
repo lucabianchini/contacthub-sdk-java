@@ -2,6 +2,7 @@ package it.contactlab.hub.sdk.java.models;
 
 public enum MobileDeviceType {
   IOS,
-  GCM,
-  WP
+  ANDROID,
+  WINDOWS_PHONE,
+  FIREOS
 }
