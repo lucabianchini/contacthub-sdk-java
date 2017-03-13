@@ -8,19 +8,22 @@ import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Event;
 import it.contactlab.hub.sdk.java.models.EventFilters;
+import it.contactlab.hub.sdk.java.models.Paged;
+import it.contactlab.hub.sdk.java.models.Paginated;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import org.json.JSONObject;
 
-import java.util.Arrays;
+import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class EventApi {
 
@@ -92,7 +95,7 @@ public class EventApi {
   /**
    * Retrieves all Events for a Customer.
    */
-  public static List<Event> getByCustomer(Auth auth, String customerId)
+  public static Paginated<Event> getByCustomer(Auth auth, String customerId)
       throws ContactHubException, ServerException, HttpException {
     return getByCustomer(auth, customerId, EventFilters.builder().build());
   }
@@ -100,7 +103,7 @@ public class EventApi {
   /**
    * Retrieves all Events for a Customer, with filters.
    */
-  public static List<Event> getByCustomer(
+  public static Paginated<Event> getByCustomer(
       Auth auth, String customerId, EventFilters filters
   ) throws ContactHubException, ServerException, HttpException {
     final String endpoint = "/events";
@@ -109,6 +112,7 @@ public class EventApi {
 
     queryString.put("customerId", customerId);
 
+    filters.page().ifPresent(page -> queryString.put("page", page.toString()));
     filters.type().ifPresent(type -> queryString.put("type", type.toString()));
     filters.context().ifPresent(context -> queryString.put("context", context.toString()));
     filters.mode().ifPresent(mode -> queryString.put("mode", mode.toString()));
@@ -121,11 +125,18 @@ public class EventApi {
 
     String response = Request.doGet(auth, endpoint, queryString);
 
-    JsonParser parser = new JsonParser();
-    JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
-    Event[] events = gson.fromJson(jsonResponse.get("elements"), Event[].class);
+    Type pagedEventType = new TypeToken<Paged<Event>>(){}.getType();
+    Paged<Event> pagedEvents = gson.fromJson(response, pagedEventType);
 
-    return Arrays.asList(events);
+    Function<Integer, Paginated<Event>> requestFunction = (Integer pageNumber) -> {
+      try {
+        return getByCustomer(auth, customerId, filters.withPage(pageNumber));
+      } catch (ContactHubException exception) {
+        throw new RuntimeException(exception);
+      }
+    };
+
+    return new Paginated<Event>(pagedEvents, requestFunction);
   }
 
 }

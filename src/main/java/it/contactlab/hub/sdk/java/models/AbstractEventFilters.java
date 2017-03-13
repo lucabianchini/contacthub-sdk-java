@@ -9,6 +9,8 @@ import java.util.Optional;
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractEventFilters {
 
+  public abstract Optional<Integer> page();
+
   public abstract Optional<EventType> type();
 
   public abstract Optional<EventContext> context();

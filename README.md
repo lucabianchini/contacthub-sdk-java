@@ -165,6 +165,23 @@ Auth auth = new Auth(token, workspaceId, nodeId, apiUrl);
 If not specified, the SDK will use the default URL for the Contacthub API:
 https://api.contactlab.it/hub/v1
 
+## Pagination
+
+When the API returns a paginated set of results, the SDK will return an instance
+of `Paginated<T>`. This class has the following methods:
+
+* `elements()`: returns a `List<T>` containing the elements of the current page
+* `page()`: returns an instance of `Page` containing some page metadata (current
+  page number, total number of pages, etc.)
+* `nextPage()`: sends a new API request and returns a new instance of
+  `Paginated<T>` for the next page
+* `previousPage()`: sends a new API request and returns a new instance of
+  `Paginated<T>` for the previous page
+
+`nextPage()` and `previousPage` wrap the result in an `Optional`. If you try to
+call `nextPage()` when you have reached the last page, or `previousPage()` from
+the first page, you will get an empty `Optional` instance.
+
 ## Session API
 
 ### createSessionId
@@ -199,19 +216,53 @@ Customer customer = ch.getCustomer("a-valid-customer-id");
 Retrieve all the Customers in a node.
 
 ```java
-List<Customer> customers = ch.getCustomers();
+Paginated<Customer> customers = ch.getCustomers();
 ```
+
+This method returns an instance of `Paginated<T>`.
+See [Pagination](#pagination).
+
+### getCustomers with extra options
+
+```java
+Paginated<Customer> customers = ch.getCustomers(options);
+```
+
+`options` is an instance of `GetCustomersOptions`, which can contain one or more
+of the following attributes:
+
+* `externalId`: filters Customers by externalId
+* `fields`: a whitelist of Customer properties you are interested in
+* `query`: a `JsonObject` representing a custom query
+* `sort`: the field to order the results by
+* `direction`: the order of the sorting (`asc` or `desc`)
+* `page`: the page to retrieve (defaults to `0`)
+
+This method returns an instance of `Paginated<T>`.
+See [Pagination](#pagination).
 
 ### getCustomerByExternalId
 
 Retrieve all the Customers matching a specific external ID.
 
 ```java
-List<Customer> customers = ch.getCustomerByExternalId("an-external-id");
+Paginated<Customer> customers = ch.getCustomerByExternalId("an-external-id");
+```
+
+This method will return the same result you would get from this more verbose
+request:
+
+```java
+Paginated<Customer> customers = ch.getCustomers(
+    GetCustomersOptions.builder().externalId("an-external-id").build()
+)
 ```
 
 Please note you can have more than one customer with the same external ID,
 unless you include "external ID" in the "matching policies" for your workspace.
+
+This method returns an instance of `Paginated<T>`.
+See [Pagination](#pagination).
 
 ### addCustomer
 
@@ -411,8 +462,11 @@ Event event = ch.getEvent("a-valid-event-id");
 Retrieve all the events for a customer.
 
 ```java
-List<Event> events = ch.getEvents(customerId);
+Paginated<Event> events = ch.getEvents(customerId);
 ```
+
+This method returns an instance of `Paginated<T>`.
+See [Pagination](#pagination).
 
 ### addEvent
 

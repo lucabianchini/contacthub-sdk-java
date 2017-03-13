@@ -35,7 +35,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Given("a node")
 
       When("the user asks for the first page of customers")
-      val customers = ch.getCustomers
+      val customers = ch.getCustomers.elements
 
       Then("all 10 users should be retrieved")
       customers shouldNot be (null)
@@ -64,7 +64,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Given("a node")
 
       When("the user asks for a customer matching an external id")
-      val customers = ch.getCustomerByExternalId(extIdSingle)
+      val customers = ch.getCustomerByExternalId(extIdSingle).elements
 
       Then("the expected user should be retrieved")
       customers should have length 1
@@ -75,7 +75,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Given("a node")
 
       When("the user asks for multiple customers matching an external id")
-      val customers = ch.getCustomerByExternalId(extIdMultiple)
+      val customers = ch.getCustomerByExternalId(extIdMultiple).elements
 
       Then("the expected users should be retrieved")
       customers should have length 2
@@ -86,7 +86,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
     scenario("retrieving a non-existing customer by external id", Integration) {
       Given("a node")
       When("the user asks for a user that doesn't exist")
-      val customers = ch.getCustomerByExternalId("not-existing")
+      val customers = ch.getCustomerByExternalId("not-existing").elements
 
       Then("an empty list should be returned")
       customers should have length 0
@@ -114,7 +114,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
                     .build
 
       When("the user retrieves a list of customers")
-      val customers = ch.getCustomers(options)
+      val customers = ch.getCustomers(options).elements
 
       Then("the returned objects should not include other fields")
       customers.head.base.get.lastName.isPresent shouldBe false
@@ -141,7 +141,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       val options = GetCustomersOptions.builder.query(query).build
 
       When("the user retrieves a list of customers")
-      val customers = ch.getCustomers(options)
+      val customers = ch.getCustomers(options).elements
 
       Then("the returned objects should not include other fields")
       customers.head.base.get.firstName.get shouldBe "Mario"

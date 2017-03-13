@@ -2,21 +2,26 @@ package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
+import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
+import it.contactlab.hub.sdk.java.models.Paged;
+import it.contactlab.hub.sdk.java.models.Paginated;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
-import java.util.Arrays;
+import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class CustomerApi {
 
@@ -41,9 +46,9 @@ public class CustomerApi {
    * Retrieves all the Customers for a Node.
    *
    * @param auth A ContactHub Auth object.
-   * @return     A List of Customer objects.
+   * @return     A {@link Paginated} list of Customer objects.
    */
-  public static List<Customer> get(Auth auth)
+  public static Paginated<Customer> get(Auth auth)
       throws ApiException, ServerException, HttpException {
     return get(auth, GetCustomersOptions.builder().build());
   }
@@ -53,15 +58,17 @@ public class CustomerApi {
    *
    * @param auth       A ContactHub Auth object.
    * @param options    An instance of {@link GetCustomersOptions}.
-   * @return           A list of matching Customer objects.
+   * @return           A {@link Paginated} list of matching Customer objects.
    */
-  public static List<Customer> get(Auth auth, GetCustomersOptions options)
+  public static Paginated<Customer> get(Auth auth, GetCustomersOptions options)
       throws ApiException, ServerException, HttpException {
     Map<String, Object> queryString = new HashMap<>();
 
     final String endpoint = "/customers";
 
     queryString.put("nodeId", auth.nodeId);
+
+    options.page().ifPresent(page -> queryString.put("page", page));
 
     options.externalId().ifPresent(id -> queryString.put("externalId", id));
 
@@ -78,11 +85,18 @@ public class CustomerApi {
 
     String response = Request.doGet(auth, endpoint, queryString);
 
-    JsonParser parser = new JsonParser();
-    JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
-    Customer[] customers = gson.fromJson(jsonResponse.get("elements"), Customer[].class);
+    Type paginatedCustomerType = new TypeToken<Paged<Customer>>(){}.getType();
+    Paged<Customer> pagedCustomers = gson.fromJson(response, paginatedCustomerType);
 
-    return Arrays.asList(customers);
+    Function<Integer, Paginated<Customer>> requestFunction = (Integer pageNumber) -> {
+      try {
+        return get(auth, options.withPage(pageNumber));
+      } catch (ContactHubException exception) {
+        throw new RuntimeException(exception);
+      }
+    };
+
+    return new Paginated<Customer>(pagedCustomers, requestFunction);
   }
 
   /**
