@@ -9,6 +9,7 @@ import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
+import it.contactlab.hub.sdk.java.models.Paged;
 import it.contactlab.hub.sdk.java.models.Paginated;
 
 import com.google.gson.Gson;
@@ -84,8 +85,8 @@ public class CustomerApi {
 
     String response = Request.doGet(auth, endpoint, queryString);
 
-    Type paginatedCustomerType = new TypeToken<Paginated<Customer>>(){}.getType();
-    Paginated<Customer> paginatedCustomers = gson.fromJson(response, paginatedCustomerType);
+    Type paginatedCustomerType = new TypeToken<Paged<Customer>>(){}.getType();
+    Paged<Customer> pagedCustomers = gson.fromJson(response, paginatedCustomerType);
 
     Function<Integer, Paginated<Customer>> requestFunction = (Integer pageNumber) -> {
       try {
@@ -95,7 +96,7 @@ public class CustomerApi {
       }
     };
 
-    return paginatedCustomers.withRequestFunction(requestFunction);
+    return new Paginated<Customer>(pagedCustomers, requestFunction);
   }
 
   /**

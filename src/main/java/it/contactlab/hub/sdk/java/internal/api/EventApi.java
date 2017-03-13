@@ -8,6 +8,7 @@ import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
 import it.contactlab.hub.sdk.java.models.Event;
 import it.contactlab.hub.sdk.java.models.EventFilters;
+import it.contactlab.hub.sdk.java.models.Paged;
 import it.contactlab.hub.sdk.java.models.Paginated;
 
 import com.google.gson.Gson;
@@ -124,8 +125,8 @@ public class EventApi {
 
     String response = Request.doGet(auth, endpoint, queryString);
 
-    Type paginatedEventType = new TypeToken<Paginated<Event>>(){}.getType();
-    Paginated<Event> paginatedEvents = gson.fromJson(response, paginatedEventType);
+    Type pagedEventType = new TypeToken<Paged<Event>>(){}.getType();
+    Paged<Event> pagedEvents = gson.fromJson(response, pagedEventType);
 
     Function<Integer, Paginated<Event>> requestFunction = (Integer pageNumber) -> {
       try {
@@ -135,7 +136,7 @@ public class EventApi {
       }
     };
 
-    return paginatedEvents.withRequestFunction(requestFunction);
+    return new Paginated<Event>(pagedEvents, requestFunction);
   }
 
 }
