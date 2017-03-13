@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-  compile 'it.contactlab.hub:sdk-java:0.5.0'
+  compile 'it.contactlab.hub:sdk-java:0.6.0'
 }
 
 task run(type:JavaExec) {
