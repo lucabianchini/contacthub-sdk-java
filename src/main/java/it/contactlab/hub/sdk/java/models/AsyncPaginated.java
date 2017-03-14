@@ -6,18 +6,18 @@ import it.contactlab.hub.sdk.java.exceptions.ServerException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 public class AsyncPaginated<T> {
 
   private final Paged<T> pagedElements;
-  private final Function<Integer, CompletableFuture<AsyncPaginated<T>>> requestFunction;
+  private final Function<Integer, CompletionStage<AsyncPaginated<T>>> requestFunction;
 
   public AsyncPaginated(
       Paged<T> pagedElements,
-      Function<Integer, CompletableFuture<AsyncPaginated<T>>> requestFunction
+      Function<Integer, CompletionStage<AsyncPaginated<T>>> requestFunction
   ) {
     this.pagedElements = pagedElements;
     this.requestFunction = requestFunction;
@@ -34,7 +34,7 @@ public class AsyncPaginated<T> {
   /**
    * Retrieves the next page, if available.
    */
-  public Optional<CompletableFuture<AsyncPaginated<T>>> nextPage() {
+  public Optional<CompletionStage<AsyncPaginated<T>>> nextPage() {
     if (page().number().equals(page().totalPages())) {
       return Optional.empty();
     }
@@ -45,7 +45,7 @@ public class AsyncPaginated<T> {
   /**
    * Retrieves the previous page, if available.
    */
-  public Optional<CompletableFuture<AsyncPaginated<T>>> previousPage() {
+  public Optional<CompletionStage<AsyncPaginated<T>>> previousPage() {
     if (page().number().equals(0)) {
       return Optional.empty();
     }
@@ -53,7 +53,7 @@ public class AsyncPaginated<T> {
     return Optional.of(request(page().number() - 1));
   }
 
-  private CompletableFuture<AsyncPaginated<T>> request(Integer pageNumber) {
+  private CompletionStage<AsyncPaginated<T>> request(Integer pageNumber) {
     return requestFunction.apply(pageNumber);
   }
 

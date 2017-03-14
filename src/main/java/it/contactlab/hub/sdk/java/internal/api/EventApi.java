@@ -1,6 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 public class EventApi {
@@ -38,7 +40,7 @@ public class EventApi {
    * Add a new Event.
    */
   public static Boolean add(Auth auth, Event event)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     final String endpoint = "/events";
     String payload = "";
 
@@ -86,7 +88,7 @@ public class EventApi {
 
   private static Paged<Event> getPaged(
       Auth auth, String customerId, EventFilters filters
-  ) throws ContactHubException, ServerException, HttpException {
+  ) throws ApiException, ServerException, HttpException {
     final String endpoint = "/events";
 
     Map<String, Object> queryString = new HashMap<>();
@@ -115,10 +117,10 @@ public class EventApi {
   /**
    * Async version of get.
    */
-  public static CompletableFuture<AsyncPaginated<Event>> asyncGet(
+  public static CompletionStage<AsyncPaginated<Event>> asyncGet(
       Auth auth, String customerId, EventFilters filters
   ) {
-    Function<Integer, CompletableFuture<AsyncPaginated<Event>>>
+    Function<Integer, CompletionStage<AsyncPaginated<Event>>>
         requestFunction = (Integer pageNumber) ->
             asyncGet(auth, customerId, filters.withPage(pageNumber));
 
@@ -138,7 +140,7 @@ public class EventApi {
    */
   public static Paginated<Event> get(
       Auth auth, String customerId, EventFilters filters
-  ) throws ContactHubException, ServerException, HttpException {
+  ) throws ApiException, ServerException, HttpException {
     Paged<Event> pagedEvents = getPaged(auth, customerId, filters);
 
     Function<Integer, Paginated<Event>> requestFunction = (Integer pageNumber) -> {
@@ -156,7 +158,7 @@ public class EventApi {
    * Retrieves an Event by id.
    */
   public static Event getById(Auth auth, String id)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/events/" + id;
     String response = Request.doGet(auth, endpoint);
 

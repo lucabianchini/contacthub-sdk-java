@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
@@ -29,7 +29,7 @@ public class SessionApi {
    * Reconcile a SessionId with a Customer.
    */
   public static boolean reconcile(Auth auth, String customerId, String sessionId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId + "/sessions";
     JsonObject session = new JsonObject();
     session.addProperty("value", sessionId);

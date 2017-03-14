@@ -19,6 +19,7 @@ import it.contactlab.hub.sdk.java.models.Like;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 
 /**
  * ContactHub Java SDK (Async version).
@@ -37,7 +38,7 @@ public class AsyncContactHub {
     T apply() throws Exception;
   }
 
-  private <T> CompletableFuture<T> wrapAsync(Thunk<T> fun) {
+  private <T> CompletionStage<T> wrapAsync(Thunk<T> fun) {
     return CompletableFuture.supplyAsync(() -> {
       try {
         return fun.apply();
@@ -49,6 +50,8 @@ public class AsyncContactHub {
 
   /**
    * Generate a new SessionId.
+   *
+   * @return A new randomly-generated Session id.
    */
   public String createSessionId() {
     return SessionApi.generate();
@@ -56,8 +59,12 @@ public class AsyncContactHub {
 
   /**
    * Reconcile a SessionId with a Customer.
+   *
+   * @param  customerId A Customer id.
+   * @param  sessionId  A session id that will be associated with the Customer.
+   * @return            A {@link CompletionStage}.
    */
-  public CompletableFuture<Boolean> addCustomerSession(String customerId, String sessionId) {
+  public CompletionStage<Boolean> addCustomerSession(String customerId, String sessionId) {
     return wrapAsync(() -> SessionApi.reconcile(this.auth, customerId, sessionId));
   }
 
@@ -65,18 +72,18 @@ public class AsyncContactHub {
    * Retrieves a Customer by id.
    *
    * @param id A Customer id.
-   * @return   A {@link Customer}.
+   * @return   A {@link CompletionStage} of {@link Customer}.
    */
-  public CompletableFuture<Customer> getCustomer(String id) {
+  public CompletionStage<Customer> getCustomer(String id) {
     return wrapAsync(() -> CustomerApi.getById(this.auth, id));
   }
 
   /**
    * Retrieve all the Customers of a Node.
    *
-   * @return   A {@link Paginated} List of {@link Customer} objects.
+   * @return A {@link CompletionStage} of {@link AsyncPaginated} {@link Customer} objects.
    */
-  public CompletableFuture<AsyncPaginated<Customer>> getCustomers() {
+  public CompletionStage<AsyncPaginated<Customer>> getCustomers() {
     return CustomerApi.asyncGet(this.auth, GetCustomersOptions.builder().build());
   }
 
@@ -84,10 +91,9 @@ public class AsyncContactHub {
    * Retrieve all the Customers of a Node, filtered and ordered with 'options'
    *
    * @param options An instance of {@link GetCustomersOptions}.
-   * @return        A {@link CompletableFuture} {@link AsyncPaginated}
-   *                {@link List} of {@link Customer} objects.
+   * @return        A {@link CompletionStage} of {@link AsyncPaginated} {@link Customer} objects.
    */
-  public CompletableFuture<AsyncPaginated<Customer>> getCustomers(GetCustomersOptions options) {
+  public CompletionStage<AsyncPaginated<Customer>> getCustomers(GetCustomersOptions options) {
     return CustomerApi.asyncGet(this.auth, options);
   }
 
@@ -95,9 +101,9 @@ public class AsyncContactHub {
    * Retrieves Customers by external id.
    *
    * @param externalId A Customer external id.
-   * @return           A {@link Paginated} List of {@link Customer} objects.
+   * @return           A {@link CompletionStage} of {@link AsyncPaginated} {@link Customer} objects.
    */
-  public CompletableFuture<AsyncPaginated<Customer>> getCustomerByExternalId(String externalId) {
+  public CompletionStage<AsyncPaginated<Customer>> getCustomerByExternalId(String externalId) {
     GetCustomersOptions options = GetCustomersOptions.builder()
                                   .externalId(externalId).build();
     return CustomerApi.asyncGet(this.auth, options);
@@ -107,9 +113,9 @@ public class AsyncContactHub {
    * Adds a new Customer.
    *
    * @param customer The {@link Customer} to create.
-   * @return         A CompletableFuture of the newly created {@link Customer}.
+   * @return         A {@link CompletionStage} of {@link Customer}.
    */
-  public CompletableFuture<Customer> addCustomer(Customer customer) {
+  public CompletionStage<Customer> addCustomer(Customer customer) {
     return wrapAsync(() -> CustomerApi.add(this.auth, customer));
   }
 
@@ -117,9 +123,9 @@ public class AsyncContactHub {
    * Deletes a Customer.
    *
    * @param id A Customer id.
-   * @return   Whether the Customer was successfully deleted.
+   * @return   A {@link CompletionStage}
    */
-  public CompletableFuture<Boolean> deleteCustomer(String id) {
+  public CompletionStage<Boolean> deleteCustomer(String id) {
     return wrapAsync(() -> CustomerApi.delete(this.auth, id));
   }
 
@@ -127,9 +133,9 @@ public class AsyncContactHub {
    * Updates an existing Customer.
    *
    * @param customer The {@link Customer} to update.
-   * @return         An updated {@link Customer}.
+   * @return         A {@link CompletionStage} of {@link Customer}.
    */
-  public CompletableFuture<Customer> updateCustomer(Customer customer) {
+  public CompletionStage<Customer> updateCustomer(Customer customer) {
     return wrapAsync(() -> CustomerApi.update(this.auth, customer));
   }
 
@@ -139,9 +145,9 @@ public class AsyncContactHub {
    *
    * @param customerId    The id of the Customer to update.
    * @param patchCustomer The {@link Customer} object, containing all the values to patch.
-   * @return              An updated {@link Customer}.
+   * @return              A {@link CompletionStage} of {@link Customer}.
    */
-  public CompletableFuture<Customer> patchCustomer(String customerId, Customer patchCustomer) {
+  public CompletionStage<Customer> patchCustomer(String customerId, Customer patchCustomer) {
     return wrapAsync(() -> CustomerApi.patch(this.auth, customerId, patchCustomer));
   }
 
@@ -154,7 +160,7 @@ public class AsyncContactHub {
    * @param like       The Like to be added.
    * @return           The Like object that was persisted by the API.
    */
-  public CompletableFuture<Like> addLike(String customerId, Like like) {
+  public CompletionStage<Like> addLike(String customerId, Like like) {
     return wrapAsync(() -> LikeApi.add(this.auth, customerId, like));
   }
 
@@ -168,7 +174,7 @@ public class AsyncContactHub {
    * @return           The Like object that was persisted by the API.
    */
 
-  public CompletableFuture<Like> updateLike(String customerId, Like like) {
+  public CompletionStage<Like> updateLike(String customerId, Like like) {
     return wrapAsync(() -> LikeApi.update(this.auth, customerId, like));
   }
 
@@ -181,7 +187,7 @@ public class AsyncContactHub {
    * @param likeId     The id of the Like to be removed.
    * @return           true if the removal was successful.
    */
-  public CompletableFuture<Boolean> removeLike(String customerId, String likeId) {
+  public CompletionStage<Boolean> removeLike(String customerId, String likeId) {
     return wrapAsync(() -> LikeApi.remove(this.auth, customerId, likeId));
   }
 
@@ -194,7 +200,7 @@ public class AsyncContactHub {
    * @param job        The Job to be added.
    * @return           The Job object that was persisted by the API.
    */
-  public CompletableFuture<Job> addJob(String customerId, Job job) {
+  public CompletionStage<Job> addJob(String customerId, Job job) {
     return wrapAsync(() -> JobApi.add(this.auth, customerId, job));
   }
 
@@ -208,7 +214,7 @@ public class AsyncContactHub {
    * @return           The Job object that was persisted by the API.
    */
 
-  public CompletableFuture<Job> updateJob(String customerId, Job job) {
+  public CompletionStage<Job> updateJob(String customerId, Job job) {
     return wrapAsync(() -> JobApi.update(this.auth, customerId, job));
   }
 
@@ -219,9 +225,9 @@ public class AsyncContactHub {
    *
    * @param customerId The id of the Customer.
    * @param jobId      The id of the Job to be removed.
-   * @return           true if the removal was successful.
+   * @return           A {@link CompletionStage}.
    */
-  public CompletableFuture<Boolean> removeJob(String customerId, String jobId) {
+  public CompletionStage<Boolean> removeJob(String customerId, String jobId) {
     return wrapAsync(() -> JobApi.remove(this.auth, customerId, jobId));
   }
 
@@ -234,7 +240,7 @@ public class AsyncContactHub {
    * @param education  The Education to be added.
    * @return           The Education object that was persisted by the API.
    */
-  public CompletableFuture<Education> addEducation(String customerId, Education education) {
+  public CompletionStage<Education> addEducation(String customerId, Education education) {
     return wrapAsync(() -> EducationApi.add(this.auth, customerId, education));
   }
 
@@ -248,7 +254,7 @@ public class AsyncContactHub {
    * @return           The Education object that was persisted by the API.
    */
 
-  public CompletableFuture<Education> updateEducation(String customerId, Education education) {
+  public CompletionStage<Education> updateEducation(String customerId, Education education) {
     return wrapAsync(() -> EducationApi.update(this.auth, customerId, education));
   }
 
@@ -261,7 +267,7 @@ public class AsyncContactHub {
    * @param educationId The id of the Education to be removed.
    * @return            true if the removal was successful.
    */
-  public CompletableFuture<Boolean> removeEducation(String customerId, String educationId) {
+  public CompletionStage<Boolean> removeEducation(String customerId, String educationId) {
     return wrapAsync(() -> EducationApi.remove(this.auth, customerId, educationId));
   }
 
@@ -274,7 +280,7 @@ public class AsyncContactHub {
    * @param tag        The tag to be added.
    * @return           The full Customer object after the update.
    */
-  public CompletableFuture<Customer> addTag(String customerId, String tag) {
+  public CompletionStage<Customer> addTag(String customerId, String tag) {
     return wrapAsync(() -> TagApi.add(this.auth, customerId, tag));
   }
 
@@ -287,7 +293,7 @@ public class AsyncContactHub {
    * @param tag        The tag to be removed.
    * @return           The full Customer object after the update.
    */
-  public CompletableFuture<Customer> removeTag(String customerId, String tag) {
+  public CompletionStage<Customer> removeTag(String customerId, String tag) {
     return wrapAsync(() -> TagApi.remove(this.auth, customerId, tag));
   }
 
@@ -297,7 +303,7 @@ public class AsyncContactHub {
    * @param newEvent The {@link Event} to create.
    * @return Whether the Event was successfully queued for insertion.
    */
-  public CompletableFuture<Boolean> addEvent(Event newEvent) {
+  public CompletionStage<Boolean> addEvent(Event newEvent) {
     return wrapAsync(() -> EventApi.add(this.auth, newEvent));
   }
 
@@ -307,7 +313,7 @@ public class AsyncContactHub {
    * @param id The id of the event
    * @return   An {@link Event}.
    */
-  public CompletableFuture<Event> getEvent(String id) {
+  public CompletionStage<Event> getEvent(String id) {
     return wrapAsync(() -> EventApi.getById(this.auth, id));
   }
 
@@ -315,9 +321,9 @@ public class AsyncContactHub {
    * Retrieves all the Events for a Customer.
    *
    * @param customerId The id of a Customer with some Events.
-   * @return A {@link Paginated} List of {@link Event} objects.
+   * @return           A {@link CompletionStage} of {@link AsyncPaginated} {@link Event} objects.
    */
-  public CompletableFuture<AsyncPaginated<Event>> getEvents(String customerId) {
+  public CompletionStage<AsyncPaginated<Event>> getEvents(String customerId) {
     return EventApi.asyncGet(this.auth, customerId, EventFilters.builder().build());
   }
 
@@ -326,9 +332,9 @@ public class AsyncContactHub {
    *
    * @param customerId The id of a Customer with some Events.
    * @param filters    An instance of {@link EventFilters}.
-   * @return A {@link Paginated} List of {@link Event} objects.
+   * @return           A {@link CompletionStage} of {@link AsyncPaginated} {@link Event} objects.
    */
-  public CompletableFuture<AsyncPaginated<Event>> getEvents(
+  public CompletionStage<AsyncPaginated<Event>> getEvents(
       String customerId, EventFilters filters
   ) {
     return EventApi.asyncGet(this.auth, customerId, filters);

@@ -1,6 +1,6 @@
 package it.contactlab.hub.sdk.java;
 
-import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.internal.api.CustomerApi;
@@ -32,6 +32,8 @@ public class ContactHub {
 
   /**
    * Generate a new SessionId.
+   *
+   * @return A new randomly-generated Session id.
    */
   public String createSessionId() {
     return SessionApi.generate();
@@ -39,9 +41,17 @@ public class ContactHub {
 
   /**
    * Reconcile a SessionId with a Customer.
+   *
+   * @param  customerId A Customer id.
+   * @param  sessionId  A session id that will be associated with the Customer.
+   * @return            true if the operation succeeded.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public boolean addCustomerSession(String customerId, String sessionId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return SessionApi.reconcile(this.auth, customerId, sessionId);
   }
 
@@ -50,9 +60,13 @@ public class ContactHub {
    *
    * @param id A Customer id.
    * @return   A {@link Customer}.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Customer getCustomer(String id)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return CustomerApi.getById(this.auth, id);
   }
 
@@ -60,9 +74,13 @@ public class ContactHub {
    * Retrieve all the Customers of a Node.
    *
    * @return     A {@link Paginated} List of {@link Customer} objects.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Paginated<Customer> getCustomers()
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return CustomerApi.get(this.auth, GetCustomersOptions.builder().build());
   }
 
@@ -71,9 +89,13 @@ public class ContactHub {
    *
    * @param options An instance of {@link GetCustomersOptions}.
    * @return        A {@link Paginated} List of {@link Customer} objects.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Paginated<Customer> getCustomers(GetCustomersOptions options)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return CustomerApi.get(this.auth, options);
   }
 
@@ -82,9 +104,13 @@ public class ContactHub {
    *
    * @param externalId A Customer external id.
    * @return           A {@link Paginated} List of {@link Customer} objects.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Paginated<Customer> getCustomerByExternalId(String externalId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     GetCustomersOptions options = GetCustomersOptions.builder()
                                   .externalId(externalId).build();
     return CustomerApi.get(this.auth, options);
@@ -95,9 +121,13 @@ public class ContactHub {
    *
    * @param customer The {@link Customer} to create.
    * @return         A newly created {@link Customer}.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Customer addCustomer(Customer customer)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return CustomerApi.add(this.auth, customer);
   }
 
@@ -106,9 +136,13 @@ public class ContactHub {
    *
    * @param id A Customer id.
    * @return   Whether the Customer was successfully deleted.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public boolean deleteCustomer(String id)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return CustomerApi.delete(this.auth, id);
   }
 
@@ -117,9 +151,13 @@ public class ContactHub {
    *
    * @param customer The {@link Customer} to update.
    * @return         An updated {@link Customer}.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Customer updateCustomer(Customer customer)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return CustomerApi.update(this.auth, customer);
   }
 
@@ -130,9 +168,13 @@ public class ContactHub {
    * @param customerId    The id of the Customer to update.
    * @param patchCustomer The {@link Customer} object, containing all the values to patch.
    * @return              An updated {@link Customer}.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Customer patchCustomer(String customerId, Customer patchCustomer)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return CustomerApi.patch(this.auth, customerId, patchCustomer);
   }
 
@@ -144,9 +186,13 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param like       The Like to be added.
    * @return           The Like object that was persisted by the API.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Like addLike(String customerId, Like like)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return LikeApi.add(this.auth, customerId, like);
   }
 
@@ -158,10 +204,14 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param like       The updated Like object.
    * @return           The Like object that was persisted by the API.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
 
   public Like updateLike(String customerId, Like like)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return LikeApi.update(this.auth, customerId, like);
   }
 
@@ -173,9 +223,12 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param likeId     The id of the Like to be removed.
    * @return           true if the removal was successful.
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public boolean removeLike(String customerId, String likeId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return LikeApi.remove(this.auth, customerId, likeId);
   }
 
@@ -187,9 +240,12 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param job        The Job to be added.
    * @return           The Job object that was persisted by the API.
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Job addJob(String customerId, Job job)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return JobApi.add(this.auth, customerId, job);
   }
 
@@ -201,10 +257,13 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param job        The updated Job object.
    * @return           The Job object that was persisted by the API.
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
 
   public Job updateJob(String customerId, Job job)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return JobApi.update(this.auth, customerId, job);
   }
 
@@ -216,9 +275,13 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param jobId      The id of the Job to be removed.
    * @return           true if the removal was successful.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public boolean removeJob(String customerId, String jobId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return JobApi.remove(this.auth, customerId, jobId);
   }
 
@@ -230,9 +293,13 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param education  The Education to be added.
    * @return           The Education object that was persisted by the API.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Education addEducation(String customerId, Education education)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return EducationApi.add(this.auth, customerId, education);
   }
 
@@ -244,10 +311,14 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param education  The updated Education object.
    * @return           The Education object that was persisted by the API.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
 
   public Education updateEducation(String customerId, Education education)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return EducationApi.update(this.auth, customerId, education);
   }
 
@@ -259,9 +330,13 @@ public class ContactHub {
    * @param customerId  The id of the Customer.
    * @param educationId The id of the Education to be removed.
    * @return            true if the removal was successful.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public boolean removeEducation(String customerId, String educationId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return EducationApi.remove(this.auth, customerId, educationId);
   }
 
@@ -273,9 +348,13 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param tag        The tag to be added.
    * @return           The full Customer object after the update.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Customer addTag(String customerId, String tag)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return TagApi.add(this.auth, customerId, tag);
   }
 
@@ -287,9 +366,13 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param tag        The tag to be removed.
    * @return           The full Customer object after the update.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Customer removeTag(String customerId, String tag)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return TagApi.remove(this.auth, customerId, tag);
   }
 
@@ -298,9 +381,13 @@ public class ContactHub {
    *
    * @param newEvent The {@link Event} to create.
    * @return Whether the Event was successfully queued for insertion.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public boolean addEvent(Event newEvent)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return EventApi.add(this.auth, newEvent);
   }
 
@@ -309,9 +396,13 @@ public class ContactHub {
    *
    * @param id The id of the event
    * @return   An {@link Event}.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Event getEvent(String id)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return EventApi.getById(this.auth, id);
   }
 
@@ -320,9 +411,13 @@ public class ContactHub {
    *
    * @param customerId The id of a Customer with some Events.
    * @return A {@link Paginated} List of {@link Event} objects.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Paginated<Event> getEvents(String customerId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return EventApi.get(this.auth, customerId, EventFilters.builder().build());
   }
 
@@ -332,9 +427,13 @@ public class ContactHub {
    * @param customerId The id of a Customer with some Events.
    * @param filters    An instance of {@link EventFilters}.
    * @return A {@link Paginated} List of {@link Event} objects.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public Paginated<Event> getEvents(String customerId, EventFilters filters)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
     return EventApi.get(this.auth, customerId, filters);
   }
 

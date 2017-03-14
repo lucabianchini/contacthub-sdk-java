@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
@@ -18,7 +18,7 @@ public class JobApi {
    * Add a new Job to a Customer.
    */
   public static Job add(Auth auth, String customerId, Job job)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/jobs";
     String payload = gson.toJson(job);
@@ -31,7 +31,7 @@ public class JobApi {
    * Update an existing Job.
    */
   public static Job update(Auth auth, String customerId, Job job)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/jobs/" + job.id();
     String payload = gson.toJson(job);
@@ -44,7 +44,7 @@ public class JobApi {
    * Remove a tag from a Customer.
    */
   public static boolean remove(Auth auth, String customerId, String jobId)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/jobs/" + jobId;
     String response = Request.doDelete(auth, endpoint);
