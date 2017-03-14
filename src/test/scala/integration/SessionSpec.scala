@@ -34,10 +34,10 @@ class SessionSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       val sid = java.util.UUID.randomUUID().toString();
 
       When("the user reconciles the session")
-      val success = ch.addCustomerSession(cid, sid);
+      def reconcile = ch.addCustomerSession(cid, sid);
 
       Then("the session is added successfully")
-      success should be (true)
+      noException should be thrownBy reconcile
     }
   }
 

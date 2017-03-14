@@ -1,6 +1,7 @@
 package it.contactlab.hub.sdk.java;
 
 import it.contactlab.hub.sdk.java.Auth;
+import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.internal.api.CustomerApi;
 import it.contactlab.hub.sdk.java.internal.api.EducationApi;
 import it.contactlab.hub.sdk.java.internal.api.EventApi;
@@ -20,6 +21,7 @@ import it.contactlab.hub.sdk.java.models.Like;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Consumer;
 
 /**
  * ContactHub Java SDK (Async version).
@@ -34,16 +36,31 @@ public class AsyncContactHub {
   }
 
   @FunctionalInterface
-  private interface Thunk<T> {
-    T apply() throws Exception;
+  private interface ThrowingSupplier<T> {
+    T get() throws ContactHubException;
   }
 
-  private <T> CompletionStage<T> wrapAsync(Thunk<T> fun) {
+  @FunctionalInterface
+  private interface ThrowingRunnable {
+    void run() throws ContactHubException;
+  }
+
+  private <T> CompletionStage<T> wrapAsync(ThrowingSupplier<T> supplier) {
     return CompletableFuture.supplyAsync(() -> {
       try {
-        return fun.apply();
-      } catch (Exception ex) {
-        throw new CompletionException(ex);
+        return supplier.get();
+      } catch (ContactHubException exception) {
+        throw new CompletionException(exception);
+      }
+    });
+  }
+
+  private CompletionStage<Void> wrapAsync(ThrowingRunnable runnable) {
+    return CompletableFuture.runAsync(() -> {
+      try {
+        runnable.run();
+      } catch (ContactHubException exception) {
+        throw new CompletionException(exception);
       }
     });
   }
@@ -64,7 +81,7 @@ public class AsyncContactHub {
    * @param  sessionId  A session id that will be associated with the Customer.
    * @return            A {@link CompletionStage}.
    */
-  public CompletionStage<Boolean> addCustomerSession(String customerId, String sessionId) {
+  public CompletionStage<Void> addCustomerSession(String customerId, String sessionId) {
     return wrapAsync(() -> SessionApi.reconcile(this.auth, customerId, sessionId));
   }
 
@@ -125,7 +142,7 @@ public class AsyncContactHub {
    * @param id A Customer id.
    * @return   A {@link CompletionStage}
    */
-  public CompletionStage<Boolean> deleteCustomer(String id) {
+  public CompletionStage<Void> deleteCustomer(String id) {
     return wrapAsync(() -> CustomerApi.delete(this.auth, id));
   }
 
@@ -187,7 +204,7 @@ public class AsyncContactHub {
    * @param likeId     The id of the Like to be removed.
    * @return           true if the removal was successful.
    */
-  public CompletionStage<Boolean> removeLike(String customerId, String likeId) {
+  public CompletionStage<Void> removeLike(String customerId, String likeId) {
     return wrapAsync(() -> LikeApi.remove(this.auth, customerId, likeId));
   }
 
@@ -227,7 +244,7 @@ public class AsyncContactHub {
    * @param jobId      The id of the Job to be removed.
    * @return           A {@link CompletionStage}.
    */
-  public CompletionStage<Boolean> removeJob(String customerId, String jobId) {
+  public CompletionStage<Void> removeJob(String customerId, String jobId) {
     return wrapAsync(() -> JobApi.remove(this.auth, customerId, jobId));
   }
 
@@ -267,7 +284,7 @@ public class AsyncContactHub {
    * @param educationId The id of the Education to be removed.
    * @return            true if the removal was successful.
    */
-  public CompletionStage<Boolean> removeEducation(String customerId, String educationId) {
+  public CompletionStage<Void> removeEducation(String customerId, String educationId) {
     return wrapAsync(() -> EducationApi.remove(this.auth, customerId, educationId));
   }
 
@@ -303,7 +320,7 @@ public class AsyncContactHub {
    * @param newEvent The {@link Event} to create.
    * @return Whether the Event was successfully queued for insertion.
    */
-  public CompletionStage<Boolean> addEvent(Event newEvent) {
+  public CompletionStage<Void> addEvent(Event newEvent) {
     return wrapAsync(() -> EventApi.add(this.auth, newEvent));
   }
 

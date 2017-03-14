@@ -43,13 +43,11 @@ public class EducationApi {
   /**
    * Remove a tag from a Customer.
    */
-  public static boolean remove(Auth auth, String customerId, String educationId)
+  public static void remove(Auth auth, String customerId, String educationId)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/educations/" + educationId;
     String response = Request.doDelete(auth, endpoint);
-
-    return true;
   }
 
 }

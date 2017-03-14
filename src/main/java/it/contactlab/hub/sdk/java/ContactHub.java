@@ -44,15 +44,14 @@ public class ContactHub {
    *
    * @param  customerId A Customer id.
    * @param  sessionId  A session id that will be associated with the Customer.
-   * @return            true if the operation succeeded.
    *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public boolean addCustomerSession(String customerId, String sessionId)
+  public void addCustomerSession(String customerId, String sessionId)
       throws ApiException, ServerException, HttpException {
-    return SessionApi.reconcile(this.auth, customerId, sessionId);
+    SessionApi.reconcile(this.auth, customerId, sessionId);
   }
 
   /**
@@ -135,15 +134,14 @@ public class ContactHub {
    * Deletes a Customer.
    *
    * @param id A Customer id.
-   * @return   Whether the Customer was successfully deleted.
    *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public boolean deleteCustomer(String id)
+  public void deleteCustomer(String id)
       throws ApiException, ServerException, HttpException {
-    return CustomerApi.delete(this.auth, id);
+    CustomerApi.delete(this.auth, id);
   }
 
   /**
@@ -222,14 +220,14 @@ public class ContactHub {
    *
    * @param customerId The id of the Customer.
    * @param likeId     The id of the Like to be removed.
-   * @return           true if the removal was successful.
+   *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public boolean removeLike(String customerId, String likeId)
+  public void removeLike(String customerId, String likeId)
       throws ApiException, ServerException, HttpException {
-    return LikeApi.remove(this.auth, customerId, likeId);
+    LikeApi.remove(this.auth, customerId, likeId);
   }
 
   /**
@@ -240,6 +238,7 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param job        The Job to be added.
    * @return           The Job object that was persisted by the API.
+   *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
@@ -257,6 +256,7 @@ public class ContactHub {
    * @param customerId The id of the Customer.
    * @param job        The updated Job object.
    * @return           The Job object that was persisted by the API.
+   *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
@@ -274,15 +274,14 @@ public class ContactHub {
    *
    * @param customerId The id of the Customer.
    * @param jobId      The id of the Job to be removed.
-   * @return           true if the removal was successful.
    *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public boolean removeJob(String customerId, String jobId)
+  public void removeJob(String customerId, String jobId)
       throws ApiException, ServerException, HttpException {
-    return JobApi.remove(this.auth, customerId, jobId);
+    JobApi.remove(this.auth, customerId, jobId);
   }
 
   /**
@@ -329,15 +328,14 @@ public class ContactHub {
    *
    * @param customerId  The id of the Customer.
    * @param educationId The id of the Education to be removed.
-   * @return            true if the removal was successful.
    *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public boolean removeEducation(String customerId, String educationId)
+  public void removeEducation(String customerId, String educationId)
       throws ApiException, ServerException, HttpException {
-    return EducationApi.remove(this.auth, customerId, educationId);
+    EducationApi.remove(this.auth, customerId, educationId);
   }
 
   /**
@@ -380,15 +378,14 @@ public class ContactHub {
    * Adds a new Event.
    *
    * @param newEvent The {@link Event} to create.
-   * @return Whether the Event was successfully queued for insertion.
    *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public boolean addEvent(Event newEvent)
+  public void addEvent(Event newEvent)
       throws ApiException, ServerException, HttpException {
-    return EventApi.add(this.auth, newEvent);
+    EventApi.add(this.auth, newEvent);
   }
 
   /**

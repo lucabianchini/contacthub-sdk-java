@@ -28,7 +28,7 @@ public class SessionApi {
   /**
    * Reconcile a SessionId with a Customer.
    */
-  public static boolean reconcile(Auth auth, String customerId, String sessionId)
+  public static void reconcile(Auth auth, String customerId, String sessionId)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId + "/sessions";
     JsonObject session = new JsonObject();
@@ -36,8 +36,6 @@ public class SessionApi {
 
     String payload = gson.toJson(session);
     Request.doPost(auth, endpoint, payload);
-
-    return true;
   }
 
 }

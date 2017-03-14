@@ -158,18 +158,15 @@ public class CustomerApi {
    *
    * @param auth       A ContactHub Auth object.
    * @param customerId The id of the Customer to delete.
-   * @return           True if the deletion was successful
    *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public static boolean delete(Auth auth, String customerId)
+  public static void delete(Auth auth, String customerId)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
     String response = Request.doDelete(auth, endpoint);
-
-    return true;
   }
 
   /**

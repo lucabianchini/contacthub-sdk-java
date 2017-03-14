@@ -43,12 +43,10 @@ public class LikeApi {
   /**
    * Remove a tag from a Customer.
    */
-  public static boolean remove(Auth auth, String customerId, String likeId)
+  public static void remove(Auth auth, String customerId, String likeId)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes/" + likeId;
     String response = Request.doDelete(auth, endpoint);
-
-    return true;
   }
 }

@@ -39,7 +39,7 @@ public class EventApi {
   /**
    * Add a new Event.
    */
-  public static Boolean add(Auth auth, Event event)
+  public static void add(Auth auth, Event event)
       throws ApiException, ServerException, HttpException {
     final String endpoint = "/events";
     String payload = "";
@@ -82,8 +82,6 @@ public class EventApi {
     }
 
     Request.doPost(auth, endpoint, payload);
-
-    return true;
   }
 
   private static Paged<Event> getPaged(

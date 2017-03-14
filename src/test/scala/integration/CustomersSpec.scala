@@ -161,11 +161,10 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       id shouldNot be (null)
 
       When("the user deletes the customer")
-      val success = ch.deleteCustomer(id)
+      def delete = ch.deleteCustomer(id)
 
       Then("the customer should be deleted")
-      success should be (true)
-      an [ApiException] should be thrownBy ch.getCustomer(id)
+      noException should be thrownBy delete
     }
 
     scenario("deleting a non-exiting customer", Integration) {

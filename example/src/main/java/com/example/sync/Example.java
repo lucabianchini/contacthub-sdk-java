@@ -91,12 +91,9 @@ public class Example {
     System.out.println("-------------------");
     System.out.println("Deleting a customer");
     System.out.println("-------------------");
-    boolean success = ch.deleteCustomer(newId);
-    if (success) {
-      System.out.println("Successfully deleted customer " + newId);
-    } else {
-      System.out.println("OMGZ FAILED!!1!");
-    }
+    ch.deleteCustomer(newId);
+
+    System.out.println("Successfully deleted customer " + newId);
     System.out.println();
   }
 
