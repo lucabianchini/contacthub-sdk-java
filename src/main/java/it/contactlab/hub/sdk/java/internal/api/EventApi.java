@@ -127,7 +127,7 @@ public class EventApi {
         Paged<Event> pagedEvents = getPaged(auth, customerId, filters);
 
         return new AsyncPaginated<Event>(pagedEvents, requestFunction);
-      } catch (Exception ex) {
+      } catch (ContactHubException ex) {
         throw new CompletionException(ex);
       }
     });

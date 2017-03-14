@@ -81,7 +81,7 @@ public class CustomerApi {
         Paged<Customer> pagedCustomers = getPaged(auth, options);
 
         return new AsyncPaginated<Customer>(pagedCustomers, requestFunction);
-      } catch (Exception ex) {
+      } catch (ContactHubException ex) {
         throw new CompletionException(ex);
       }
     });
