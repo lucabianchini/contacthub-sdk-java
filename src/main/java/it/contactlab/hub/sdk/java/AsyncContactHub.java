@@ -2,12 +2,23 @@ package it.contactlab.hub.sdk.java;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.internal.api.CustomerApi;
+import it.contactlab.hub.sdk.java.internal.api.EducationApi;
+import it.contactlab.hub.sdk.java.internal.api.EventApi;
+import it.contactlab.hub.sdk.java.internal.api.JobApi;
+import it.contactlab.hub.sdk.java.internal.api.LikeApi;
+import it.contactlab.hub.sdk.java.internal.api.SessionApi;
+import it.contactlab.hub.sdk.java.internal.api.TagApi;
+import it.contactlab.hub.sdk.java.models.AsyncPaginated;
 import it.contactlab.hub.sdk.java.models.Customer;
-import it.contactlab.hub.sdk.java.models.Paginated;
+import it.contactlab.hub.sdk.java.models.Education;
+import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventFilters;
+import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
+import it.contactlab.hub.sdk.java.models.Job;
+import it.contactlab.hub.sdk.java.models.Like;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.CompletionStage;
 
 /**
  * ContactHub Java SDK (Async version).
@@ -26,7 +37,7 @@ public class AsyncContactHub {
     T apply() throws Exception;
   }
 
-  private <T> CompletionStage<T> wrapAsync(Thunk<T> fun) {
+  private <T> CompletableFuture<T> wrapAsync(Thunk<T> fun) {
     return CompletableFuture.supplyAsync(() -> {
       try {
         return fun.apply();
@@ -37,33 +48,290 @@ public class AsyncContactHub {
   }
 
   /**
-   * Retrieve all the Customers of a Node.
-   *
-   * @return   A {@link Paginated} List of {@link Customer} objects.
+   * Generate a new SessionId.
    */
-  public CompletionStage<Paginated<Customer>> getCustomers() {
-    return wrapAsync(() -> CustomerApi.get(this.auth));
+  public String createSessionId() {
+    return SessionApi.generate();
+  }
+
+  /**
+   * Reconcile a SessionId with a Customer.
+   */
+  public CompletableFuture<Boolean> addCustomerSession(String customerId, String sessionId) {
+    return wrapAsync(() -> SessionApi.reconcile(this.auth, customerId, sessionId));
   }
 
   /**
    * Retrieves a Customer by id.
    *
    * @param id A Customer id.
-   * @return   A CompletionStage of {@link Customer}.
+   * @return   A {@link Customer}.
    */
-  public CompletionStage<Customer> getCustomer(String id) {
-    return wrapAsync(() -> CustomerApi.get(this.auth, id));
+  public CompletableFuture<Customer> getCustomer(String id) {
+    return wrapAsync(() -> CustomerApi.getById(this.auth, id));
+  }
+
+  /**
+   * Retrieve all the Customers of a Node.
+   *
+   * @return   A {@link Paginated} List of {@link Customer} objects.
+   */
+  public CompletableFuture<AsyncPaginated<Customer>> getCustomers() {
+    return CustomerApi.asyncGet(this.auth, GetCustomersOptions.builder().build());
+  }
+
+  /**
+   * Retrieve all the Customers of a Node, filtered and ordered with 'options'
+   *
+   * @param options An instance of {@link GetCustomersOptions}.
+   * @return        A {@link CompletableFuture} {@link AsyncPaginated}
+   *                {@link List} of {@link Customer} objects.
+   */
+  public CompletableFuture<AsyncPaginated<Customer>> getCustomers(GetCustomersOptions options) {
+    return CustomerApi.asyncGet(this.auth, options);
+  }
+
+  /**
+   * Retrieves Customers by external id.
+   *
+   * @param externalId A Customer external id.
+   * @return           A {@link Paginated} List of {@link Customer} objects.
+   */
+  public CompletableFuture<AsyncPaginated<Customer>> getCustomerByExternalId(String externalId) {
+    GetCustomersOptions options = GetCustomersOptions.builder()
+                                  .externalId(externalId).build();
+    return CustomerApi.asyncGet(this.auth, options);
   }
 
   /**
    * Adds a new Customer.
    *
    * @param customer The {@link Customer} to create.
-   * @return         A CompletionStage of the newly created {@link Customer}.
+   * @return         A CompletableFuture of the newly created {@link Customer}.
    */
-  public CompletionStage<Customer> addCustomer(Customer customer) {
+  public CompletableFuture<Customer> addCustomer(Customer customer) {
     return wrapAsync(() -> CustomerApi.add(this.auth, customer));
   }
 
+  /**
+   * Deletes a Customer.
+   *
+   * @param id A Customer id.
+   * @return   Whether the Customer was successfully deleted.
+   */
+  public CompletableFuture<Boolean> deleteCustomer(String id) {
+    return wrapAsync(() -> CustomerApi.delete(this.auth, id));
+  }
+
+  /**
+   * Updates an existing Customer.
+   *
+   * @param customer The {@link Customer} to update.
+   * @return         An updated {@link Customer}.
+   */
+  public CompletableFuture<Customer> updateCustomer(Customer customer) {
+    return wrapAsync(() -> CustomerApi.update(this.auth, customer));
+  }
+
+
+  /**
+   * Patches an existing Customer.
+   *
+   * @param customerId    The id of the Customer to update.
+   * @param patchCustomer The {@link Customer} object, containing all the values to patch.
+   * @return              An updated {@link Customer}.
+   */
+  public CompletableFuture<Customer> patchCustomer(String customerId, Customer patchCustomer) {
+    return wrapAsync(() -> CustomerApi.patch(this.auth, customerId, patchCustomer));
+  }
+
+  /**
+   * Adds a {@link Like} to an existing Customer.
+   *
+   * <p>If the Like is already present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param like       The Like to be added.
+   * @return           The Like object that was persisted by the API.
+   */
+  public CompletableFuture<Like> addLike(String customerId, Like like) {
+    return wrapAsync(() -> LikeApi.add(this.auth, customerId, like));
+  }
+
+  /**
+   * Update an existing {@link Like} for an existing Customer.
+   *
+   * <p>If the Like is already present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param like       The updated Like object.
+   * @return           The Like object that was persisted by the API.
+   */
+
+  public CompletableFuture<Like> updateLike(String customerId, Like like) {
+    return wrapAsync(() -> LikeApi.update(this.auth, customerId, like));
+  }
+
+  /**
+   * Removes a {@link Like} from an existing Customer.
+   *
+   * <p>If the Like is not present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param likeId     The id of the Like to be removed.
+   * @return           true if the removal was successful.
+   */
+  public CompletableFuture<Boolean> removeLike(String customerId, String likeId) {
+    return wrapAsync(() -> LikeApi.remove(this.auth, customerId, likeId));
+  }
+
+  /**
+   * Adds a {@link Job} to an existing Customer.
+   *
+   * <p>If the Job is already present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param job        The Job to be added.
+   * @return           The Job object that was persisted by the API.
+   */
+  public CompletableFuture<Job> addJob(String customerId, Job job) {
+    return wrapAsync(() -> JobApi.add(this.auth, customerId, job));
+  }
+
+  /**
+   * Update an existing {@link Job} for an existing Customer.
+   *
+   * <p>If the Job is already present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param job        The updated Job object.
+   * @return           The Job object that was persisted by the API.
+   */
+
+  public CompletableFuture<Job> updateJob(String customerId, Job job) {
+    return wrapAsync(() -> JobApi.update(this.auth, customerId, job));
+  }
+
+  /**
+   * Removes a {@link Job} from an existing Customer.
+   *
+   * <p>If the Job is not present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param jobId      The id of the Job to be removed.
+   * @return           true if the removal was successful.
+   */
+  public CompletableFuture<Boolean> removeJob(String customerId, String jobId) {
+    return wrapAsync(() -> JobApi.remove(this.auth, customerId, jobId));
+  }
+
+  /**
+   * Adds a {@link Education} to an existing Customer.
+   *
+   * <p>If the Education is already present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param education  The Education to be added.
+   * @return           The Education object that was persisted by the API.
+   */
+  public CompletableFuture<Education> addEducation(String customerId, Education education) {
+    return wrapAsync(() -> EducationApi.add(this.auth, customerId, education));
+  }
+
+  /**
+   * Update an existing {@link Education} for an existing Customer.
+   *
+   * <p>If the Education is already present, nothing will be done.</p>
+   *
+   * @param customerId The id of the Customer.
+   * @param education  The updated Education object.
+   * @return           The Education object that was persisted by the API.
+   */
+
+  public CompletableFuture<Education> updateEducation(String customerId, Education education) {
+    return wrapAsync(() -> EducationApi.update(this.auth, customerId, education));
+  }
+
+  /**
+   * Removes a {@link Education} from an existing Customer.
+   *
+   * <p>If the Education is not present, nothing will be done.</p>
+   *
+   * @param customerId  The id of the Customer.
+   * @param educationId The id of the Education to be removed.
+   * @return            true if the removal was successful.
+   */
+  public CompletableFuture<Boolean> removeEducation(String customerId, String educationId) {
+    return wrapAsync(() -> EducationApi.remove(this.auth, customerId, educationId));
+  }
+
+  /**
+   * Adds a tag to an existing Customer.
+   *
+   * <p>If the tag is already present, nothing will be done.
+   *
+   * @param customerId The id of the Customer.
+   * @param tag        The tag to be added.
+   * @return           The full Customer object after the update.
+   */
+  public CompletableFuture<Customer> addTag(String customerId, String tag) {
+    return wrapAsync(() -> TagApi.add(this.auth, customerId, tag));
+  }
+
+  /**
+   * Removes a tag from an existing Customer.
+   *
+   * <p>If the tag is not present, nothing will be done.
+   *
+   * @param customerId The id of the Customer.
+   * @param tag        The tag to be removed.
+   * @return           The full Customer object after the update.
+   */
+  public CompletableFuture<Customer> removeTag(String customerId, String tag) {
+    return wrapAsync(() -> TagApi.remove(this.auth, customerId, tag));
+  }
+
+  /**
+   * Adds a new Event.
+   *
+   * @param newEvent The {@link Event} to create.
+   * @return Whether the Event was successfully queued for insertion.
+   */
+  public CompletableFuture<Boolean> addEvent(Event newEvent) {
+    return wrapAsync(() -> EventApi.add(this.auth, newEvent));
+  }
+
+  /**
+   * Retrieves an Event.
+   *
+   * @param id The id of the event
+   * @return   An {@link Event}.
+   */
+  public CompletableFuture<Event> getEvent(String id) {
+    return wrapAsync(() -> EventApi.getById(this.auth, id));
+  }
+
+  /**
+   * Retrieves all the Events for a Customer.
+   *
+   * @param customerId The id of a Customer with some Events.
+   * @return A {@link Paginated} List of {@link Event} objects.
+   */
+  public CompletableFuture<AsyncPaginated<Event>> getEvents(String customerId) {
+    return EventApi.asyncGet(this.auth, customerId, EventFilters.builder().build());
+  }
+
+  /**
+   * Retrieves all the Events for a Customer, with filters.
+   *
+   * @param customerId The id of a Customer with some Events.
+   * @param filters    An instance of {@link EventFilters}.
+   * @return A {@link Paginated} List of {@link Event} objects.
+   */
+  public CompletableFuture<AsyncPaginated<Event>> getEvents(
+      String customerId, EventFilters filters
+  ) {
+    return EventApi.asyncGet(this.auth, customerId, filters);
+  }
 
 }

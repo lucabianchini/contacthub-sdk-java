@@ -53,7 +53,7 @@ public class ContactHub {
    */
   public Customer getCustomer(String id)
       throws ContactHubException, ServerException, HttpException {
-    return CustomerApi.get(this.auth, id);
+    return CustomerApi.getById(this.auth, id);
   }
 
   /**
@@ -63,7 +63,7 @@ public class ContactHub {
    */
   public Paginated<Customer> getCustomers()
       throws ContactHubException, ServerException, HttpException {
-    return CustomerApi.get(this.auth);
+    return CustomerApi.get(this.auth, GetCustomersOptions.builder().build());
   }
 
   /**
@@ -312,7 +312,7 @@ public class ContactHub {
    */
   public Event getEvent(String id)
       throws ContactHubException, ServerException, HttpException {
-    return EventApi.get(this.auth, id);
+    return EventApi.getById(this.auth, id);
   }
 
   /**
@@ -323,7 +323,7 @@ public class ContactHub {
    */
   public Paginated<Event> getEvents(String customerId)
       throws ContactHubException, ServerException, HttpException {
-    return EventApi.getByCustomer(this.auth, customerId);
+    return EventApi.get(this.auth, customerId, EventFilters.builder().build());
   }
 
   /**
@@ -335,7 +335,7 @@ public class ContactHub {
    */
   public Paginated<Event> getEvents(String customerId, EventFilters filters)
       throws ContactHubException, ServerException, HttpException {
-    return EventApi.getByCustomer(this.auth, customerId, filters);
+    return EventApi.get(this.auth, customerId, filters);
   }
 
 }

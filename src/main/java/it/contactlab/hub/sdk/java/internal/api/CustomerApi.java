@@ -7,6 +7,7 @@ import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
+import it.contactlab.hub.sdk.java.models.AsyncPaginated;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Paged;
@@ -21,46 +22,15 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 
 public class CustomerApi {
 
   private static Gson gson = ContactHubGson.getInstance();
 
-  /**
-   * Retrieves a Customer by id.
-   *
-   * @param auth A ContactHub Auth object.
-   * @param id   The Customer id.
-   * @return     A Customer object.
-   */
-  public static Customer get(Auth auth, String id)
-      throws ApiException, ServerException, HttpException {
-    String endpoint = "/customers/" + id;
-    String response = Request.doGet(auth, endpoint);
-
-    return gson.fromJson(response, Customer.class);
-  }
-
-  /**
-   * Retrieves all the Customers for a Node.
-   *
-   * @param auth A ContactHub Auth object.
-   * @return     A {@link Paginated} list of Customer objects.
-   */
-  public static Paginated<Customer> get(Auth auth)
-      throws ApiException, ServerException, HttpException {
-    return get(auth, GetCustomersOptions.builder().build());
-  }
-
-  /**
-   * Retrieves all the Customers for a Node, with options
-   *
-   * @param auth       A ContactHub Auth object.
-   * @param options    An instance of {@link GetCustomersOptions}.
-   * @return           A {@link Paginated} list of matching Customer objects.
-   */
-  public static Paginated<Customer> get(Auth auth, GetCustomersOptions options)
+  private static Paged<Customer> getPaged(Auth auth, GetCustomersOptions options)
       throws ApiException, ServerException, HttpException {
     Map<String, Object> queryString = new HashMap<>();
 
@@ -88,6 +58,42 @@ public class CustomerApi {
     Type paginatedCustomerType = new TypeToken<Paged<Customer>>(){}.getType();
     Paged<Customer> pagedCustomers = gson.fromJson(response, paginatedCustomerType);
 
+    return pagedCustomers;
+  }
+
+  /**
+   * Async version of get.
+   */
+  public static CompletableFuture<AsyncPaginated<Customer>> asyncGet(
+      Auth auth, GetCustomersOptions options) {
+
+    Function<Integer, CompletableFuture<AsyncPaginated<Customer>>>
+        requestFunction = (Integer pageNumber) ->
+            asyncGet(auth, options.withPage(pageNumber));
+
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        Paged<Customer> pagedCustomers = getPaged(auth, options);
+
+        return new AsyncPaginated<Customer>(pagedCustomers, requestFunction);
+      } catch (Exception ex) {
+        throw new CompletionException(ex);
+      }
+    });
+  }
+
+  /**
+   * Retrieves all the Customers for a Node, with options
+   *
+   * @param auth       A ContactHub Auth object.
+   * @param options    An instance of {@link GetCustomersOptions}.
+   * @return           A {@link Paginated} list of matching Customer objects.
+   */
+  public static Paginated<Customer> get(Auth auth, GetCustomersOptions options)
+      throws ApiException, ServerException, HttpException {
+
+    Paged<Customer> pagedCustomers = getPaged(auth, options);
+
     Function<Integer, Paginated<Customer>> requestFunction = (Integer pageNumber) -> {
       try {
         return get(auth, options.withPage(pageNumber));
@@ -97,6 +103,21 @@ public class CustomerApi {
     };
 
     return new Paginated<Customer>(pagedCustomers, requestFunction);
+  }
+
+  /**
+   * Retrieves a Customer by id.
+   *
+   * @param auth A ContactHub Auth object.
+   * @param id   The Customer id.
+   * @return     A Customer object.
+   */
+  public static Customer getById(Auth auth, String id)
+      throws ApiException, ServerException, HttpException {
+    String endpoint = "/customers/" + id;
+    String response = Request.doGet(auth, endpoint);
+
+    return gson.fromJson(response, Customer.class);
   }
 
   /**

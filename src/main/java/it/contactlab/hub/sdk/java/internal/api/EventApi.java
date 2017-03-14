@@ -6,6 +6,7 @@ import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
+import it.contactlab.hub.sdk.java.models.AsyncPaginated;
 import it.contactlab.hub.sdk.java.models.Event;
 import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.Paged;
@@ -23,6 +24,8 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 
 public class EventApi {
@@ -81,29 +84,7 @@ public class EventApi {
     return true;
   }
 
-  /**
-   * Retrieves an Event by id.
-   */
-  public static Event get(Auth auth, String id)
-      throws ContactHubException, ServerException, HttpException {
-    String endpoint = "/events/" + id;
-    String response = Request.doGet(auth, endpoint);
-
-    return gson.fromJson(response, Event.class);
-  }
-
-  /**
-   * Retrieves all Events for a Customer.
-   */
-  public static Paginated<Event> getByCustomer(Auth auth, String customerId)
-      throws ContactHubException, ServerException, HttpException {
-    return getByCustomer(auth, customerId, EventFilters.builder().build());
-  }
-
-  /**
-   * Retrieves all Events for a Customer, with filters.
-   */
-  public static Paginated<Event> getByCustomer(
+  private static Paged<Event> getPaged(
       Auth auth, String customerId, EventFilters filters
   ) throws ContactHubException, ServerException, HttpException {
     final String endpoint = "/events";
@@ -128,15 +109,58 @@ public class EventApi {
     Type pagedEventType = new TypeToken<Paged<Event>>(){}.getType();
     Paged<Event> pagedEvents = gson.fromJson(response, pagedEventType);
 
+    return pagedEvents;
+  }
+
+  /**
+   * Async version of get.
+   */
+  public static CompletableFuture<AsyncPaginated<Event>> asyncGet(
+      Auth auth, String customerId, EventFilters filters
+  ) {
+    Function<Integer, CompletableFuture<AsyncPaginated<Event>>>
+        requestFunction = (Integer pageNumber) ->
+            asyncGet(auth, customerId, filters.withPage(pageNumber));
+
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        Paged<Event> pagedEvents = getPaged(auth, customerId, filters);
+
+        return new AsyncPaginated<Event>(pagedEvents, requestFunction);
+      } catch (Exception ex) {
+        throw new CompletionException(ex);
+      }
+    });
+  }
+
+  /**
+   * Retrieves all Events for a Customer, with filters.
+   */
+  public static Paginated<Event> get(
+      Auth auth, String customerId, EventFilters filters
+  ) throws ContactHubException, ServerException, HttpException {
+    Paged<Event> pagedEvents = getPaged(auth, customerId, filters);
+
     Function<Integer, Paginated<Event>> requestFunction = (Integer pageNumber) -> {
       try {
-        return getByCustomer(auth, customerId, filters.withPage(pageNumber));
+        return get(auth, customerId, filters.withPage(pageNumber));
       } catch (ContactHubException exception) {
         throw new RuntimeException(exception);
       }
     };
 
     return new Paginated<Event>(pagedEvents, requestFunction);
+  }
+
+  /**
+   * Retrieves an Event by id.
+   */
+  public static Event getById(Auth auth, String id)
+      throws ContactHubException, ServerException, HttpException {
+    String endpoint = "/events/" + id;
+    String response = Request.doGet(auth, endpoint);
+
+    return gson.fromJson(response, Event.class);
   }
 
 }
