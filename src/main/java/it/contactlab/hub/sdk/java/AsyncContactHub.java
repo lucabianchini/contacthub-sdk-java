@@ -202,7 +202,7 @@ public class AsyncContactHub {
    *
    * @param customerId The id of the Customer.
    * @param likeId     The id of the Like to be removed.
-   * @return           true if the removal was successful.
+   * @return           A {@link CompletionStage}.
    */
   public CompletionStage<Void> removeLike(String customerId, String likeId) {
     return wrapAsync(() -> LikeApi.remove(this.auth, customerId, likeId));
@@ -282,7 +282,7 @@ public class AsyncContactHub {
    *
    * @param customerId  The id of the Customer.
    * @param educationId The id of the Education to be removed.
-   * @return            true if the removal was successful.
+   * @return            A {@link CompletionStage}.
    */
   public CompletionStage<Void> removeEducation(String customerId, String educationId) {
     return wrapAsync(() -> EducationApi.remove(this.auth, customerId, educationId));
@@ -318,7 +318,7 @@ public class AsyncContactHub {
    * Adds a new Event.
    *
    * @param newEvent The {@link Event} to create.
-   * @return Whether the Event was successfully queued for insertion.
+   * @return         A {@link CompletionStage}.
    */
   public CompletionStage<Void> addEvent(Event newEvent) {
     return wrapAsync(() -> EventApi.add(this.auth, newEvent));
