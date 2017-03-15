@@ -17,7 +17,13 @@ import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
+import it.contactlab.hub.sdk.java.internal.api.QueryApi;
+import it.contactlab.hub.sdk.java.models.Customer;
+import it.contactlab.hub.sdk.java.models.Paginated;
+import it.contactlab.hub.sdk.java.queries.Operator;
+import it.contactlab.hub.sdk.java.queries.QueryContainer;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
@@ -355,6 +361,18 @@ public class AsyncContactHub {
       String customerId, EventFilters filters
   ) {
     return EventApi.asyncGet(this.auth, customerId, filters);
+
+  /**
+   * Returns a {@link QueryContainer} based on some simple arguments.
+   */
+  public QueryContainer createQuery(String attribute, Operator operator, Object value) {
+    return QueryApi.createQuery(attribute, operator, Optional.of(value));
   }
 
+  /**
+   * Overloaded version of createQuery for operators that do not require a value.
+   */
+  public QueryContainer createQuery(String attribute, Operator operator) {
+    return QueryApi.createQuery(attribute, operator, Optional.empty());
+  }
 }

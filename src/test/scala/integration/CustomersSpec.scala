@@ -119,33 +119,6 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Then("the returned objects should not include other fields")
       customers.head.base.get.lastName.isPresent shouldBe false
     }
-
-    scenario("specifying a query") {
-      Given("a query")
-      val parser = new JsonParser
-      val query = parser.parse("""{
-        "name": "",
-        "query": {
-          "name": "mario",
-          "type": "simple",
-          "are": {
-            "condition": {
-              "type": "atomic",
-              "attribute": "base.firstName",
-              "operator": "EQUALS",
-              "value": "Mario"
-            }
-          }
-        }
-      }""").getAsJsonObject
-      val options = GetCustomersOptions.builder.query(query).build
-
-      When("the user retrieves a list of customers")
-      val customers = ch.getCustomers(options).elements
-
-      Then("the returned objects should not include other fields")
-      customers.head.base.get.firstName.get shouldBe "Mario"
-    }
   }
 
   feature("adding and deleting customers") {

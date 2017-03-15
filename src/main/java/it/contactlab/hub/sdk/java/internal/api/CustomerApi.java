@@ -14,7 +14,6 @@ import it.contactlab.hub.sdk.java.models.Paged;
 import it.contactlab.hub.sdk.java.models.Paginated;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
@@ -47,7 +46,7 @@ public class CustomerApi {
       queryString.put("fields", String.join(",", options.fields()));
     }
 
-    options.query().ifPresent(query -> queryString.put("query", query.toString()));
+    options.query().ifPresent(query -> queryString.put("query", gson.toJson(query).toString()));
 
     options.sort().ifPresent(sortField -> {
       queryString.put("sort",
