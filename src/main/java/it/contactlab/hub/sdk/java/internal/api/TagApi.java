@@ -19,8 +19,8 @@ public class TagApi {
   public static Customer add(Auth auth, String customerId, String tag)
       throws ApiException, ServerException, HttpException {
 
-    Customer customer = CustomerApi.get(auth, customerId);
-    Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet());
+    Customer customer = CustomerApi.getById(auth, customerId);
+    Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet<>());
 
     boolean changed = manualTags.add(tag);
 
@@ -39,8 +39,8 @@ public class TagApi {
   public static Customer remove(Auth auth, String customerId, String tag)
       throws ApiException, ServerException, HttpException {
 
-    Customer customer = CustomerApi.get(auth, customerId);
-    Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet());
+    Customer customer = CustomerApi.getById(auth, customerId);
+    Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet<>());
 
     boolean changed = manualTags.remove(tag);
 

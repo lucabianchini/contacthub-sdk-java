@@ -47,10 +47,11 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      val success = ch.addEvent(event)
+      def create = ch.addEvent(event)
 
       Then("the event is created successfully")
-      success should be (true)
+      noException should be thrownBy create
+
     }
 
     scenario("adding an event with a sessionId", Integration) {
@@ -62,10 +63,10 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      val success = ch.addEvent(event)
+      def addEvent = ch.addEvent(event)
 
       Then("the event is created successfully")
-      success should be (true)
+      noException should be thrownBy addEvent
     }
 
     scenario("adding an event with an externalId", Integration) {
@@ -77,10 +78,10 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      val success = ch.addEvent(event)
+      def addEvent = ch.addEvent(event)
 
       Then("the event is created successfully")
-      success should be (true)
+      noException should be thrownBy addEvent
     }
 
     scenario("adding an event with sessionId and externalId", Integration) {
@@ -93,10 +94,10 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      val success = ch.addEvent(event)
+      def addEvent = ch.addEvent(event)
 
       Then("the event is created successfully")
-      success should be (true)
+      noException should be thrownBy addEvent
 
       And("the sessionId is ignored (externalId has precedence)")
       // FIXME: it's not trivial to test this condition

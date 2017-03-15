@@ -7,6 +7,7 @@ import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.http.Request;
+import it.contactlab.hub.sdk.java.models.AsyncPaginated;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Paged;
@@ -21,46 +22,16 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 public class CustomerApi {
 
   private static Gson gson = ContactHubGson.getInstance();
 
-  /**
-   * Retrieves a Customer by id.
-   *
-   * @param auth A ContactHub Auth object.
-   * @param id   The Customer id.
-   * @return     A Customer object.
-   */
-  public static Customer get(Auth auth, String id)
-      throws ApiException, ServerException, HttpException {
-    String endpoint = "/customers/" + id;
-    String response = Request.doGet(auth, endpoint);
-
-    return gson.fromJson(response, Customer.class);
-  }
-
-  /**
-   * Retrieves all the Customers for a Node.
-   *
-   * @param auth A ContactHub Auth object.
-   * @return     A {@link Paginated} list of Customer objects.
-   */
-  public static Paginated<Customer> get(Auth auth)
-      throws ApiException, ServerException, HttpException {
-    return get(auth, GetCustomersOptions.builder().build());
-  }
-
-  /**
-   * Retrieves all the Customers for a Node, with options
-   *
-   * @param auth       A ContactHub Auth object.
-   * @param options    An instance of {@link GetCustomersOptions}.
-   * @return           A {@link Paginated} list of matching Customer objects.
-   */
-  public static Paginated<Customer> get(Auth auth, GetCustomersOptions options)
+  private static Paged<Customer> getPaged(Auth auth, GetCustomersOptions options)
       throws ApiException, ServerException, HttpException {
     Map<String, Object> queryString = new HashMap<>();
 
@@ -88,6 +59,49 @@ public class CustomerApi {
     Type paginatedCustomerType = new TypeToken<Paged<Customer>>(){}.getType();
     Paged<Customer> pagedCustomers = gson.fromJson(response, paginatedCustomerType);
 
+    return pagedCustomers;
+  }
+
+  /**
+   * Async version of get.
+   *
+   * @param auth       A ContactHub Auth object.
+   * @param options    An instance of {@link GetCustomersOptions}.
+   * @return           A {@link CompletionStage} of {@link AsyncPaginated} {@link Customer} objects.
+   */
+  public static CompletionStage<AsyncPaginated<Customer>> asyncGet(
+      Auth auth, GetCustomersOptions options) {
+
+    Function<Integer, CompletionStage<AsyncPaginated<Customer>>>
+        requestFunction = (Integer pageNumber) ->
+            asyncGet(auth, options.withPage(pageNumber));
+
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        Paged<Customer> pagedCustomers = getPaged(auth, options);
+
+        return new AsyncPaginated<Customer>(pagedCustomers, requestFunction);
+      } catch (ContactHubException ex) {
+        throw new CompletionException(ex);
+      }
+    });
+  }
+
+  /**
+   * Retrieves all the Customers for a Node, with options
+   *
+   * @param auth       A ContactHub Auth object.
+   * @param options    An instance of {@link GetCustomersOptions}.
+   * @return           A {@link Paginated} list of matching Customer objects.
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
+   */
+  public static Paginated<Customer> get(Auth auth, GetCustomersOptions options)
+      throws ApiException, ServerException, HttpException {
+
+    Paged<Customer> pagedCustomers = getPaged(auth, options);
+
     Function<Integer, Paginated<Customer>> requestFunction = (Integer pageNumber) -> {
       try {
         return get(auth, options.withPage(pageNumber));
@@ -100,11 +114,34 @@ public class CustomerApi {
   }
 
   /**
+   * Retrieves a Customer by id.
+   *
+   * @param auth A ContactHub Auth object.
+   * @param id   The Customer id.
+   * @return     A Customer object.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
+   */
+  public static Customer getById(Auth auth, String id)
+      throws ApiException, ServerException, HttpException {
+    String endpoint = "/customers/" + id;
+    String response = Request.doGet(auth, endpoint);
+
+    return gson.fromJson(response, Customer.class);
+  }
+
+  /**
    * Adds a new Customer.
    *
    * @param auth     A ContactHub Auth object.
    * @param customer The Customer object.
    * @return         The stored Customer object, including its id.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public static Customer add(Auth auth, Customer customer)
       throws ApiException, ServerException, HttpException {
@@ -121,14 +158,15 @@ public class CustomerApi {
    *
    * @param auth       A ContactHub Auth object.
    * @param customerId The id of the Customer to delete.
-   * @return           True if the deletion was successful
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
-  public static boolean delete(Auth auth, String customerId)
+  public static void delete(Auth auth, String customerId)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
     String response = Request.doDelete(auth, endpoint);
-
-    return true;
   }
 
   /**
@@ -137,6 +175,10 @@ public class CustomerApi {
    * @param auth     A ContactHub Auth object.
    * @param customer The Customer object.
    * @return         The updated Customer object
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public static Customer update(Auth auth, Customer customer)
       throws ApiException, ServerException, HttpException {
@@ -155,6 +197,10 @@ public class CustomerApi {
    * @param customerId    The id of the Customer to patch.
    * @param patchCustomer The CustomerPatch object.
    * @return              The updated Customer object
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
    */
   public static Customer patch(Auth auth, String customerId, Customer patchCustomer)
       throws ApiException, ServerException, HttpException {

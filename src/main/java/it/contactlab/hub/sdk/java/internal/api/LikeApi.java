@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
+import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
 import it.contactlab.hub.sdk.java.gson.ContactHubGson;
@@ -18,7 +18,7 @@ public class LikeApi {
    * Add a new Like to a Customer.
    */
   public static Like add(Auth auth, String customerId, Like like)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes";
     String payload = gson.toJson(like);
@@ -31,7 +31,7 @@ public class LikeApi {
    * Update an existing Like.
    */
   public static Like update(Auth auth, String customerId, Like like)
-      throws ContactHubException, ServerException, HttpException {
+      throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes/" + like.id();
     String payload = gson.toJson(like);
@@ -43,12 +43,10 @@ public class LikeApi {
   /**
    * Remove a tag from a Customer.
    */
-  public static boolean remove(Auth auth, String customerId, String likeId)
-      throws ContactHubException, ServerException, HttpException {
+  public static void remove(Auth auth, String customerId, String likeId)
+      throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes/" + likeId;
     String response = Request.doDelete(auth, endpoint);
-
-    return true;
   }
 }

@@ -76,7 +76,7 @@ public class Request {
   }
 
   /**
-   * Sends a generic DELETE request and returns true if successful.
+   * Sends a generic DELETE request and returns the response String.
    */
   public static String doDelete(Auth auth, String endpoint)
       throws ApiException, ServerException, HttpException {

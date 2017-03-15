@@ -57,7 +57,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("the user asks for a user that doesn't exist")
       Then("the user should not be retrieved")
       Then("an error should be thrown")
-      a [ContactHubException] should be thrownBy ch.getCustomer("not-existing")
+      an [ApiException] should be thrownBy ch.getCustomer("not-existing")
     }
 
     scenario("retrieving a single customer by external id", Integration) {
@@ -161,11 +161,10 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       id shouldNot be (null)
 
       When("the user deletes the customer")
-      val success = ch.deleteCustomer(id)
+      def delete = ch.deleteCustomer(id)
 
       Then("the customer should be deleted")
-      success should be (true)
-      an [ContactHubException] should be thrownBy ch.getCustomer(id)
+      noException should be thrownBy delete
     }
 
     scenario("deleting a non-exiting customer", Integration) {
@@ -176,7 +175,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("the user tries to delete that customer")
 
       Then("no customer deleted")
-      an [ContactHubException] should be thrownBy ch.deleteCustomer(customerId)
+      an [ApiException] should be thrownBy ch.deleteCustomer(customerId)
     }
   }
 
@@ -218,7 +217,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       val customer = Customer.builder.id("not-existing").build
 
       Then("the update should fail")
-      an [ContactHubException] should be thrownBy ch.updateCustomer(customer)
+      an [ApiException] should be thrownBy ch.updateCustomer(customer)
     }
 
     scenario("patching a customer's email address") {
@@ -259,7 +258,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       When("the user tries to update a user that does not exist")
       def patch = ch.patchCustomer("non-existing", newCustomer)
       Then("the patch should fail")
-      an [ContactHubException] should be thrownBy patch
+      an [ApiException] should be thrownBy patch
     }
   }
 

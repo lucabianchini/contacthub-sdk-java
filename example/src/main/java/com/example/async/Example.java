@@ -10,6 +10,7 @@ import it.contactlab.hub.sdk.java.models.CustomerTags;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.concurrent.CompletionStage;
 
 /**
  * Example use of the Async SDK.
@@ -56,21 +57,27 @@ public class Example {
             .build())
         .build();
 
-    String newId = ch.addCustomer(mario).thenApply(customer ->
-        customer.id().get()
-    ).toCompletableFuture().join();
+    CompletionStage asyncOperations = ch.addCustomer(mario)
+      .thenApply(customer -> customer.id().get())
+      .thenCompose(newId -> {
 
-    System.out.println(newId);
-    System.out.println();
+        System.out.println(newId);
+        System.out.println();
 
-    System.out.println("-------------------------------");
-    System.out.println("Retrieving the customer's email");
-    System.out.println("-------------------------------");
+        System.out.println("-------------------------------");
+        System.out.println("Retrieving the customer's email");
+        System.out.println("-------------------------------");
 
-    ch.getCustomer(newId).thenAccept(customer ->
-        System.out.println(customer.base().get().contacts().get().email().get())
-    ).toCompletableFuture().join();
-    System.out.println();
+        return ch.getCustomer(newId);
+      })
+      .thenAccept(customer -> {
+        String email = customer.base().get().contacts().get().email().get();
+        System.out.println(email);
+        System.out.println();
+      });
+
+    // Wait for all the async operations to finish.
+    asyncOperations.toCompletableFuture().join();
   }
 
 }
