@@ -36,7 +36,7 @@ class QuerySpec extends FeatureSpec with GivenWhenThen {
     .operator(Operator.BETWEEN)
     .value(Arrays.asList(
       OffsetDateTime.parse("1900-01-01T00:00:00Z"),
-      OffsetDateTime.parse("2016-01-01T00:00:00Z")
+      OffsetDateTime.parse("1991-01-01T00:00:00Z")
     ))
     .build
 
@@ -47,7 +47,7 @@ class QuerySpec extends FeatureSpec with GivenWhenThen {
 
   val compositeMario = CompositeCondition.builder
     .conjunction(ConditionConjunction.and)
-    .conditions(java.util.Arrays.asList(atomicMario, atomicBetween))
+    .conditions(Arrays.asList(atomicMario, atomicBetween))
     .build
 
   val atomicPage = AtomicCondition.builder

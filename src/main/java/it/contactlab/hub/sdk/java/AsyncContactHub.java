@@ -7,6 +7,7 @@ import it.contactlab.hub.sdk.java.internal.api.EducationApi;
 import it.contactlab.hub.sdk.java.internal.api.EventApi;
 import it.contactlab.hub.sdk.java.internal.api.JobApi;
 import it.contactlab.hub.sdk.java.internal.api.LikeApi;
+import it.contactlab.hub.sdk.java.internal.api.QueryApi;
 import it.contactlab.hub.sdk.java.internal.api.SessionApi;
 import it.contactlab.hub.sdk.java.internal.api.TagApi;
 import it.contactlab.hub.sdk.java.models.AsyncPaginated;
@@ -17,9 +18,6 @@ import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
-import it.contactlab.hub.sdk.java.internal.api.QueryApi;
-import it.contactlab.hub.sdk.java.models.Customer;
-import it.contactlab.hub.sdk.java.models.Paginated;
 import it.contactlab.hub.sdk.java.queries.Operator;
 import it.contactlab.hub.sdk.java.queries.QueryContainer;
 
@@ -361,6 +359,7 @@ public class AsyncContactHub {
       String customerId, EventFilters filters
   ) {
     return EventApi.asyncGet(this.auth, customerId, filters);
+  }
 
   /**
    * Returns a {@link QueryContainer} based on some simple arguments.
