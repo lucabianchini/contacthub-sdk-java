@@ -459,7 +459,7 @@ ch.getCustomers(GetCustomersOptions.builder().query(customQuery).build)
 A Custom Query is an instance of `QueryContainer` that can be generated
 in two ways:
 
-### Easy custom queries
+### Basic custom queries
 
 ```java
 QueryContainer customQuery = ch.createQuery(
