@@ -8,6 +8,7 @@ import it.contactlab.hub.sdk.java.internal.api.EducationApi;
 import it.contactlab.hub.sdk.java.internal.api.EventApi;
 import it.contactlab.hub.sdk.java.internal.api.JobApi;
 import it.contactlab.hub.sdk.java.internal.api.LikeApi;
+import it.contactlab.hub.sdk.java.internal.api.QueryApi;
 import it.contactlab.hub.sdk.java.internal.api.SessionApi;
 import it.contactlab.hub.sdk.java.internal.api.TagApi;
 import it.contactlab.hub.sdk.java.models.Customer;
@@ -18,6 +19,10 @@ import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
 import it.contactlab.hub.sdk.java.models.Paginated;
+import it.contactlab.hub.sdk.java.queries.Operator;
+import it.contactlab.hub.sdk.java.queries.QueryContainer;
+
+import java.util.Optional;
 
 /**
  * ContactHub Java SDK (Sync version).
@@ -432,6 +437,20 @@ public class ContactHub {
   public Paginated<Event> getEvents(String customerId, EventFilters filters)
       throws ApiException, ServerException, HttpException {
     return EventApi.get(this.auth, customerId, filters);
+  }
+
+  /**
+   * Returns a {@link QueryContainer} based on some simple arguments.
+   */
+  public QueryContainer createQuery(String attribute, Operator operator, Object value) {
+    return QueryApi.createQuery(attribute, operator, Optional.of(value));
+  }
+
+  /**
+   * Overloaded version of createQuery for operators that do not require a value.
+   */
+  public QueryContainer createQuery(String attribute, Operator operator) {
+    return QueryApi.createQuery(attribute, operator, Optional.empty());
   }
 
 }

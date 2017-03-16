@@ -12,6 +12,6 @@ public abstract class AbstractApiError {
 
   public abstract String path();
 
-  public abstract Optional<String> data();
+  public abstract Optional<Object> data();
 
 }

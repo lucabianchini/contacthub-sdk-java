@@ -233,7 +233,7 @@ of the following attributes:
 
 * `externalId`: filters Customers by externalId
 * `fields`: a whitelist of Customer properties you are interested in
-* `query`: a `JsonObject` representing a custom query
+* `query`: a `QueryContainer` (see [Custom Queries](#custom-queries)).
 * `sort`: the field to order the results by
 * `direction`: the order of the sorting (`asc` or `desc`)
 * `page`: the page to retrieve (defaults to `0`)
@@ -445,6 +445,53 @@ Remove a tag from a Customer. If the tag is already present, nothing is changed.
 
 ```java
 Customer updatedCustomer = ch.addTag(customerId, "a-tag-to-remove");
+```
+
+## Custom Queries
+
+Advanced searches and filtering of Customers can be performed using Custom
+Queries.
+
+```java
+ch.getCustomers(GetCustomersOptions.builder().query(customQuery).build)
+```
+
+A Custom Query is an instance of `QueryContainer` that can be generated
+in two ways:
+
+### Basic custom queries
+
+```java
+QueryContainer customQuery = ch.createQuery(
+    "base.firstName", Operator.EQUALS, Optional.of("Mario")
+);
+```
+
+```java
+QueryContainer customQuery = ch.createQuery(
+    "base.pictureUrl", Operator.IS_NOT_NULL)
+);
+```
+
+### Advanced custom queries
+
+The SDK lets you use the full power of the ContactHub API query language. The
+SDK methods closely mirror the structure of the API query format. Refer to the
+API documentation for more details.
+
+```java
+QueryContainer customQuery = QueryContainer.builder()
+  .name("An optional name for your query")
+  .query(SimpleQuery.builder()
+    .are(ConditionContainer.builder()
+      .condition(AtomicCondition.builder()
+        .attribute("base.firstName")
+        .operator(Operator.EQUALS)
+        .value("Mario")
+        .build())
+      .build())
+    .build())
+  .build();
 ```
 
 ## Event API
