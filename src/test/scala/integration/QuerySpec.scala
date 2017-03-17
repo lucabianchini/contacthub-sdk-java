@@ -50,12 +50,6 @@ class QuerySpec extends FeatureSpec with GivenWhenThen {
     .conditions(Arrays.asList(atomicMario, atomicBetween))
     .build
 
-  val atomicPage = AtomicCondition.builder
-    .attribute("page")
-    .operator(Operator.EQUALS)
-    .value("http://example.com")
-    .build
-
   feature("createQuery helper") {
     scenario("Using the createQuery helper", Integration) {
       Given("I get a QueryContainer using the createQuery helper")
