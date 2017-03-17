@@ -557,7 +557,7 @@ try out.
 
 ## Contributing to this library
 
-Althpough this is a Java library, we use [sbt](http://www.scala-sbt.org/) as
+Although this is a Java library, we use [sbt](http://www.scala-sbt.org/) as
 the build tool.
 
 `sbt compile` will compile all the Java sources to `target/classes`
