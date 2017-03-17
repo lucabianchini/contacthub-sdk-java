@@ -198,7 +198,7 @@ Reconcile a sessionId with an existing Customer. Use this if you want to
 associate anonymous events (containing a sessionId) with an existing customerId.
 
 ```java
-Boolean success = ch.addCustomerSession(customerId, sessionId);
+ch.addCustomerSession(customerId, sessionId);
 ```
 
 ## Customer API
@@ -270,7 +270,7 @@ Add a new Customer. This method returns a new Customer object including the ID t
 assigned to the new customer by the API.
 
 ```java
-Customer newCustomer = ch.addCustomer(Customer customer)
+Customer newCustomer = ch.addCustomer(customer)
 ```
 
 If the "Customer uniqueness" configuration for your workspace is set to "Merge"
@@ -301,7 +301,7 @@ deleteCustomer("an-existing-id");
 Update an existing Customer by replacing all of their data with the data provided.
 
 ```java
-Customer updatedCustomer = ch.updateCustomer(Customer newCustomer);
+Customer updatedCustomer = ch.updateCustomer(newCustomer);
 ```
 
 This method will fail if the ID of the `newCustomer` does not match an existing
@@ -370,19 +370,19 @@ The following methods are useful ways to add/update/remove the Education objects
 ### addEducation
 
 ```java
-Customer updatedCustomer = ch.addEducation(customerId, Education education);
+Customer updatedCustomer = ch.addEducation(customerId, education);
 ```
 
 ### updateEducation
 
 ```java
-Customer updatedCustomer = ch.updateEducation(customerId, Education education);
+Customer updatedCustomer = ch.updateEducation(customerId, education);
 ```
 
 ### removeEducation
 
 ```java
-Customer updatedCustomer = ch.removeEducation(customerId, String educationId);
+Customer updatedCustomer = ch.removeEducation(customerId, educationId);
 ```
 
 ## Like API
@@ -392,19 +392,19 @@ The following methods are useful ways to add/update/remove the Like objects of a
 ### addLike
 
 ```java
-Customer updatedCustomer = ch.addLike(customerId, Like like);
+Customer updatedCustomer = ch.addLike(customerId, like);
 ```
 
 ### updateLike
 
 ```java
-Customer updatedCustomer = ch.updateLike(customerId, Like like);
+Customer updatedCustomer = ch.updateLike(customerId, like);
 ```
 
 ### removeLike
 
 ```java
-Customer updatedCustomer = ch.removeLike(customerId, String likeId);
+Customer updatedCustomer = ch.removeLike(customerId, likeId);
 ```
 
 ## Job API
@@ -463,7 +463,7 @@ in two ways:
 
 ```java
 QueryContainer customQuery = ch.createQuery(
-    "base.firstName", Operator.EQUALS, Optional.of("Mario")
+    "base.firstName", Operator.EQUALS, "Mario"
 );
 ```
 
@@ -517,12 +517,11 @@ See [Pagination](#pagination).
 
 ### addEvent
 
-Add a new Event. This method returns `true` if the API has successfully queued
-the event for insertion. The API will then process the queue asynchronously, and it
-can take a few seconds for an event to actually be stored.
+Add a new Event. The API will process the event queue asynchronously, and it can
+take a few seconds for an event to be actually stored.
 
 ```java
-Boolean queued = ch.addEvent(Event event)
+queued = ch.addEvent(event)
 ```
 
 To create an `Event` instance, use the builder provided by the `Event` object.
