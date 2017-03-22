@@ -110,7 +110,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
         "a",
         "b",
         "c",
-        "https://httpbin.org/status/500?"
+        "http://httpbin.org/status/500?"
       )
       val ch = new ContactHub(auth)
 
@@ -129,7 +129,7 @@ class ErrorSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
         "a",
         "b",
         "c",
-        "https://httpbin.org"
+        "http://httpbin.org"
       )
       val ch = new ContactHub(auth)
 

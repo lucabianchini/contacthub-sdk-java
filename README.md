@@ -1,5 +1,6 @@
 # Contacthub Java SDK
 
+[![Build Status](https://travis-ci.org/contactlab/contacthub-sdk-java.svg?branch=master)](https://travis-ci.org/contactlab/contacthub-sdk-java)
 [![Latest tag](https://img.shields.io/github/tag/contactlab/contacthub-sdk-java.svg)](https://github.com/contactlab/contacthub-sdk-java/releases/)
 
 ## Private repository for beta
