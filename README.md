@@ -98,7 +98,7 @@ Then add your credentials to `~/.m2/settings.xml`:
 In your `build.sbt`:
 
 ```scala
-libraryDependencies += "it.contactlab.hub" % "sdk-java" % "1.0.0"
+libraryDependencies += "it.contactlab.hub" % "sdk-java" % "1.1.0"
 ```
 
 ### Gradle
@@ -107,7 +107,7 @@ In your `build.gradle`:
 
 ```
 dependencies {
-  compile 'it.contactlab.hub:sdk-java:1.0.0
+  compile 'it.contactlab.hub:sdk-java:1.1.0
 }
 ```
 
@@ -119,7 +119,7 @@ In your `pom.xml`:
 <dependency>
   <groupId>it.contactlab.hub</groupId>
   <artifactId>sdk-java</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
