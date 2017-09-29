@@ -1,2 +1,2 @@
-addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.8.5")
-addSbtPlugin("org.xerial.sbt" % "sbt-jcheckstyle" % "0.1.3")
+addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.9.3")
+addSbtPlugin("org.xerial.sbt" % "sbt-jcheckstyle" % "0.2.0")
