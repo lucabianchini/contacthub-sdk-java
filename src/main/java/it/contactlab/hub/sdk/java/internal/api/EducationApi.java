@@ -4,8 +4,8 @@ import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
-import it.contactlab.hub.sdk.java.gson.ContactHubGson;
-import it.contactlab.hub.sdk.java.http.Request;
+import it.contactlab.hub.sdk.java.internal.gson.ContactHubGson;
+import it.contactlab.hub.sdk.java.internal.http.Request;
 import it.contactlab.hub.sdk.java.models.Education;
 
 import com.google.gson.Gson;

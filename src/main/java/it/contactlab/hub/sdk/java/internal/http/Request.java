@@ -1,4 +1,4 @@
-package it.contactlab.hub.sdk.java.http;
+package it.contactlab.hub.sdk.java.internal.http;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
