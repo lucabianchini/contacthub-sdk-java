@@ -40,6 +40,8 @@ public class CustomerApi {
 
     options.page().ifPresent(page -> queryString.put("page", page));
 
+    options.pageSize().ifPresent(pageSize -> queryString.put("size", pageSize));
+
     options.externalId().ifPresent(id -> queryString.put("externalId", id));
 
     if (!options.fields().isEmpty()) {
