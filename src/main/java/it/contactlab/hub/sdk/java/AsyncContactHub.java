@@ -20,6 +20,7 @@ import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
 import it.contactlab.hub.sdk.java.queries.Operator;
 import it.contactlab.hub.sdk.java.queries.QueryContainer;
+import it.contactlab.hub.sdk.java.models.ClientData;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

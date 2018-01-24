@@ -1,7 +1,7 @@
 package it.contactlab.hub.sdk.java.internal.http;
 
 import it.contactlab.hub.sdk.java.Auth;
-import it.contactlab.hub.sdk.java.ClientData;
+import it.contactlab.hub.sdk.java.models.ClientData;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
 import it.contactlab.hub.sdk.java.exceptions.ServerException;
@@ -158,7 +158,7 @@ public class Request {
     Map<String, String> headers = new HashMap<>();
     headers.put("Authorization", "Bearer " + auth.token);
     if (clientData != null) {
-      headers.put("Contactlab-Tracing-ID", clientData.correlationId);
+      headers.put("Contactlab-Tracing-ID", clientData.correlationId());
     }
     return headers;
   }
