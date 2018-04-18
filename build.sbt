@@ -1,6 +1,7 @@
 organization := "com.contactlab.hub"
 licenses := Seq("Apache License 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 homepage := Some(url("https://contactlab.com"))
+sonatypeProfileName := "com.contactlab"
 
 scmInfo := Some(
   ScmInfo(
