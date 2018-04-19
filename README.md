@@ -3,94 +3,6 @@
 [![Build Status](https://travis-ci.org/contactlab/contacthub-sdk-java.svg?branch=master)](https://travis-ci.org/contactlab/contacthub-sdk-java)
 [![Latest tag](https://img.shields.io/github/tag/contactlab/contacthub-sdk-java.svg)](https://github.com/contactlab/contacthub-sdk-java/releases/)
 
-## Private repository for beta
-
-Until this library reaches 1.0, it is only available as a private Maven
-repository from:
-
-* https://buildo-private-maven.appspot.com/
-
-If you have a valid account for this repository, add it to your build tool
-configuration.
-
-### sbt
-
-Add the following lines to your `build.sbt`:
-
-```scala
-resolvers += "buildo private maven" at "https://buildo-private-maven.appspot.com/"
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
-```
-
-Then create a file '~/.ivy2/.credentials' with the following content:
-
-```
-realm=
-host=buildo-private-maven.appspot.com
-user=user
-password=pass
-```
-
-
-### Gradle
-
-Add this to your project's `build.gradle`:
-
-```
-repositories {
-  mavenCentral()
-  maven {
-    credentials {
-      username "$buildoMavenUser"
-      password "$buildoMavenPassword"
-    }
-    url "https://buildo-private-maven.appspot.com"
-  }
-}
-```
-
-Then add your credentials to `~/.gradle/gradle.properties`:
-
-```
-buildoMavenUser=user
-buildoMavenPassword=pass
-```
-
-### Maven
-
-Add this to your project's `pom.xml`:
-
-```xml
-  <repositories>
-    <repository>
-      <id>buildo-private-maven.appspot.com</id>
-      <url>https://buildo-private-maven.appspot.com</url>
-    </repository>
-  </repositories>
-```
-
-Then add your credentials to `~/.m2/settings.xml`:
-
-```xml
-<settings>
-  <servers>
-    <server>
-      <id>buildo-private-maven.appspot.com</id>
-      <configuration>
-        <httpHeaders>
-          <property>
-            <name>Authorization</name>
-            <!-- Encode the string "user:pass" using https://www.base64encode.org/ -->
-            <value>Basic dXNlcjpwYXNz</value>
-          </property>
-        </httpHeaders>
-      </configuration>
-    </server>
-  </servers>
-</settings>
-```
-
-
 ## Adding this library to your project dependencies
 
 ### sbt
@@ -98,7 +10,7 @@ Then add your credentials to `~/.m2/settings.xml`:
 In your `build.sbt`:
 
 ```scala
-libraryDependencies += "it.contactlab.hub" % "sdk-java" % "1.1.0"
+libraryDependencies += "it.contactlab.hub" % "sdk-java" % "1.2.1"
 ```
 
 ### Gradle
@@ -107,7 +19,7 @@ In your `build.gradle`:
 
 ```
 dependencies {
-  compile 'it.contactlab.hub:sdk-java:1.1.0
+  compile 'it.contactlab.hub:sdk-java:1.2.1
 }
 ```
 
@@ -119,7 +31,7 @@ In your `pom.xml`:
 <dependency>
   <groupId>it.contactlab.hub</groupId>
   <artifactId>sdk-java</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.1</version>
 </dependency>
 ```
 
@@ -561,17 +473,21 @@ try out.
 Although this is a Java library, we use [sbt](http://www.scala-sbt.org/) as
 the build tool.
 
-`sbt compile` will compile all the Java sources to `target/classes`
+`sbt compile` will compile all the Java sources to `target/classes`.
 
-`sbt package` will package the compiled files in a JAR file under `target`
+`sbt package` will package the compiled files in a JAR file under `target`.
 
-`sbt doc` will generate an HTML JavaDoc in `target/api`
+`sbt doc` will generate an HTML JavaDoc in `target/api`.
 
-`sbt packageDoc` will package the javadoc files in a JAR file under `target`
+`sbt packageDoc` will package the javadoc files in a JAR file under `target`.
 
 `sbt test` will run the tests. To run the tests you need a valid ContactHub
 account and a test workspace, refer to the notes in the [example](example) to
 set the correct environment variables.
+
+`sbt publishSigned` and `sbt sonatypeRelease` will publish a new version to
+Maven Central. You'll need the required credentials and the setup described
+[here](https://www.scala-sbt.org/release/docs/Using-Sonatype.html).
 
 ### Immutables
 
