@@ -37,6 +37,11 @@ public abstract class AbstractCustomer {
   public abstract Optional<BaseProperties> base();
 
   /**
+   * The customer's consents data structure included in Contacthub
+   */
+  public abstract Optional<Consents> consents();
+
+  /**
    * The id of the ContactHub node the customer belongs to.
    */
   public abstract Optional<String> nodeId();
