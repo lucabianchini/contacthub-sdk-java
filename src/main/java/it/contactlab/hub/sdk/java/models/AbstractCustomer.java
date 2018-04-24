@@ -37,7 +37,7 @@ public abstract class AbstractCustomer {
   public abstract Optional<BaseProperties> base();
 
   /**
-   * The customer's consents data structure included in Contacthub
+   * The {@link Consents} of the customer.
    */
   public abstract Optional<Consents> consents();
 
