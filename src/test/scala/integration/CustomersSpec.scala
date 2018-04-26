@@ -340,4 +340,39 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
     }
   }
 
+  feature("creating and reading privacy consents") {
+    scenario("creating a new customer with privacy consents") {
+      Given("a customer with privacy consents")
+
+      val base = BaseProperties.builder
+        .firstName("Mario")
+        .lastName("Rossi")
+        .contacts(Contacts.builder
+          .email(Gen.alphaStr.sample.get + "@example.com")
+          .build)
+        .build
+
+      val consents = Consents.builder
+        .thirdPartyTransfer(
+          ThirdPartyTransfer.builder.profiling(
+            Consent.builder.status(true).limitation(false).objection(false).build
+          )
+          .build)
+        .build
+
+      val customer = Customer.builder
+        .base(base)
+        .consents(consents)
+        .build
+
+      When("the user creates and retrieves the customer")
+      val newCustomer = ch.addCustomer(customer)
+      val retrievedCustomer = ch.getCustomer(newCustomer.id.get)
+
+      Then("all the consents match")
+      retrievedCustomer.consents.get.thirdPartyTransfer.get.profiling.get shouldBe consents.thirdPartyTransfer.get.profiling.get
+      ch.deleteCustomer(retrievedCustomer.id.get)
+    }
+  }
+
 }
