@@ -37,6 +37,11 @@ public abstract class AbstractCustomer {
   public abstract Optional<BaseProperties> base();
 
   /**
+   * The {@link Consents} of the customer.
+   */
+  public abstract Optional<Consents> consents();
+
+  /**
    * The id of the ContactHub node the customer belongs to.
    */
   public abstract Optional<String> nodeId();

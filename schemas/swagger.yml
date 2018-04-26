@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: 1.0.0
+  version: 1.39.0
   title: Contacthub
   description: >-
     The platform to collect, store, conserve, update and export all the digital
@@ -42,30 +42,33 @@ tags:
     description: Automation endpoint
   - name: user
     description: User endpoint
-  - name: audit
-    description: Audit endpoint
+
 paths:
   '/me':
     get:
       description: |
         Gets all the info of user
+      summary: "Get User info"
+      operationId: getMe
       security:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/UserInfo'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - user
-  '/workspaces/{id-workspace}/configuration':
+  '/workspaces/{workspaceId}/configuration':
     get:
       description: |
         Gets workspace parameters
+      summary: "Get Workspace parameters"
+      operationId: getConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -74,18 +77,20 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/WorkspaceConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
         Modify workspace parameters
+      summary: "Modify Workspace parameters"
+      operationId: putConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -100,19 +105,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/WorkspaceConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/properties/base':
+  '/workspaces/{workspaceId}/configuration/properties/base':
     get:
       description: |
         Gets all base properties
+      summary: "Get Base properties"
+      operationId: getBasePropertiesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -121,7 +128,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -132,20 +139,22 @@ paths:
                   $ref: '#/definitions/BasePropertyConfiguration'
 
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/properties/base/{name}':
+  '/workspaces/{workspaceId}/configuration/properties/base/{name}':
     put:
       description: |
         Enable/Disable base properties
+      summary: "Modify Base property status"
+      operationId: putBasePropertyConfigurationWorkspaces
       parameters:
         - name: name
           in: path
           description: The name of base customer property
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -161,16 +170,16 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/BasePropertyConfiguration'
         '400':
-          description: If the client tries to change a fields different from `enabled`
+          description: "Bad Request"
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/properties/extended':
+  '/workspaces/{workspaceId}/configuration/properties/extended':
     get:
       description: >
         Gets extended properties configurated. The json schema of extended
@@ -178,8 +187,10 @@ paths:
         with property `label`, `enabled` and `mergePolicy` with value
         OBJ_PRIORITY, OBJ_CONCATENATE, ARRAY_UNION, ARRAY_INTERSECTION,
         MATH_SUM, MATH_AVG, MATH_DIFF, MATH_MIN, MATH_MAX).
+      summary: "Get Extended properties"
+      operationId: getExtendedPropertiesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -188,93 +199,95 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/ExtendedPropertyConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: >
-        Modify extended properties configurated. 
-                                              
-        The json schema of extended property (including for every elements 
-        the contactlabProperties object with property `label`, `enabled` 
-        and `mergePolicy` with value
+        Modify extended properties configurated. The json schema of extended
+        property (including for every elements the contactlabProperties object
+        with property `label`, `enabled` and `mergePolicy` with value
         OBJ_PRIORITY, OBJ_CONCATENATE, ARRAY_UNION, ARRAY_INTERSECTION,
         MATH_SUM, MATH_AVG, MATH_DIFF, MATH_MIN, MATH_MAX).
-
-        #### EXAMPLE
-
-        ```json
-
-        {
-          "membership_card_nr": {
-            "description": "il numero della membership card",
-            "type": "number",
-            "contactlabProperties":{
-              "label": "Membership Card",
-              "mergePolicy": "OBJ_PRIORITY",
-              "enabled": true
-            }
-          },
-          "point": {
-            "description": "i punti accumulati con la membership card",
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true
-            "contactlabProperties":{
-              "label": "Membership Card",
-              "mergePolicy": "OBJ_PRIORITY",
-              "enabled": true
-            }
-          },
-          "tags": {
-            "description": "i tag associati al profilo",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "minItems": 1,
-            "uniqueItems": true
-            "contactlabProperties":{
-              "label": "Tags",
-              "mergePolicy": "ARRAY_INTERSECTION",
-              "enabled": true
-            }
-          },
-          "dimensions": {
-            "type": "object",
-            "contactlabProperties":{
-              "label": "Misure fisiche",
-              "mergePolicy": "OBJ_PRIORITY",
-              "enabled": true
-            },
-            "properties": {
-              "height": {
-                    "type": "number",
-                    "contactlabProperties":{
-                      "label": "Altezza",
-                      "mergePolicy": "OBJ_PRIORITY",
-                      "enabled": true
-                    }
-                  },
-              "weight": {
-                    "type": "number",
-                    "contactlabProperties":{
-                      "label": "Peso",
-                      "mergePolicy": "OBJ_PRIORITY",
-                      "enabled": true
-                    }
-                  }
-            }
-          },
-          ........
-        }
-        ```
+      summary: "Modify Extended properties"
+      operationId: putExtendedPropertiesConfigurationWorkspaces
+    ##### EXAMPLE
+    #```json
+    #{
+    #  "name": "Webhook",
+    #  "enabled": true,
+    #  "nodes": [
+    #    "9d57e0e4-42cd-4b84-9eab-7dc28fb5a220"
+    #  ],
+    #  "delay": 3600,
+    #  "topic": {
+    #    "eventType": "addedProduct",
+    #    "customerType": "ANONYMOUS",
+    #    "eventContext": "WEB",
+    #    "query": {
+    #      "are": {
+    #        "condition": {
+    #          "conditions": [
+    #            {
+    #              "value": [
+    #                "82f0d0a1-84df-4af5-9fb8-57dca1950808"
+    #              ],
+    #              "operator": "IN",
+    #              "attribute": "nodeId",
+    #              "type": "atomic"
+    #            },
+    #            {
+    #              "value": [
+    #                1472421600000,
+    #                1475099999999
+    #              ],
+    #              "operator": "BETWEEN",
+    #              "attribute": "date",
+    #              "type": "atomic"
+    #            },
+    #            {
+    #              "value": "customerCreated",
+    #              "operator": "EQUALS",
+    #              "attribute": "type",
+    #              "type": "atomic"
+    #            }
+    #          ],
+    #          "conjunction": "and",
+    #          "type": "composite"
+    #        }
+    #      },
+    #      "name": "mySimpleQuery",
+    #      "type": "simple"
+    #    }
+    #  },
+    #  "tag": {
+    #    "operations": [
+    #      { "op": "SET_NULL", "path": "/foo"},
+    #      { "op": "SET_CONSTANT", "path": "/baz", "value": "boo" },
+    #      { "op": "ADD_CONSTANT", "path": "/hello", "value": ["world"] },
+    #      { "op": "SUB_EVENT_PROPERTY", "path": "/customerPrice", "value": "/_price"},
+    #      { "op": "SUB_CONSTANT", "path": "/customerPrice2", "value": 2}
+    #    ]
+    #  },
+    #  "webhook": {
+    #    "url": "http://...",
+    #    "format": "JSON",
+    #    "body": {
+    #      "type": "LIST",
+    #      "contents": [
+    #        {"type": "CONSTANT", "key": "d","value": "/eventfield"},
+    #        {"type": "EVENT_PROPERTY", "key": "d", "value": "/constantvalue"}
+    #      ]
+    #    }
+    #  }
+    #}
+    #```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -291,19 +304,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/ExtendedPropertyConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/unique-customer-matching-policy':
+  '/workspaces/{workspaceId}/configuration/unique-customer-matching-policy':
     get:
       description: |
         Gets unique customer matching policies for aggregations
+      summary: "Get Customer matching policy"
+      operationId: getUniqueCustomerMatchingPolicy
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -312,51 +327,53 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/UniqueCustomerMatchingPolicyConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
-        Modify unique customer matching policies for aggregations
+        Updates unique customer matching policies for aggregations
+      summary: "Modify Customer matching policy"
+      operationId: putUniqueCustomerMatchingPolicy
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
-          description: The unique identifier of workspace
+          description: |
+            The unique identifier of workspace
           required: true
           type: string
         - name: properties
+          in: body
           description: |
             The flag to enable/disable the property base.
-          in: body
           required: true
           schema:
-            type: array
-            items:
-              type: string
-              description: Rules of aggregations
+           $ref: '#/definitions/UniqueCustomerMatchingPolicyConfiguration'
       security:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/UniqueCustomerMatchingPolicyConfiguration'
         '400':
-          description: "You have sent one or more unexpected properties"
+          description: "Bad Request"
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/nodes/entries':
+  '/workspaces/{workspaceId}/configuration/nodes/entries':
     get:
       description: |
         Gets list of entries node
+      summary: "Get Entries node"
+      operationId: getEntriesNodesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -365,7 +382,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -377,14 +394,16 @@ paths:
               page:
                   $ref: '#/definitions/Page'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     post:
       description: |
-        Create new entries node
+        Creates new entry node
+      summary: "Create Entry node"
+      operationId: postEntryNodeConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -400,24 +419,26 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Created new entry node
+          description: Created
           schema:
             $ref: '#/definitions/EntryNodeConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/nodes/entries/{id}':
+  '/workspaces/{workspaceId}/configuration/nodes/entries/{id}':
     get:
       description: |
         Gets details of a specific entry node
+      summary: "Get Entry node"
+      operationId: getEntryNodeConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of entry node
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -426,23 +447,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/EntryNodeConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
         Modify a specific entry node
+      summary: "Modify Entry node"
+      operationId: putEntryNodeConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of entry node
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -458,19 +481,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/EntryNodeConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/nodes/views':
+  '/workspaces/{workspaceId}/configuration/nodes/views':
     get:
       description: |
         Gets list of view node
+      summary: "Get View nodes"
+      operationId: getViewsNodesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -479,7 +504,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -491,14 +516,16 @@ paths:
               page:
                 $ref: '#/definitions/Page'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     post:
       description: |
         Create new view node
+      summary: "Create View node"
+      operationId: postViewNodeConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -514,24 +541,26 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Created new view node
+          description: Created
           schema:
             $ref: '#/definitions/ViewNodeConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/nodes/views/{id}':
+  '/workspaces/{workspaceId}/configuration/nodes/views/{id}':
     get:
       description: |
         Gets details of a specific view node
+      summary: "Get View node"
+      operationId: getViewNodeConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of view node
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -540,23 +569,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/ViewNodeConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
         Modify a specific view node
+      summary: "Modify View node"
+      operationId: putViewNodeConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of view node
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -572,23 +603,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/ViewNodeConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     delete:
       description: |
-        Delete a specific view node
+        Deletes a specific view node
+      summary: "Delete View node"
+      operationId: deleteViewNodeConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of view node
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -597,19 +630,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '400':
-          description: If the view node is used in the node hierarchy
+          description: "Bad Request"
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/nodes/node-hierarchy':
+  '/workspaces/{workspaceId}/configuration/nodes/node-hierarchy':
     get:
       description: |
-        Define the hierarchy of the tree mapping the workspace organization
+        Returns the hierarchy of the tree mapping the workspace organization
+      summary: "Get Node hierarchy"
+      operationId: getHierarchyNodesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -618,18 +653,20 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/NodeHierarchyConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
         Modify the hierarchy of the tree mapping the workspace organization
+      summary: "Modify Node hierarchy"
+      operationId: putHierarchyNodesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -645,19 +682,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/NodeHierarchyConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/sources':
+  '/workspaces/{workspaceId}/configuration/sources':
     get:
       description: |
         Gets list of source configurated
+      summary: "Get Sources list"
+      operationId: getSourcesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -666,7 +705,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -678,14 +717,16 @@ paths:
               page:
                 $ref: '#/definitions/Page'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     post:
       description: |
         Create a new source
+      summary: "Modify Source"
+      operationId: postSourceConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -701,24 +742,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/SourceConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/sources/{id}':
+  '/workspaces/{workspaceId}/configuration/sources/{id}':
     get:
       description: |
         Gets source details
+      summary: "Get Source details"
+      operationId: getSourceConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of source
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -727,23 +770,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/SourceConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
         Modify source
+      summary: "Modify Source"
+      operationId: putSourceConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of source
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -759,23 +804,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/SourceConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     delete:
       description: |
-        Delete source
+        Deletes source
+      summary: "Delete Source"
+      operationId: deleteSourceConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of source
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -784,22 +831,24 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/sources/{id}/refresh-token':
+  '/workspaces/{workspaceId}/configuration/sources/{id}/refresh-token':
     post:
       description: |
         Refresh source token
+      summary: "Refresh Source token"
+      operationId: postSourceTokenConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of source
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -808,19 +857,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/SourceConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/events':
+  '/workspaces/{workspaceId}/configuration/events':
     get:
       description: |
         Gets list of built-in event
+      summary: "Get Events list"
+      operationId: getEventsConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -829,7 +880,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -841,20 +892,22 @@ paths:
               page:
                 $ref: '#/definitions/Page'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/events/{id}':
+  '/workspaces/{workspaceId}/configuration/events/{id}':
     get:
       description: |
         Gets details of built-in event
+      summary: "Get Event details"
+      operationId: getEventConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of event
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -863,23 +916,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/EventConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
         Enable/Disable built-in event
+      summary: "Modify Event"
+      operationId: putEventConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of built-in
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -895,73 +950,22 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/EventConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
 
-  '/workspaces/{id-workspace}/audit':
-    get:
-      description:
-        Gets audit event
-      parameters:
-        - name: id-workspace
-          in: path
-          description: The unique identifier of workspace
-          required: true
-          type: string
-        - name: customerId
-          in: query
-          description: The unique identifier of customer
-          type: string
-        - name: eventType
-          in: query
-          description: The name of event type
-          type: string
-          enum:
-            - customerCreated
-            - customerUpdated
-            - customerDeleted
-            - eventCreated
-            - eventDeleted
-        - name: nodeId
-          in: query
-          description: The node identifier
-          type: string
-        - name: sourceId
-          in: query
-          description: The source identifier
-          type: string
-        - name: dateFrom
-          in: query
-          description: From datetime for search of event
-          type: string
-          format: date-time
-        - name: dateTo
-          in: query
-          description: To datetime for search of event
-          type: string
-          format: date-time
-      security:
-         - Bearer: []
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            $ref: '#/definitions/PagedAuditEvent'
-        '403':
-          description: "You don't have the necessary permissions for the resource"
-      tags:
-        - audit
-  '/workspaces/{id-workspace}/configuration/users':
+  '/workspaces/{workspaceId}/configuration/users':
     get:
       description: |
         Gets users
+      summary: "Get Users list"
+      operationId: getUsersConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -970,7 +974,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -982,20 +986,22 @@ paths:
               page:
                 $ref: '#/definitions/Page'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/configuration/users/{id}':
+  '/workspaces/{workspaceId}/configuration/users/{id}':
     get:
       description: |
         Gets user details
+      summary: "Get User details"
+      operationId: getUserConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of user
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1004,23 +1010,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/User'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
         Modify user nodes
+      summary: "Modify User"
+      operationId: putUserConfigurationWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of user
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1036,19 +1044,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/User'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
-  '/workspaces/{id-workspace}/customers':
+  '/workspaces/{workspaceId}/customers':
     get:
       description: |
         Gets list of customers
+      summary: "Get Customers list"
+      operationId: getCustomersWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1074,21 +1084,27 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/PagedCustomer'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     post:
       description: |
-        Create a new customer
+        Creates a new customer
+      summary: "Create Customer"
+      operationId: postCustomerWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
+          type: string
+        - name: sessionId
+          in: query
+          description: The unique identifier of session
           type: string
         - name: customer
           in: body
@@ -1100,26 +1116,30 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Created new customer
+          description: Created
           schema:
             $ref: '#/definitions/Customer'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
         '409':
-          description: "Customer unique constraint violation"
+          description: Conflict
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{id}':
+  '/workspaces/{workspaceId}/customers/{id}':
     get:
       description: |
         Gets details of customer
+      summary: "Get Customer details"
+      operationId: getCustomerWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1128,57 +1148,64 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Customer'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     patch:
       description: |
         Modifies partially the customer
-      parameters:
-        -
-          name: id
-          in: path
-          description: The unique identifier of customer
-          required: true
-          type: string
-        -
-          name: id-workspace
-          in: path
-          description: The unique identifier of workspace
-          required: true
-          type: string
-        -
-          name: customer
-          in: body
-          description: The customer object
-          required: true
-          schema:
-            $ref: '#/definitions/PatchCustomer'
-      security:
-         - Bearer: []
-      responses:
-        200:
-          description: Successful response
-        '403':
-          description: "You don't have the necessary permissions for the resource"
-        '409':
-          description: "Customer unique constraint violation"
-      tags:
-        - customer
-    put:
-      description: |
-        Modify customer
+      summary: "Modify Customer"
+      operationId: patchCustomerWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: customer
+          in: body
+          description: The customer object
+          required: true
+          schema:
+            $ref: '#/definitions/PatchCustomer'
+        - name: sessionId
+          in: query
+          description: The unique identifier of session
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        200:
+          description: OK
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+        '423':
+          description: Reindexing in progress
+      tags:
+        - customer
+    put:
+      description: |
+        Updates customer
+      summary: "Modify Customer"
+      operationId: putCustomerWorkspaces
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of customer
+          required: true
+          type: string
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1189,29 +1216,37 @@ paths:
           description: Object necessary to update customer
           schema:
             $ref: '#/definitions/PutCustomer'
+        - name: sessionId
+          in: query
+          description: The unique identifier of session
+          type: string
       security:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Customer'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
         '409':
-          description: "Customer unique constraint violation"
+          description: Conflict
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
     delete:
       description: |
-        Delete customer
+        Deletes customer
+      summary: "Delete Customer"
+      operationId: deleteCustomerWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1220,22 +1255,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{id}/sources':
+  '/workspaces/{workspaceId}/customers/{id}/sources':
     get:
       description: |
         Gets list of raw data from sources
+      summary: "Get Customer sources list"
+      operationId: getSourcesCustomerWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1244,7 +1283,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -1254,25 +1293,27 @@ paths:
                 items:
                   $ref: '#/definitions/SourceCustomer'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{id}/sources/{id-source}':
+  '/workspaces/{workspaceId}/customers/{id}/sources/{sourceId}':
     get:
       description: |
         Gets raw data from a specific sources
+      summary: "Get Customer source details"
+      operationId: getSourceCustomerWorkspaces
       parameters:
         - name: id
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-source
+        - name: sourceId
           in: path
           description: The unique identifier of source
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1281,24 +1322,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/SourceCustomer'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/educations':
+  '/workspaces/{workspaceId}/customers/{customerId}/educations':
     post:
       description: |
-        Create customer education
+        Creates customer education
+      summary: "Create Customer education"
+      operationId: postEducationsCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1313,24 +1356,28 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Education'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/educations/{id}':
+  '/workspaces/{workspaceId}/customers/{customerId}/educations/{id}':
     get:
       description: |
         Gets details of customer education
+      summary: "Get Customer education"
+      operationId: getEducationCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1344,23 +1391,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Education'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     put:
       description: |
-        Modify customer education
+        Modifies customer education
+      summary: "Modify Customer education"
+      operationId: putEducationCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1380,23 +1429,27 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Education'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
     delete:
       description: |
-        Delete customer education
+        Deletes customer education
+      summary: "Delete Customer education"
+      operationId: deleteEducationCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1410,22 +1463,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/likes':
+  '/workspaces/{workspaceId}/customers/{customerId}/likes':
     post:
       description: |
-        Create customer like
+        Creates customer like
+      summary: "Create Customer like"
+      operationId: postLikesCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1440,24 +1497,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Like'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/likes/{id}':
+  '/workspaces/{workspaceId}/customers/{customerId}/likes/{id}':
     get:
       description: |
         Gets details of customer like
+      summary: "Get Customer like"
+      operationId: getLikeCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1471,23 +1530,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Like'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     put:
       description: |
-        Modify customer like
+        Modifies customer like
+      summary: "Modify Customer like"
+      operationId: putLikeCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1507,23 +1568,27 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Like'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
     delete:
       description: |
-        Delete customer like
+        Deletes customer like
+      summary: "Delete Customer like"
+      operationId: deleteLikeCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1537,22 +1602,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/jobs':
+  '/workspaces/{workspaceId}/customers/{customerId}/jobs':
     post:
       description: |
-        Create customer job
+        Creates customer job
+      summary: "Create Customer job"
+      operationId: postJobsCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1567,24 +1636,28 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Job'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/jobs/{id}':
+  '/workspaces/{workspaceId}/customers/{customerId}/jobs/{id}':
     get:
       description: |
         Gets details of customer job
+      summary: "Get Customer job"
+      operationId: getJobCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1598,23 +1671,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Job'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     put:
       description: |
-        Modify customer job
+        Modifies customer job
+      summary: "Modify Customer job"
+      operationId: putJobCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1634,23 +1709,27 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Job'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
     delete:
       description: |
-        Delete customer job
+        Deletes customer job
+      summary: "Delete Customer job"
+      operationId: deleteJobCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1664,22 +1743,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/subscriptions':
+  '/workspaces/{workspaceId}/customers/{customerId}/subscriptions':
     post:
       description: |
-        Create customer subscription
+        Creates customer subscription
+      summary: "Create Customer subscription"
+      operationId: postSubscriptionsCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1694,24 +1777,28 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Created new customer subscription
+          description: Created
           schema:
             $ref: '#/definitions/Subscription'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{customerId}/subscriptions/{id}':
+  '/workspaces/{workspaceId}/customers/{customerId}/subscriptions/{id}':
     get:
       description: |
         Gets details of customer subscription
+      summary: "Get Customer subscription"
+      operationId: getSubscriptionCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1725,23 +1812,25 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Subscription'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     put:
       description: |
-        Modify customer subscription
+        Modifies customer subscription
+      summary: "Modify Customer subscription"
+      operationId: putSubscriptionCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1761,23 +1850,27 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Subscription'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
     delete:
       description: |
-        Delete customer subscription
+        Deletes customer subscription
+      summary: "Delete Customer subscription"
+      operationId: deleteSubscriptionCustomerWorkspaces
       parameters:
         - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1791,17 +1884,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+        '423':
+          description: Reindexing in progress
       tags:
         - customer
-  '/workspaces/{id-workspace}/configuration/sources/priority':
+  '/workspaces/{workspaceId}/configuration/sources/priority':
     get:
       description: |
         Gets source priority
+      summary: "Get Source priority"
+      operationId: getPrioritySourcesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1810,18 +1907,20 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/SourcePriorityConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
     put:
       description: |
-        Modify source priority
+        Modifies source priority
+      summary: "Modify Source priority"
+      operationId: putPrioritySourcesConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -1836,20 +1935,22 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/SourcePriorityConfiguration'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - configuration
 
   # [BEGIN] EVENT AUTOMATION APIs DEFINITION
-  '/workspaces/{id-workspace}/configuration/automations/event-trigger':
+  '/workspaces/{workspaceId}/configuration/automations/event-trigger':
     get:
       description: Gets all configured automations
+      summary: "Get Automations list"
+      operationId: getEventTriggerAutomationsConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -1858,89 +1959,90 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/PagedAutomationConfigurationValues'
         '403':
-          description: You don't have the necessary permissions for the resource
+          description: Forbidden
       tags:
         - automation
     post:
       description: |
-        Creates a new automation configuration  
-                        
+        Creates a new automation configuration
+      summary: "Create Automation"
+      operationId: postEventTriggerAutomationConfigurationWorkspaces
         #### EXAMPLE
-        ```json
-        {
-          "name": "Webhook",
-          "enabled": true,
-          "nodes": [
-            "9d57e0e4-42cd-4b84-9eab-7dc28fb5a220"
-          ],
-          "topic": {
-            "eventType": "addedProduct",
-            "customerType": "ANONYMOUS",
-            "eventContext": "WEB",
-            "query": {
-              "are": {
-                "condition": {
-                  "conditions": [
-                    {
-                      "value": [
-                        "82f0d0a1-84df-4af5-9fb8-57dca1950808"
-                      ],
-                      "operator": "IN",
-                      "attribute": "nodeId",
-                      "type": "atomic"
-                    },
-                    {
-                      "value": [
-                        1472421600000,
-                        1475099999999
-                      ],
-                      "operator": "BETWEEN",
-                      "attribute": "date",
-                      "type": "atomic"
-                    },
-                    {
-                      "value": "customerCreated",
-                      "operator": "EQUALS",
-                      "attribute": "type",
-                      "type": "atomic"
-                    }
-                  ],
-                  "conjunction": "and",
-                  "type": "composite"
-                }
-              },
-              "name": "mySimpleQuery",
-              "type": "simple"
-            }
-          },
-          "tag": {
-            "operations": [
-              { "op": "SET_NULL", "path": "/foo"},
-              { "op": "SET_CONSTANT", "path": "/baz", "value": "boo" },
-              { "op": "ADD_CONSTANT", "path": "/hello", "value": ["world"] },
-              { "op": "SUB_EVENT_PROPERTY", "path": "/customerPrice", "value": "/_price"},
-              { "op": "SUB_CONSTANT", "path": "/customerPrice2", "value": 2}
-            ]
-          },
-          "webhook": {
-            "url": "http://...",
-            "format": "JSON",
-            "body": {
-              "type": "LIST",
-              "contents": [
-                {"type": "CONSTANT", "key": "d","value": "/eventfield"},
-                {"type": "EVENT_PROPERTY", "key": "d", "value": "/constantvalue"}
-              ]
-            }
-          }
-        }
-        ```
+        # ```json
+        # {
+        #   "name": "Webhook",
+        #   "enabled": true,
+        #   "nodes": [
+        #     "9d57e0e4-42cd-4b84-9eab-7dc28fb5a220"
+        #   ],
+        #   "topic": {
+        #     "eventType": "addedProduct",
+        #     "customerType": "ANONYMOUS",
+        #     "eventContext": "WEB",
+        #     "query": {
+        #       "are": {
+        #         "condition": {
+        #           "conditions": [
+        #             {
+        #               "value": [
+        #                 "82f0d0a1-84df-4af5-9fb8-57dca1950808"
+        #               ],
+        #               "operator": "IN",
+        #               "attribute": "nodeId",
+        #               "type": "atomic"
+        #             },
+        #             {
+        #               "value": [
+        #                 1472421600000,
+        #                 1475099999999
+        #               ],
+        #               "operator": "BETWEEN",
+        #               "attribute": "date",
+        #               "type": "atomic"
+        #             },
+        #             {
+        #               "value": "customerCreated",
+        #               "operator": "EQUALS",
+        #               "attribute": "type",
+        #               "type": "atomic"
+        #             }
+        #           ],
+        #           "conjunction": "and",
+        #           "type": "composite"
+        #         }
+        #       },
+        #       "name": "mySimpleQuery",
+        #       "type": "simple"
+        #     }
+        #   },
+        #   "tag": {
+        #     "operations": [
+        #       { "op": "SET_NULL", "path": "/foo"},
+        #       { "op": "SET_CONSTANT", "path": "/baz", "value": "boo" },
+        #       { "op": "ADD_CONSTANT", "path": "/hello", "value": ["world"] },
+        #       { "op": "SUB_EVENT_PROPERTY", "path": "/customerPrice", "value": "/_price"},
+        #       { "op": "SUB_CONSTANT", "path": "/customerPrice2", "value": 2}
+        #     ]
+        #   },
+        #   "webhook": {
+        #     "url": "http://...",
+        #     "format": "JSON",
+        #     "body": {
+        #       "type": "LIST",
+        #       "contents": [
+        #         {"type": "CONSTANT", "key": "d","value": "/eventfield"},
+        #         {"type": "EVENT_PROPERTY", "key": "d", "value": "/constantvalue"}
+        #       ]
+        #     }
+        #   }
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -1954,19 +2056,21 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Created new automation
+          description: Created
           schema:
             $ref: '#/definitions/AutomationConfiguration'
         '403':
-          description: You don't have the necessary permissions for the resource
+          description: Forbidden
       tags:
         - automation
 
-  '/workspaces/{id-workspace}/configuration/automations/event-trigger/{id-automation}':
+  '/workspaces/{workspaceId}/configuration/automations/event-trigger/{id-automation}':
     get:
       description: Gets a specific automation
+      summary: "Get Automation details"
+      operationId: getEventTriggerAutomationConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -1980,89 +2084,91 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AutomationConfiguration'
         '403':
-          description: You don't have the necessary permissions for the resource
+          description: Forbidden
       tags:
         - automation
     put:
       description: |
-        Updates a specific automation   
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Webhook",
-          "enabled": true,
-          "nodes": [
-            "9d57e0e4-42cd-4b84-9eab-7dc28fb5a220"
-          ],
-          "topic": {
-            "eventType": "addedProduct",
-            "customerType": "ANONYMOUS",
-            "eventContext": "WEB",
-            "query": {
-              "are": {
-                "condition": {
-                  "conditions": [
-                    {
-                      "value": [
-                        "82f0d0a1-84df-4af5-9fb8-57dca1950808"
-                      ],
-                      "operator": "IN",
-                      "attribute": "nodeId",
-                      "type": "atomic"
-                    },
-                    {
-                      "value": [
-                        1472421600000,
-                        1475099999999
-                      ],
-                      "operator": "BETWEEN",
-                      "attribute": "date",
-                      "type": "atomic"
-                    },
-                    {
-                      "value": "customerCreated",
-                      "operator": "EQUALS",
-                      "attribute": "type",
-                      "type": "atomic"
-                    }
-                  ],
-                  "conjunction": "and",
-                  "type": "composite"
-                }
-              },
-              "name": "mySimpleQuery",
-              "type": "simple"
-            }
-          },
-          "tag": {
-            "operations": [
-              { "op": "REMOVE", "path": "/foo"},
-              { "op": "SET_CONSTANT", "path": "/baz", "value": "boo" },
-              { "op": "ADD_CONSTANT", "path": "/hello", "value": ["world"] },
-              { "op": "SUB_EVENT_PROPERTY", "path": "/customerPrice", "value": "/_price"},
-              { "op": "SUB_CONSTANT", "path": "/customerPrice2", "value": 2}
-            ]
-          },
-          "webhook": {
-            "url": "http://...",
-            "format": "JSON",
-            "body": {
-              "type": "LIST",
-              "contents": [
-                {"type": "CONSTANT", "key": "d","value": "/eventfield"},
-                {"type": "EVENT_PROPERTY", "key": "d", "value": "/constantvalue"}
-              ]
-            }
-          }
-        }
-        ```
+        Updates a specific automation
+      summary: "Modify Automation"
+      operationId: putEventTriggerAutomationConfigurationWorkspaces
+        #
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Webhook",
+        #   "enabled": true,
+        #   "nodes": [
+        #     "9d57e0e4-42cd-4b84-9eab-7dc28fb5a220"
+        #   ],
+        #   "topic": {
+        #     "eventType": "addedProduct",
+        #     "customerType": "ANONYMOUS",
+        #     "eventContext": "WEB",
+        #     "query": {
+        #       "are": {
+        #         "condition": {
+        #           "conditions": [
+        #             {
+        #               "value": [
+        #                 "82f0d0a1-84df-4af5-9fb8-57dca1950808"
+        #               ],
+        #               "operator": "IN",
+        #               "attribute": "nodeId",
+        #               "type": "atomic"
+        #             },
+        #             {
+        #               "value": [
+        #                 1472421600000,
+        #                 1475099999999
+        #               ],
+        #               "operator": "BETWEEN",
+        #               "attribute": "date",
+        #               "type": "atomic"
+        #             },
+        #             {
+        #               "value": "customerCreated",
+        #               "operator": "EQUALS",
+        #               "attribute": "type",
+        #               "type": "atomic"
+        #             }
+        #           ],
+        #           "conjunction": "and",
+        #           "type": "composite"
+        #         }
+        #       },
+        #       "name": "mySimpleQuery",
+        #       "type": "simple"
+        #     }
+        #   },
+        #   "tag": {
+        #     "operations": [
+        #       { "op": "REMOVE", "path": "/foo"},
+        #       { "op": "SET_CONSTANT", "path": "/baz", "value": "boo" },
+        #       { "op": "ADD_CONSTANT", "path": "/hello", "value": ["world"] },
+        #       { "op": "SUB_EVENT_PROPERTY", "path": "/customerPrice", "value": "/_price"},
+        #       { "op": "SUB_CONSTANT", "path": "/customerPrice2", "value": 2}
+        #     ]
+        #   },
+        #   "webhook": {
+        #     "url": "http://...",
+        #     "format": "JSON",
+        #     "body": {
+        #       "type": "LIST",
+        #       "contents": [
+        #         {"type": "CONSTANT", "key": "d","value": "/eventfield"},
+        #         {"type": "EVENT_PROPERTY", "key": "d", "value": "/constantvalue"}
+        #       ]
+        #     }
+        #   }
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -2081,17 +2187,19 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AutomationConfiguration'
         '403':
-          description: You don't have the necessary permissions for the resource
+          description: Forbidden
       tags:
         - automation
     delete:
       description: Deletes a specific automation
+      summary: "Delete Automation"
+      operationId: deleteEventTriggerAutomationConfigurationWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -2105,24 +2213,26 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: You don't have the necessary permissions for the resource
+          description: Forbidden
       tags:
         - automation
   # [END] EVENT AUTOMATION APIs DEFINITION
 
-  '/workspaces/{id-workspace}/customers/{id}/sessions':
+  '/workspaces/{workspaceId}/customers/{customerId}/sessions':
     get:
       description: |
         Gets list of session assign to customer
+      summary: "Get Sessions list"
+      operationId: getSessionsCustomerWorkspaces
       parameters:
-        - name: id
+        - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2131,7 +2241,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -2141,19 +2251,21 @@ paths:
                 items:
                   $ref: '#/definitions/Session'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     post:
       description: |
-        Create a session of customer
+        Creates a session of customer
+      summary: "Create Session"
+      operationId: postSessionCustomerWorkspaces
       parameters:
-        - name: id
+        - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2173,29 +2285,31 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Created new session of customer
+          description: Created
           schema:
             $ref: '#/definitions/Session'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
-  '/workspaces/{id-workspace}/customers/{id}/sessions/{id-session}':
+  '/workspaces/{workspaceId}/customers/{customerId}/sessions/{sessionId}':
     get:
       description: |
         Gets a specific sessions assigned at customer
+      summary: "Get Session details"
+      operationId: getSessionCustomerWorkspaces
       parameters:
-        - name: id
+        - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-session
+        - name: sessionId
           in: path
           description: The unique identifier of session
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2204,28 +2318,30 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Session'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
     delete:
       description: |
-        Delete session assigned at customer
+        Deletes session assigned at customer
+      summary: "Delete Session"
+      operationId: deleteSessionCustomerWorkspaces
       parameters:
-        - name: id
+        - name: customerId
           in: path
           description: The unique identifier of customer
           required: true
           type: string
-        - name: id-session
+        - name: sessionId
           in: path
           description: The unique identifier of session
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2234,33 +2350,38 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - customer
-  '/workspaces/{id-workspace}/events':
+  '/workspaces/{workspaceId}/events':
     get:
       description: |
         Gets list of events
+      summary: "Get Events list"
+      operationId: getEventsWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
           type: string
         - name: customerId
           in: query
-          description: The unique identifier of workspace
-          required: true
+          description: The unique identifier of customer
+          type: string
+        - name: nodeId
+          in: query
+          description: The node identifier
           type: string
         - name: type
           in: query
-          description: The name of type event
+          description: One or more event types (separated by comma)
           type: string
         - name: context
           in: query
-          description: The name of context event
+          description: One or more event context (separated by comma)
           type: string
         - name: mode
           in: query
@@ -2285,18 +2406,20 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/PagedEvent'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - event
     post:
       description: |
-        Insert new event
+        Inserts new event
+      summary: "Create Event"
+      operationId: postEventWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2311,19 +2434,21 @@ paths:
          - Bearer: []
       responses:
         '202':
-          description: The request has been accepted for processing
+          description: Accepted
           schema:
-            $ref: '#/definitions/Event'
+            $ref: '#/definitions/PostResponseEvent'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - event
-  '/workspaces/{id-workspace}/events/{id}':
+  '/workspaces/{workspaceId}/events/{id}':
     get:
       description: |
         Gets details of specific event
+      summary: "Get Event details"
+      operationId: getEventWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2337,23 +2462,49 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Event'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
+      tags:
+        - event
+    put:
+      description: Modifies details of specific event
+      parameters:
+        - name: workspaceId
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: The unique identifier of event
+          required: true
+          type: string
+      security:
+         - Bearer: []
+      responses:
+        '202':
+          description: The request has been accepted for processing
+          schema:
+            $ref: '#/definitions/PutEvent'
+        '403':
+          description: You don't have the necessary permissions for the resource
       tags:
         - event
     delete:
       description: |
         Deletes a specific event
+      summary: "Delete Event"
+      operationId: deleteEventWorkspaces
       parameters:
         - name: id
           in: path
           description: The event identifier
           required: true
           type: string
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2362,18 +2513,20 @@ paths:
          - Bearer: []
       responses:
         '204':
-          description: "Successful response"
+          description: "No Content"
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
         '404':
-          description: "If no event corresponds to the specified identifier"
+          description: "Not Found"
       tags:
         - event
-  '/workspaces/{id-workspace}/segments':
+  '/workspaces/{workspaceId}/segments':
     get:
       description: Gets list of segments
+      summary: "Get Segments list"
+      operationId: getSegmentsWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2386,47 +2539,49 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/PagedSegment'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - segment
     post:
       description: |
-        insert a new segments
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "segment with 2 conditions",
-          "query": {
-                   "type": "simple",
-                   "name": "query rossi-brambilla",
-                   "are": {
-                           "condition": {
-                                   "type": "composite",
-                                   "conjunction": "or",
-                                   "conditions": [{
-                                          "type": "atomic",
-                                          "attribute": "user.surname",
-                                          "operator": "EQUALS",
-                                          "value": "ROSSI"
-                                   }, {
-                                          "type": "atomic",
-                                          "attribute": "user.surname",
-                                          "operator": "EQUALS",
-                                          "value": "BRAMBILLA"
-                                   }]
-                           }
-                   }
-          },
-          "enable": true
-        }
-        ```
+        Inserts a new segment
+      summary: "Create Segment"
+      operationId: postSegmentWorkspaces
+        #
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "segment with 2 conditions",
+        #   "query": {
+        #            "type": "simple",
+        #            "name": "query rossi-brambilla",
+        #            "are": {
+        #                    "condition": {
+        #                            "type": "composite",
+        #                            "conjunction": "or",
+        #                            "conditions": [{
+        #                                   "type": "atomic",
+        #                                   "attribute": "user.surname",
+        #                                   "operator": "EQUALS",
+        #                                   "value": "ROSSI"
+        #                            }, {
+        #                                   "type": "atomic",
+        #                                   "attribute": "user.surname",
+        #                                   "operator": "EQUALS",
+        #                                   "value": "BRAMBILLA"
+        #                            }]
+        #                    }
+        #            }
+        #   },
+        #   "enable": true
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2441,53 +2596,54 @@ paths:
          - Bearer: []
       responses:
         '201':
-          description: Created new segment
+          description: Created
           schema:
             type: array
             items:
               $ref: '#/definitions/Segment'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - segment
-  '/workspaces/{id-workspace}/segments/{id}':
+  '/workspaces/{workspaceId}/segments/{id}':
     get:
       description: |
         Details of specific segment
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "id": "059a4855-f304-4dbc-9e11-d1163aa96b0c",
-          "name": "segment with 2 conditions",
-          "query": {
-                   "type": "simple",
-                   "name": "query rossi-brambilla",
-                   "are": {
-                           "condition": {
-                                   "type": "composite",
-                                   "conjunction": "or",
-                                   "conditions": [{
-                                          "type": "atomic",
-                                          "attribute": "user.surname",
-                                          "operator": "EQUALS",
-                                          "value": "ROSSI"
-                                   }, {
-                                          "type": "atomic",
-                                          "attribute": "user.surname",
-                                          "operator": "EQUALS",
-                                          "value": "BRAMBILLA"
-                                   }]
-                           }
-                   }
-          },
-          "createdAt": "2016-02-23T09:26:33Z",
-          "updatedAt": "2016-02-23T09:26:44Z",
-          "enable": true
-        }
-        ```
+      summary: "Get Segment details"
+      operationId: getSegmentWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "id": "059a4855-f304-4dbc-9e11-d1163aa96b0c",
+        #   "name": "segment with 2 conditions",
+        #   "query": {
+        #            "type": "simple",
+        #            "name": "query rossi-brambilla",
+        #            "are": {
+        #                    "condition": {
+        #                            "type": "composite",
+        #                            "conjunction": "or",
+        #                            "conditions": [{
+        #                                   "type": "atomic",
+        #                                   "attribute": "user.surname",
+        #                                   "operator": "EQUALS",
+        #                                   "value": "ROSSI"
+        #                            }, {
+        #                                   "type": "atomic",
+        #                                   "attribute": "user.surname",
+        #                                   "operator": "EQUALS",
+        #                                   "value": "BRAMBILLA"
+        #                            }]
+        #                    }
+        #            }
+        #   },
+        #   "createdAt": "2016-02-23T09:26:33Z",
+        #   "updatedAt": "2016-02-23T09:26:44Z",
+        #   "enable": true
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2501,17 +2657,19 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Segment'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - segment
     put:
-      description: Modify a specific segment
+      description: Modifies a specific segment
+      summary: "Modify Segment"
+      operationId: putSegmentWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2531,17 +2689,19 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Segment'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - segment
     delete:
-      description: Delete a specific segment
+      description: Deletes a specific segment
+      summary: "Delete Segment"
+      operationId: deleteSegmentWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2555,21 +2715,22 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Segment'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - segment
-  '/workspaces/{id-workspace}/segments/{id}/customers':
+  '/workspaces/{workspaceId}/segments/{id}/customers':
     get:
       description: >
-        List of customer in a specific segment. 
-                                              
+        List of customer in a specific segment.
         The output it's a list of id. For other property specify with paramenters fields
+      summary: "Get Segment customers"
+      operationId: getCustomersSegmentWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2593,89 +2754,90 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/PagedCustomer'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - segment
-  '/workspaces/{id-workspace}/analytics/trend/customer':
+  '/workspaces/{workspaceId}/analytics/trend/customer':
     get:
       description: |
         Trend of customer base
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "analytics trend",
-          "parameters": {
-            "nodes": null,
-            "mode": "MONTHLY",
-            "startDate": "2015-12-31",
-            "endDate": "2016-08-31"
-          },
-          "headers": {
-            "nodeId": {
-              "description": "the node Id",
-              "type": "string"
-            },
-            "values": {
-              "description": "the value list",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "description": "Date referral to mode defined in request",
-                    "type": "string"
-                  },
-                  "new": {
-                    "description": "Number of new customers",
-                    "type": "number"
-                  },
-                  "lost": {
-                    "description": "Number of lost customers",
-                    "type": "number"
-                  },
-                  "total": {
-                    "description": "Number of total customer in the node",
-                    "type": "number"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "values": [
-                {
-                  "new": 1,
-                  "total": 2,
-                  "time": "2016-01",
-                  "lost": 0
-                },
-                {
-                  "new": 12,
-                  "total": 13,
-                  "time": "2016-02",
-                  "lost": 1
-                },...
-              ],
-              "nodeId": "node_1"
-            }
-          ]
-        }
-        ```
+      summary: "Get Customer base trend"
+      operationId: getCustomerTrendAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "analytics trend",
+        #   "parameters": {
+        #     "nodes": null,
+        #     "mode": "MONTHLY",
+        #     "startDate": "2015-12-31",
+        #     "endDate": "2016-08-31"
+        #   },
+        #   "headers": {
+        #     "nodeId": {
+        #       "description": "the node Id",
+        #       "type": "string"
+        #     },
+        #     "values": {
+        #       "description": "the value list",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "time": {
+        #             "description": "Date referral to mode defined in request",
+        #             "type": "string"
+        #           },
+        #           "new": {
+        #             "description": "Number of new customers",
+        #             "type": "number"
+        #           },
+        #           "lost": {
+        #             "description": "Number of lost customers",
+        #             "type": "number"
+        #           },
+        #           "total": {
+        #             "description": "Number of total customer in the node",
+        #             "type": "number"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "values": [
+        #         {
+        #           "new": 1,
+        #           "total": 2,
+        #           "time": "2016-01",
+        #           "lost": 0
+        #         },
+        #         {
+        #           "new": 12,
+        #           "total": 13,
+        #           "time": "2016-02",
+        #           "lost": 1
+        #         },...
+        #       ],
+        #       "nodeId": "node_1"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
           type: string
         - name: mode
           in: query
-          description: 'Mode of aggretation daily, weekly,monthly'
+          description: Mode of aggretation daily, weekly,monthly
           required: true
           type: string
           enum:
@@ -2703,85 +2865,86 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Trend'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/trend/event':
+  '/workspaces/{workspaceId}/analytics/trend/event':
     get:
       description: |
-        Trend of events.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Events trend analytics",
-          "parameters": {
-            "nodes": null,
-            "mode": "MONTHLY",
-            "startDate": "2015-12-31",
-            "endDate": "2016-08-31",
-            "eventType": "completedOrder",
-            "context": "ECOMMERCE"
-          },
-          "headers": {
-            "nodeId": {
-              "description": "Node identifier",
-              "type": "string"
-            },
-            "values": {
-              "description": "Distribution list",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "time": {
-                    "description": "Date referral to mode defined in request",
-                    "type": "string"
-                  },
-                  "new": {
-                    "description": "Number of new events",
-                    "type": "number"
-                  },
-                  "total": {
-                    "description": "Number of total events in the node",
-                    "type": "number"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "values": [
-                {
-                  "new": 1,
-                  "total": 2,
-                  "time": "2016-01"
-                },
-                {
-                  "new": 12,
-                  "total": 13,
-                  "time": "2016-02"
-                }, ...
-              ],
-              "nodeId": "node_1"
-            }
-          ]
-        }
-        ```
+        Trend of events
+      summary: "Get Events trend"
+      operationId: getEventTrendAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Events trend analytics",
+        #   "parameters": {
+        #     "nodes": null,
+        #     "mode": "MONTHLY",
+        #     "startDate": "2015-12-31",
+        #     "endDate": "2016-08-31",
+        #     "eventType": "completedOrder",
+        #     "context": "ECOMMERCE"
+        #   },
+        #   "headers": {
+        #     "nodeId": {
+        #       "description": "Node identifier",
+        #       "type": "string"
+        #     },
+        #     "values": {
+        #       "description": "Distribution list",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "time": {
+        #             "description": "Date referral to mode defined in request",
+        #             "type": "string"
+        #           },
+        #           "new": {
+        #             "description": "Number of new events",
+        #             "type": "number"
+        #           },
+        #           "total": {
+        #             "description": "Number of total events in the node",
+        #             "type": "number"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "values": [
+        #         {
+        #           "new": 1,
+        #           "total": 2,
+        #           "time": "2016-01"
+        #         },
+        #         {
+        #           "new": 12,
+        #           "total": 13,
+        #           "time": "2016-02"
+        #         }, ...
+        #       ],
+        #       "nodeId": "node_1"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
           type: string
         - name: mode
           in: query
-          description: 'Mode of aggretation daily, weekly and monthly'
+          description: Mode of aggretation daily, weekly and monthly
           required: true
           type: string
           enum:
@@ -2805,10 +2968,7 @@ paths:
           in: query
           description: The list of nodeId separated by comma
           type: string
-        - name: context
-          in: query
-          description: the event context
-          type: string
+        - $ref: '#/parameters/EventContext'
         - name: eventType
           in: query
           description: the event type
@@ -2817,60 +2977,61 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/EventTrend'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/composition/gender':
+  '/workspaces/{workspaceId}/analytics/composition/gender':
     get:
       description: |
-        Get composition by gender for one o multiple node
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "analytics gender",
-          "parameters": {
-            "nodes": null,
-            "startDate": "2015-12-31",
-            "endDate": "2016-08-31"
-          },
-          "headers": {
-            "nodeId": {
-              "description": "the node Id",
-              "type": "string"
-            },
-            "distribution": {
-              "description": "the distribution list",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "description": "Gender name",
-                    "type": "string"
-                  },
-                  "value": {
-                    "description": "Value for gender",
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "distribution": [{"name": "male", "value": 7},{"name": "N/A", "value": 1},{"name": "female", "value": 1}],
-              "nodeId": "node_1"
-            }, ...
-          ]
-        }
-        ```
+        Gets composition by gender for one o multiple node
+      summary: "Get Gender composition"
+      operationId: getGenderCompositionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "analytics gender",
+        #   "parameters": {
+        #     "nodes": null,
+        #     "startDate": "2015-12-31",
+        #     "endDate": "2016-08-31"
+        #   },
+        #   "headers": {
+        #     "nodeId": {
+        #       "description": "the node Id",
+        #       "type": "string"
+        #     },
+        #     "distribution": {
+        #       "description": "the distribution list",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "name": {
+        #             "description": "Gender name",
+        #             "type": "string"
+        #           },
+        #           "value": {
+        #             "description": "Value for gender",
+        #             "type": "string"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "distribution": [{"name": "male", "value": 7},{"name": "N/A", "value": 1},{"name": "female", "value": 1}],
+        #       "nodeId": "node_1"
+        #     }, ...
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2893,63 +3054,64 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/CompositionGender'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/composition/age-range':
+  '/workspaces/{workspaceId}/analytics/composition/age-range':
     get:
       description: |
-        Get composition by age range for one o multiple node
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "analytics age-range",
-          "parameters": {
-            "nodes": null,
-            "startDate": "2015-12-31",
-            "endDate": "2016-08-31"
-          },
-          "headers": {
-            "nodeId": {
-              "description": "the node Id",
-              "type": "string"
-            },
-            "distribution": {
-              "description": "the distribution list",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "description": "Age range name",
-                    "type": "string"
-                  },
-                  "value": {
-                    "description": "Value for Age range",
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "distribution": [
-              {"name": "> 64","value": 0},{"name": "55-64","value": 0},{"name": "45-54","value": 1},{"name": "35-44","value": 2},
-              {"name": "25-34","value": 2},{"name": "18-24", "value": 1},{"name": "< 18","value": 2},{"name": "N/A","value": 1}
-              ],
-              "nodeId": "node_1"
-            },...
-          ]
-        }
-        ```
+        Gets composition by age range for one o multiple node
+      summary: "Get Age-range composition"
+      operationId: getAgeRangeCompositionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "analytics age-range",
+        #   "parameters": {
+        #     "nodes": null,
+        #     "startDate": "2015-12-31",
+        #     "endDate": "2016-08-31"
+        #   },
+        #   "headers": {
+        #     "nodeId": {
+        #       "description": "the node Id",
+        #       "type": "string"
+        #     },
+        #     "distribution": {
+        #       "description": "the distribution list",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "name": {
+        #             "description": "Age range name",
+        #             "type": "string"
+        #           },
+        #           "value": {
+        #             "description": "Value for Age range",
+        #             "type": "string"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "distribution": [
+        #       {"name": "> 64","value": 0},{"name": "55-64","value": 0},{"name": "45-54","value": 1},{"name": "35-44","value": 2},
+        #       {"name": "25-34","value": 2},{"name": "18-24", "value": 1},{"name": "< 18","value": 2},{"name": "N/A","value": 1}
+        #       ],
+        #       "nodeId": "node_1"
+        #     },...
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -2972,65 +3134,66 @@ paths:
         - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/CompositionAgeRange'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
 
-  '/workspaces/{id-workspace}/analytics/composition/geo/country':
+  '/workspaces/{workspaceId}/analytics/composition/geo/country':
     get:
       description: |
-        Get composition by country for one o multiple node
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "analytics geo-country",
-          "parameters": {
-            "nodes": null,
-            "startDate": "2015-12-31",
-            "endDate": "2016-08-31"
-          },
-          "headers": {
-            "nodeId": {
-              "description": "the node Id",
-              "type": "string"
-            },
-            "distribution": {
-              "description": "the distribution list",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "description": "Country name",
-                    "type": "string"
-                  },
-                  "value": {
-                    "description": "Value for country",
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "nodeId": "1",
-              "distribution":[{"name": "italy", "value": 12000}, {"name": "spain", "value": 10000}, ....]
-            },
-            {
-              "nodeId": "2",
-              "distribution":[{"name": "italy", "value": 12000}, {"name": "spain", "value": 10000}, ....]
-            }
-          ]
-        }
-        ```
+        Gets composition by country for one o multiple node
+      summary: "Get Country composition"
+      operationId: getCountryCompositionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "analytics geo-country",
+        #   "parameters": {
+        #     "nodes": null,
+        #     "startDate": "2015-12-31",
+        #     "endDate": "2016-08-31"
+        #   },
+        #   "headers": {
+        #     "nodeId": {
+        #       "description": "the node Id",
+        #       "type": "string"
+        #     },
+        #     "distribution": {
+        #       "description": "the distribution list",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "name": {
+        #             "description": "Country name",
+        #             "type": "string"
+        #           },
+        #           "value": {
+        #             "description": "Value for country",
+        #             "type": "string"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "nodeId": "1",
+        #       "distribution":[{"name": "italy", "value": 12000}, {"name": "spain", "value": 10000}, ....]
+        #     },
+        #     {
+        #       "nodeId": "2",
+        #       "distribution":[{"name": "italy", "value": 12000}, {"name": "spain", "value": 10000}, ....]
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -3053,61 +3216,62 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/CompositionGeoCountry'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/composition/geo/city':
+  '/workspaces/{workspaceId}/analytics/composition/geo/city':
     get:
       description: |
-        Get composition by city for one o multiple node
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "analytics geo-city",
-          "parameters": {
-            "nodes": null,
-            "country": 'italy',
-            "startDate": "2015-12-31",
-            "endDate": "2016-08-31"
-          },
-          "headers": {
-            "nodeId": {
-              "description": "the node Id",
-              "type": "string"
-            },
-            "distribution": {
-              "description": "the distribution list",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "description": "City name",
-                    "type": "string"
-                  },
-                  "value": {
-                    "description": "Value for city",
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "distribution":[{"name": "rome", "value": 12000}, {"name": "milan", "value": 10000}, ....],
-              "nodeId": "node_1"
-            },...
-          ]
-        }
-        ```
+        GetS composition by city for one o multiple node
+      summary: "Get City composition"
+      operationId: getCityCompositionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "analytics geo-city",
+        #   "parameters": {
+        #     "nodes": null,
+        #     "country": 'italy',
+        #     "startDate": "2015-12-31",
+        #     "endDate": "2016-08-31"
+        #   },
+        #   "headers": {
+        #     "nodeId": {
+        #       "description": "the node Id",
+        #       "type": "string"
+        #     },
+        #     "distribution": {
+        #       "description": "the distribution list",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "name": {
+        #             "description": "City name",
+        #             "type": "string"
+        #           },
+        #           "value": {
+        #             "description": "Value for city",
+        #             "type": "string"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "distribution":[{"name": "rome", "value": 12000}, {"name": "milan", "value": 10000}, ....],
+        #       "nodeId": "node_1"
+        #     },...
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -3134,57 +3298,58 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/CompositionGeoCity'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
 
-  '/workspaces/{id-workspace}/analytics/distribution/customer/node':
+  '/workspaces/{workspaceId}/analytics/distribution/customer/node':
     get:
       description: |
         Distribution of new customers, aggregated for nodes.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Distribution of new customers, aggregated for nodes",
-          "parameters": {
-            "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
-            "startDate": "2016-08-25",
-            "endDate": "2016-09-02"
-          },
-          "headers": {
-            "data": {
-              "description": "Distribution for node of 'customerCreated' events",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "description": "Node identifier",
-                    "type": "string"
-                  },
-                  "count": {
-                    "description": "Count of events",
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "count": 0,
-              "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
-            }
-          ]
-        }
-        ```
+      summary: "Get Customers node distribution"
+      operationId: getNodeCustomerDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Distribution of new customers, aggregated for nodes",
+        #   "parameters": {
+        #     "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
+        #     "startDate": "2016-08-25",
+        #     "endDate": "2016-09-02"
+        #   },
+        #   "headers": {
+        #     "data": {
+        #       "description": "Distribution for node of 'customerCreated' events",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "nodeId": {
+        #             "description": "Node identifier",
+        #             "type": "string"
+        #           },
+        #           "count": {
+        #             "description": "Count of events",
+        #             "type": "integer"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "count": 0,
+        #       "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -3207,75 +3372,76 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticDistributionCustomerNode'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
 
-  '/workspaces/{id-workspace}/analytics/distribution/customer/source':
+  '/workspaces/{workspaceId}/analytics/distribution/customer/source':
     get:
       description: |
         Distribution of new customers, aggregated for nodes and sources.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Distribution of new customers, aggregated for nodes and sources",
-          "parameters": {
-            "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
-            "startDate": "2016-08-25",
-            "endDate": "2016-09-02"
-          },
-          "headers": {
-            "data": {
-              "description": "Distribution for node and sources of 'customerCreated' events",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "description": "Node identifier",
-                    "type": "string"
-                  },
-                  "values": {
-                    "description": "Distribution for sources of events",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "sourceId": {
-                          "description": "Source identifier",
-                          "type": "string"
-                        },
-                        "count": {
-                          "description": "Count of events",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "values": [
-                {
-                  "sourceId": "4f3096ca-65ec-4f2e-8332-a4dc0edacd8f",
-                  "count": 86
-                }
-              ],
-              "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
-            }
-          ]
-        }
-        ```
+      summary: "Get Customers source distribution"
+      operationId: getSourceCustomerDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Distribution of new customers, aggregated for nodes and sources",
+        #   "parameters": {
+        #     "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
+        #     "startDate": "2016-08-25",
+        #     "endDate": "2016-09-02"
+        #   },
+        #   "headers": {
+        #     "data": {
+        #       "description": "Distribution for node and sources of 'customerCreated' events",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "nodeId": {
+        #             "description": "Node identifier",
+        #             "type": "string"
+        #           },
+        #           "values": {
+        #             "description": "Distribution for sources of events",
+        #             "type": "array",
+        #             "items": {
+        #               "type": "object",
+        #               "properties": {
+        #                 "sourceId": {
+        #                   "description": "Source identifier",
+        #                   "type": "string"
+        #                 },
+        #                 "count": {
+        #                   "description": "Count of events",
+        #                   "type": "integer"
+        #                 }
+        #               }
+        #             }
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "values": [
+        #         {
+        #           "sourceId": "4f3096ca-65ec-4f2e-8332-a4dc0edacd8f",
+        #           "count": 86
+        #         }
+        #       ],
+        #       "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -3298,99 +3464,100 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticDistributionCustomerSource'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/distribution/customer/time':
+  '/workspaces/{workspaceId}/analytics/distribution/customer/time':
     get:
       description: |
         Distribution of new customers, aggregated for nodes and time.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Distribution of new customers, aggregated for nodes and time",
-          "parameters": {
-            "mode": "DAYOFWEEK",
-            "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
-            "startDate": null,
-            "endDate": null
-          },
-          "headers": {
-            "data": {
-              "description": "Distribution for node and time of 'customerCreated' events",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "description": "Node identifier",
-                    "type": "string"
-                  },
-                  "values": {
-                    "description": "Distribution for time of events",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "time": {
-                          "description": "Time label",
-                          "type": "string"
-                        },
-                        "count": {
-                          "description": "Count of events",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "values": [
-                {
-                  "count": 2,
-                  "time": "Tue"
-                },
-                {
-                  "count": 7,
-                  "time": "Wed"
-                },
-                {
-                  "count": 5,
-                  "time": "Thu"
-                },
-                {
-                  "count": 5,
-                  "time": "Fri"
-                },
-                {
-                  "count": 2,
-                  "time": "Sat"
-                },
-                {
-                  "count": 3,
-                  "time": "Sun"
-                },
-                {
-                  "count": 4,
-                  "time": "Mon"
-                }
-              ],
-              "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
-            }
-          ]
-        }
-        ```
+      summary: "Get Customers time distribution"
+      operationId: getTimeCustomerDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Distribution of new customers, aggregated for nodes and time",
+        #   "parameters": {
+        #     "mode": "DAYOFWEEK",
+        #     "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
+        #     "startDate": null,
+        #     "endDate": null
+        #   },
+        #   "headers": {
+        #     "data": {
+        #       "description": "Distribution for node and time of 'customerCreated' events",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "nodeId": {
+        #             "description": "Node identifier",
+        #             "type": "string"
+        #           },
+        #           "values": {
+        #             "description": "Distribution for time of events",
+        #             "type": "array",
+        #             "items": {
+        #               "type": "object",
+        #               "properties": {
+        #                 "time": {
+        #                   "description": "Time label",
+        #                   "type": "string"
+        #                 },
+        #                 "count": {
+        #                   "description": "Count of events",
+        #                   "type": "integer"
+        #                 }
+        #               }
+        #             }
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "values": [
+        #         {
+        #           "count": 2,
+        #           "time": "Tue"
+        #         },
+        #         {
+        #           "count": 7,
+        #           "time": "Wed"
+        #         },
+        #         {
+        #           "count": 5,
+        #           "time": "Thu"
+        #         },
+        #         {
+        #           "count": 5,
+        #           "time": "Fri"
+        #         },
+        #         {
+        #           "count": 2,
+        #           "time": "Sat"
+        #         },
+        #         {
+        #           "count": 3,
+        #           "time": "Sun"
+        #         },
+        #         {
+        #           "count": 4,
+        #           "time": "Mon"
+        #         }
+        #       ],
+        #       "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -3422,67 +3589,103 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticDistributionCustomerTime'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
 
-  '/workspaces/{id-workspace}/analytics/distribution/event/node':
+  '/workspaces/{workspaceId}/analytics/customer/count':
+    get:
+      description: |
+        Gets count of new, updated and deleted customers
+      summary: "Get customer count by state"
+      operationId: countCustomers
+      parameters:
+        - name: workspaceId
+          in: path
+          description: The unique identifier of workspace
+          required: true
+          type: string
+        - name: nodes
+          in: query
+          description: The list of nodeId separated by comma
+          type: string
+        - name: startDate
+          in: query
+          description: Start date
+          type: string
+          format: date
+        - name: endDate
+          in: query
+          description: End date
+          type: string
+          format: date
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CustomerCount'
+        '403':
+          description: Forbidden
+      tags:
+        - analytic
+
+  '/workspaces/{workspaceId}/analytics/distribution/event/node':
     get:
       description: |
         Distribution of events, aggregated for nodes.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Distribution of new events, aggregated for nodes",
-          "parameters": {
-            "context": null,
-            "eventType": null,
-            "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
-            "startDate": "2016-08-25",
-            "endDate": "2016-09-02"
-          },
-          "headers": {
-            "data": {
-              "description": "Distribution for node of events",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "description": "Node identifier",
-                    "type": "string"
-                  },
-                  "count": {
-                    "description": "Count of events",
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "count": 12,
-              "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
-            }
-          ]
-        }
-        ```
+      summary: "Get Events node distribution"
+      operationId: getNodeEventDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Distribution of new events, aggregated for nodes",
+        #   "parameters": {
+        #     "context": null,
+        #     "eventType": null,
+        #     "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
+        #     "startDate": "2016-08-25",
+        #     "endDate": "2016-09-02"
+        #   },
+        #   "headers": {
+        #     "data": {
+        #       "description": "Distribution for node of events",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "nodeId": {
+        #             "description": "Node identifier",
+        #             "type": "string"
+        #           },
+        #           "count": {
+        #             "description": "Count of events",
+        #             "type": "integer"
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "count": 12,
+        #       "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
           type: string
-        - name: context
-          in: query
-          description: Event context
-          type: string
+        - $ref: '#/parameters/EventContext'
         - name: eventType
           in: query
           description: Event type
@@ -3505,84 +3708,82 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticDistributionEventNode'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/distribution/event/source':
+  '/workspaces/{workspaceId}/analytics/distribution/event/source':
     get:
       description: |
         Distribution of events, aggregated for nodes and sources.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Distribution of events, aggregated for nodes and sources",
-          "parameters": {
-            "context": null,
-            "eventType": null,
-            "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
-            "startDate": "2016-08-25",
-            "endDate": "2016-09-02"
-          },
-          "headers": {
-            "data": {
-              "description": "Distribution for node and sources of events",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "description": "Node identifier",
-                    "type": "string"
-                  },
-                  "values": {
-                    "description": "Distribution for sources of events",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "sourceId": {
-                          "description": "Source identifier",
-                          "type": "string"
-                        },
-                        "count": {
-                          "description": "Count of events",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "values": [
-                {
-                  "sourceId": "4f3096ca-65ec-4f2e-8332-a4dc0edacd8f",
-                  "count": 86
-                }
-              ],
-              "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
-            }
-          ]
-        }
-        ```
+      summary: "Get Events source distribution"
+      operationId: getSourceEventDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Distribution of events, aggregated for nodes and sources",
+        #   "parameters": {
+        #     "context": null,
+        #     "eventType": null,
+        #     "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
+        #     "startDate": "2016-08-25",
+        #     "endDate": "2016-09-02"
+        #   },
+        #   "headers": {
+        #     "data": {
+        #       "description": "Distribution for node and sources of events",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "nodeId": {
+        #             "description": "Node identifier",
+        #             "type": "string"
+        #           },
+        #           "values": {
+        #             "description": "Distribution for sources of events",
+        #             "type": "array",
+        #             "items": {
+        #               "type": "object",
+        #               "properties": {
+        #                 "sourceId": {
+        #                   "description": "Source identifier",
+        #                   "type": "string"
+        #                 },
+        #                 "count": {
+        #                   "description": "Count of events",
+        #                   "type": "integer"
+        #                 }
+        #               }
+        #             }
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "values": [
+        #         {
+        #           "sourceId": "4f3096ca-65ec-4f2e-8332-a4dc0edacd8f",
+        #           "count": 86
+        #         }
+        #       ],
+        #       "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
           type: string
-        - name: context
-          in: query
-          description: Event context
-          type: string
+        - $ref: '#/parameters/EventContext'
         - name: eventType
           in: query
           description: Event type
@@ -3605,108 +3806,106 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticDistributionEventSource'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/distribution/event/time':
+  '/workspaces/{workspaceId}/analytics/distribution/event/time':
     get:
       description: |
         Distribution of events, aggregated for nodes and time.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "name": "Distribution of events, aggregated for nodes and time",
-          "parameters": {
-            "context": null,
-            "mode": "DAYOFWEEK",
-            "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
-            "startDate": null,
-            "endDate": null
-          },
-          "headers": {
-            "data": {
-              "description": "Distribution for node and time of events",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "description": "Node identifier",
-                    "type": "string"
-                  },
-                  "values": {
-                    "description": "Distribution for time of events",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "time": {
-                          "description": "Time label",
-                          "type": "string"
-                        },
-                        "count": {
-                          "description": "Count of events",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "data": [
-            {
-              "values": [
-                {
-                  "count": 2,
-                  "time": "Tue"
-                },
-                {
-                  "count": 7,
-                  "time": "Wed"
-                },
-                {
-                  "count": 5,
-                  "time": "Thu"
-                },
-                {
-                  "count": 5,
-                  "time": "Fri"
-                },
-                {
-                  "count": 2,
-                  "time": "Sat"
-                },
-                {
-                  "count": 3,
-                  "time": "Sun"
-                },
-                {
-                  "count": 4,
-                  "time": "Mon"
-                }
-              ],
-              "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
-            }
-          ]
-        }
-        ```
+      summary: "Get Events time distribution"
+      operationId: getTimeEventDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "name": "Distribution of events, aggregated for nodes and time",
+        #   "parameters": {
+        #     "context": null,
+        #     "mode": "DAYOFWEEK",
+        #     "nodes": "bebbe268-0900-4184-9849-bc609fc90a32",
+        #     "startDate": null,
+        #     "endDate": null
+        #   },
+        #   "headers": {
+        #     "data": {
+        #       "description": "Distribution for node and time of events",
+        #       "type": "array",
+        #       "items": {
+        #         "type": "object",
+        #         "properties": {
+        #           "nodeId": {
+        #             "description": "Node identifier",
+        #             "type": "string"
+        #           },
+        #           "values": {
+        #             "description": "Distribution for time of events",
+        #             "type": "array",
+        #             "items": {
+        #               "type": "object",
+        #               "properties": {
+        #                 "time": {
+        #                   "description": "Time label",
+        #                   "type": "string"
+        #                 },
+        #                 "count": {
+        #                   "description": "Count of events",
+        #                   "type": "integer"
+        #                 }
+        #               }
+        #             }
+        #           }
+        #         }
+        #       }
+        #     }
+        #   },
+        #   "data": [
+        #     {
+        #       "values": [
+        #         {
+        #           "count": 2,
+        #           "time": "Tue"
+        #         },
+        #         {
+        #           "count": 7,
+        #           "time": "Wed"
+        #         },
+        #         {
+        #           "count": 5,
+        #           "time": "Thu"
+        #         },
+        #         {
+        #           "count": 5,
+        #           "time": "Fri"
+        #         },
+        #         {
+        #           "count": 2,
+        #           "time": "Sat"
+        #         },
+        #         {
+        #           "count": 3,
+        #           "time": "Sun"
+        #         },
+        #         {
+        #           "count": 4,
+        #           "time": "Mon"
+        #         }
+        #       ],
+        #       "nodeId": "bebbe268-0900-4184-9849-bc609fc90a32"
+        #     }
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
           type: string
-        - name: context
-          in: query
-          description: Event context
-          type: string
+        - $ref: '#/parameters/EventContext'
         - name: eventType
           in: query
           description: Event type
@@ -3738,33 +3937,34 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticDistributionEventTime'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{workspace-id}/analytics/query/distribution/customer/acquisition':
+  '/workspaces/{workspaceId}/analytics/query/distribution/customer/acquisition':
     get:
       description: |
         Analytic customer acquisition distribution.
-                                              
-        #### EXAMPLE
-        ```json
-        {
-        	"nodeId": "027634e8-5aa1-4436-a543-568f476b3f04",
-        	"startDate": "2015-01-01",
-        	"endDate": "2016-03-31",
-        	"eventType": "completedOrder",
-        	"aggregation": {
-        		"operator": "SUM",
-        		"fieldPath": "properties.amount.total"
-        	}
-        }
-        ```
+      summary: "Get Customers acquisition distribution"
+      operationId: getAcquisitionCustomerDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "nodeId": "027634e8-5aa1-4436-a543-568f476b3f04",
+        #   "startDate": "2015-01-01",
+        #   "endDate": "2016-03-31",
+        #   "eventType": "completedOrder",
+        #   "aggregation": {
+        #     "operator": "SUM",
+        #     "fieldPath": "properties.amount.total"
+        #   }
+        # }
+        # ```
       parameters:
-        - name: workspace-id
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -3778,30 +3978,82 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticQueryCustomerAcquisitionDistribution'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
 
-  '/workspaces/{workspace-id}/analytics/query/distribution/customer':
+  '/workspaces/{workspaceId}/analytics/query/distribution/customer':
     get:
       description: |
         Analytic customer distribution.
-                                              
+      summary: "Get Customers distribution"
+      operationId: getCustomerDistributionAnalyticsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "nodeId": "027634e8-5aa1-4436-a543-568f476b3f04",
+        #   "startDate": "2015-01-01",
+        #   "endDate": "2016-03-31",
+        #   "eventType": "completedOrder",
+        #   "aggregation": {
+        #     "operator": "SUM",
+        #     "fieldPath": "properties.products.price"
+        #   },
+        #   "distributionFieldPath": "properties.products.sku",
+        #   "customerDistributionFieldPath": "base.gender"
+        # }
+        # ```
+      parameters:
+        - name: workspaceId
+          in: path
+          description: Unique identifier of workspace
+          required: true
+          type: string
+        - name: query
+          in: query
+          description: Distribution Query object
+          type: string
+          required: true
+        - name: size
+          in: query
+          description: Distribution size
+          type: integer
+          required: false
+        - name: sort
+          in: query
+          description: Distribution sort direction
+          type: string
+          required: false
+      security:
+         - Bearer: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/AnalyticQueryCustomerDistribution'
+        '403':
+          description: Forbidden
+      tags:
+        - analytic
+  '/workspaces/{workspace-id}/analytics/query/distribution/event':
+    get:
+      description: |
+        Analytic event distribution.
         #### EXAMPLE
         ```json
         {
-        	"nodeId": "027634e8-5aa1-4436-a543-568f476b3f04",
-        	"startDate": "2015-01-01",
-        	"endDate": "2016-03-31",
-        	"eventType": "completedOrder",
-        	"aggregation": {
-        		"operator": "SUM",
-        		"fieldPath": "properties.products.price"
-        	},
+          "nodeId": "027634e8-5aa1-4436-a543-568f476b3f04",
+          "startDate": "2015-01-01",
+          "endDate": "2016-03-31",
+          "eventType": "completedOrder",
+          "aggregation": {
+            "operator": "SUM",
+            "fieldPath": "properties.products.price"
+          },
           "distributionFieldPath": "properties.products.sku",
           "customerDistributionFieldPath": "base.gender"
         }
@@ -3831,19 +4083,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
-            $ref: '#/definitions/AnalyticQueryCustomerDistribution'
+            $ref: '#/definitions/AnalyticQueryEventDistribution'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: You don't have the necessary permissions for the resource
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/query/numeric':
+  '/workspaces/{workspaceId}/analytics/query/numeric':
     get:
       description: |
         Analytic numeric query on events
+      summary: "Get Events numeric query"
+      operationId: getNumericQueryAnalyticsWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: Unique identifier of workspace
           required: true
@@ -3856,19 +4110,21 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/AnalyticQueryNumericResp'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
-  '/workspaces/{id-workspace}/analytics/query/trend':
+  '/workspaces/{workspaceId}/analytics/query/trend':
       get:
         description: |
           Analytic trend query on events
+        summary: "Get Events trend query"
+        operationId: getTrendQueryAnalyticsWorkspaces
         parameters:
-          - name: id-workspace
+          - name: workspaceId
             in: path
             description: Unique identifier of workspace
             required: true
@@ -3881,19 +4137,21 @@ paths:
            - Bearer: []
         responses:
           '200':
-            description: Successful response
+            description: OK
             schema:
               $ref: '#/definitions/AnalyticQueryTrendResp'
           '403':
-            description: "You don't have the necessary permissions for the resource"
+            description: Forbidden
         tags:
           - analytic
-  '/workspaces/{id-workspace}/analytics/query/distribution':
+  '/workspaces/{workspaceId}/analytics/query/distribution':
       get:
         description: |
           Analytic distribution query on events
+        summary: "Get Events distribution query"
+        operationId: getDistributionQueryAnalyticsWorkspaces
         parameters:
-          - name: id-workspace
+          - name: workspaceId
             in: path
             description: Unique identifier of workspace
             required: true
@@ -3906,23 +4164,24 @@ paths:
            - Bearer: []
         responses:
           '200':
-            description: Successful response
+            description: OK
             schema:
               $ref: '#/definitions/AnalyticQueryDistributionResp'
           '403':
-            description: "You don't have the necessary permissions for the resource"
+            description: Forbidden
         tags:
           - analytic
 
-  '/workspaces/{id-workspace}/dashboards':
+  '/workspaces/{workspaceId}/dashboards':
     get:
       description: |
-        Gets all dashboards. 
-                                              
+        Gets all dashboards.
         If the 'industry' parameter is supplied
         returns all dashboards that have the relative industry type.
+      summary: "Get Dashboards list"
+      operationId: getDashboardsWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -3936,7 +4195,7 @@ paths:
         - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             description: Object that wraps a list of dashboards
@@ -3947,16 +4206,18 @@ paths:
                 items:
                     $ref: '#/definitions/Dashboard'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
 
-  '/workspaces/{id-workspace}/dashboards/{id}':
+  '/workspaces/{workspaceId}/dashboards/{id}':
     get:
       description: |
         Gets the dashboards identifyed by a given id
+      summary: "Get Dashboard details"
+      operationId: getDashboardWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -3970,22 +4231,24 @@ paths:
         - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/Dashboard'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - analytic
 
-  '/workspaces/{id-workspace}/models/properties/base':
+  '/workspaces/{workspaceId}/models/properties/base':
     get:
       description: >
         Gets base properties. The json schema of base property (including for
         every elements the contactlabProperties object with property `label`,
         `enabled`.
+      summary: "Get Base properties"
+      operationId: getBasePropertiesModelsWorkspaces
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -3994,40 +4257,41 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             $ref: '#/definitions/BasePropertyModel'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - model
-  '/workspaces/{id-workspace}/models/merge-policies':
+  '/workspaces/{workspaceId}/models/merge-policies':
     get:
       description: |
         Gets list of merge policies defined in contacthub
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "elements":[
-            {
-              "id": "OBJ_PRIORITY",
-              "label": "Priority",
-              "description": "Substitution of value by defined priority",
-              "supportedTypes": ["string", "object", "number", "array"]
-            },
-            {
-              "id": "OBJ_CONCATENATE",
-              "label": "Concatenatennnnnnnnnnnnnnnnnnnnnn",
-              "description": "Concatenate value of property",
-              "supportedTypes": ["string", "number", "array"]
-            },
-            ........
-          ]
-        }
-        ```
+      summary: "Get Merge policies list"
+      operationId: getMergePoliciesModelsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "elements":[
+        #     {
+        #       "id": "OBJ_PRIORITY",
+        #       "label": "Priority",
+        #       "description": "Substitution of value by defined priority",
+        #       "supportedTypes": ["string", "object", "number", "array"]
+        #     },
+        #     {
+        #       "id": "OBJ_CONCATENATE",
+        #       "label": "Concatenatennnnnnnnnnnnnnnnnnnnnn",
+        #       "description": "Concatenate value of property",
+        #       "supportedTypes": ["string", "number", "array"]
+        #     },
+        #     ........
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -4036,7 +4300,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -4046,54 +4310,55 @@ paths:
                 items:
                   $ref: '#/definitions/MergePolicy'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - model
-  '/workspaces/{id-workspace}/models/providers':
+  '/workspaces/{workspaceId}/models/providers':
     get:
       description: |
         Gets list of providers defined in contacthub
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "elements":[
-            {
-              "id": "API",
-              "label": "Contachub API",
-              "description": "contachub api",
-              "propertiesSchema": {
-                "allowedIPs": {
-                  "description": "the list of IP addresses allowed to read and write a given source",
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "ipv4"
-                  }
-                }
-              }
-            },
-            {
-              "id": "JavaScript",
-              "label": "JavaScript website",
-              "description": "JavaScript website",
-              "propertiesSchema": {
-                "allowedURLs": {
-                  "description": "the list of URLs allowed to write a given source",
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "uri"
-                  }
-                }
-              }
-            },
-            ........
-          ]
-        }
-        ```
+      summary: "Get Providers list"
+      operationId: getProvidersModelsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "elements":[
+        #     {
+        #       "id": "API",
+        #       "label": "Contachub API",
+        #       "description": "contachub api",
+        #       "propertiesSchema": {
+        #         "allowedIPs": {
+        #           "description": "the list of IP addresses allowed to read and write a given source",
+        #           "type": "array",
+        #           "items": {
+        #             "type": "string",
+        #             "format": "ipv4"
+        #           }
+        #         }
+        #       }
+        #     },
+        #     {
+        #       "id": "JavaScript",
+        #       "label": "JavaScript website",
+        #       "description": "JavaScript website",
+        #       "propertiesSchema": {
+        #         "allowedURLs": {
+        #           "description": "the list of URLs allowed to write a given source",
+        #           "type": "array",
+        #           "items": {
+        #             "type": "string",
+        #             "format": "uri"
+        #           }
+        #         }
+        #       }
+        #     },
+        #     ........
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -4102,7 +4367,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -4112,53 +4377,54 @@ paths:
                 items:
                   $ref: '#/definitions/Provider'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - model
-  '/workspaces/{id-workspace}/models/contexts':
+  '/workspaces/{workspaceId}/models/contexts':
     get:
       description: |
         Gets list of event contexts defined in contacthub
-                                              
-        #### EXAMPLE
-        ```json
-        {
-          "elements":[
-            {
-              "id": "WEB",
-              "label": "Web event",
-              "description": "Events made in web context",
-              "propertiesSchema": {
-                "type": "object",
-                "$schema": "http://api.contactlab.it/hub#",
-                "additionalProperties": false,
-                "properties": {
-                  "client": {
-                    "type": "object",
-                    "properties": {
-                      "userAgent": {
-                        "type": "string"
-                      },
-                      "ip": {
-                        "type": "string",
-                        "format": "ipv4-cidr"
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "id": "MOBILE",
-              "label": "Mobile event",
-              "description": "Events made in mobile context"
-            },
-            ........
-          ]
-        }
-        ```
+      summary: "Get Contexts list"
+      operationId: getContextsModelsWorkspaces
+        # #### EXAMPLE
+        # ```json
+        # {
+        #   "elements":[
+        #     {
+        #       "id": "WEB",
+        #       "label": "Web event",
+        #       "description": "Events made in web context",
+        #       "propertiesSchema": {
+        #         "type": "object",
+        #         "$schema": "http://api.contactlab.it/hub#",
+        #         "additionalProperties": false,
+        #         "properties": {
+        #           "client": {
+        #             "type": "object",
+        #             "properties": {
+        #               "userAgent": {
+        #                 "type": "string"
+        #               },
+        #               "ip": {
+        #                 "type": "string",
+        #                 "format": "ipv4-cidr"
+        #               }
+        #             }
+        #           }
+        #         }
+        #       }
+        #     },
+        #     {
+        #       "id": "MOBILE",
+        #       "label": "Mobile event",
+        #       "description": "Events made in mobile context"
+        #     },
+        #     ........
+        #   ]
+        # }
+        # ```
       parameters:
-        - name: id-workspace
+        - name: workspaceId
           in: path
           description: The unique identifier of workspace
           required: true
@@ -4167,7 +4433,7 @@ paths:
          - Bearer: []
       responses:
         '200':
-          description: Successful response
+          description: OK
           schema:
             type: object
             properties:
@@ -4177,7 +4443,7 @@ paths:
                 items:
                   $ref: '#/definitions/Context'
         '403':
-          description: "You don't have the necessary permissions for the resource"
+          description: Forbidden
       tags:
         - model
 
@@ -4199,6 +4465,53 @@ definitions:
       - IOT
       - OTHER
 
+  EventType:
+    type: string
+    description: Type of the target event/s
+    enum:
+      - abandonedCart
+      - addedCompare
+      - addedProduct
+      - addedWishlist
+      - campaignBlacklisted
+      - campaignBounced
+      - campaignLinkClicked
+      - campaignMarkedSpam
+      - campaignOpened
+      - campaignSent
+      - campaignSubscribed
+      - campaignUnsubscribed
+      - changedSetting
+      - clickedLink
+      - closedTicket
+      - completedOrder
+      - eventConfirmed
+      - eventDeclined
+      - eventEligible
+      - eventInvited
+      - eventNoShow
+      - eventNotInvited
+      - eventParticipated
+      - eventRegistered
+      - formCompiled
+      - genericActiveEvent
+      - genericPassiveEvent
+      - loggedIn
+      - loggedOut
+      - openedTicket
+      - orderShipped
+      - removedCompare
+      - removedProduct
+      - removedWishlist
+      - repliedTicket
+      - reviewedProduct
+      - searched
+      - serviceSubscribed
+      - serviceUnsubscribed
+      - viewedPage
+      - viewedProduct
+      - viewedProductCategory
+
   PagedAutomationConfigurationValues:
     type: object
     properties:
@@ -4211,7 +4524,7 @@ definitions:
         $ref: '#/definitions/Page'
   AutomationConfigurationPayload:
     type: object
-    description: "Workspace provisioning configuration"
+    description: Workspace provisioning configuration
     properties:
       name:
         type: string
@@ -4224,13 +4537,17 @@ definitions:
         description: List of nodes
         items:
           type: string
+      delay:
+        type: integer
+        "minimum": 0
+        "maximum": 604800
+        description: Seconds to wait until automation start after triggering
       topic:
         type: object
         description: Object that represents a binding with the target event/s
         properties:
           eventType:
-            type: string
-            description: Type of the event to bind
+            $ref: '#/definitions/EventType'
           customerType:
             type: string
             description: Type of customer
@@ -4249,7 +4566,7 @@ definitions:
 
   AutomationConfiguration:
     type: object
-    description: "Workspace provisioning configuration"
+    description: Workspace provisioning configuration
     properties:
       id:
         type: string
@@ -4265,13 +4582,17 @@ definitions:
         description: List of nodes
         items:
           type: string
+      delay:
+        type: integer
+        "minimum": 0
+        "maximum": 604800
+        description: Seconds to wait until automation start after triggering
       topic:
         type: object
         description: Object that represents a binding with the target event/s
         properties:
           eventType:
-            type: string
-            description: Type of the event to bind
+            $ref: '#/definitions/EventType'
           customerType:
             type: string
             description: Type of customer
@@ -4607,6 +4928,47 @@ definitions:
         type: string
         description: Value for gender
 
+  CustomerCount:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Analytics name
+      headers:
+        type: object
+        description: Schema of object inside data property list
+      parameters:
+        type: object
+        properties:
+          nodes:
+            description: The list of node identifiers separated by comma
+            type: string
+          startDate:
+            description: Start date
+            type: string
+            format: date
+          endDate:
+            description: End date
+            type: string
+            format: date
+      data:
+        type: array
+        description: Customer count by input node
+        items:
+          $ref: '#/definitions/CustomerCountValue'
+  CustomerCountValue:
+    type: array
+    description: Customer count by input nodes
+    items:
+      type: object
+      properties:
+        nodeId:
+          type: string
+          description: Customer state
+        count:
+          type: integer
+          description: Customer count
+
   AnalyticDistributionCustomerNode:
     type: object
     properties:
@@ -4768,11 +5130,9 @@ definitions:
         type: object
         properties:
           context:
-            description: Event context
-            type: string
+            $ref: '#/definitions/EventContext'
           eventType:
-            description: Event type
-            type: string
+            $ref: '#/definitions/EventType'
           startDate:
             description: Start date
             type: string
@@ -4815,11 +5175,9 @@ definitions:
         type: object
         properties:
           context:
-            description: Event context
-            type: string
+            $ref: '#/definitions/EventContext'
           eventType:
-            description: Event type
-            type: string
+            $ref: '#/definitions/EventType'
           startDate:
             description: Start date
             type: string
@@ -4878,11 +5236,9 @@ definitions:
               - HOUROFDAY
               - DAYOFMONTH
           context:
-            description: Event context
-            type: string
+            $ref: '#/definitions/EventContext'
           eventType:
-            description: Event type
-            type: string
+            $ref: '#/definitions/EventType'
           startDate:
             description: Start date
             type: string
@@ -4933,7 +5289,7 @@ definitions:
         type: object
         properties:
           mode:
-            description: 'Mode of aggretation daily, weekly,monthly'
+            description: Mode of aggretation daily, weekly,monthly
             type: string
             enum:
               - DAILY
@@ -4952,11 +5308,9 @@ definitions:
             description: The list of nodeId separated by comma
             type: string
           context:
-            description: the event context
-            type: string
+            $ref: '#/definitions/EventContext'
           eventType:
-            description: the event type
-            type: string
+            $ref: '#/definitions/EventType'
       data:
         type: array
         description: list of node
@@ -4983,7 +5337,7 @@ definitions:
         type: object
         properties:
           mode:
-            description: 'Mode of aggretation daily, weekly,monthly'
+            description: Mode of aggretation daily, weekly,monthly
             type: string
             enum:
               - DAILY
@@ -5054,11 +5408,9 @@ definitions:
             type: string
             format: date
           eventType:
-            description: Event type
-            type: string
+            $ref: '#/definitions/EventType'
           context:
-            description: Event context
-            type: string
+            $ref: '#/definitions/EventContext'
           optionalFilters:
             description: Additional Filters
             type: array
@@ -5130,11 +5482,9 @@ definitions:
             type: string
             format: date
           eventType:
-            description: Event type
-            type: string
+            $ref: '#/definitions/EventType'
           context:
-            description: Event context
-            type: string
+            $ref: '#/definitions/EventContext'
           optionalFilters:
             description: Additional Filters
             type: array
@@ -5173,7 +5523,7 @@ definitions:
                       type: string
                       description: Property value
           mode:
-            description: 'Mode of aggretation daily, weekly, monthly'
+            description: Mode of aggretation daily, weekly, monthly
             type: string
             enum:
               - DAILY
@@ -5224,11 +5574,9 @@ definitions:
             type: string
             format: date
           eventType:
-            description: Event type
-            type: string
+            $ref: '#/definitions/EventType'
           context:
-            description: Event context
-            type: string
+            $ref: '#/definitions/EventContext'
           optionalFilters:
             description: Additional Filters
             type: array
@@ -5327,6 +5675,46 @@ definitions:
                     type: number
 
   AnalyticQueryCustomerDistribution:
+    type: "object"
+    properties:
+      name:
+        type: object
+        description: Description for this object
+      parameters:
+        type: object
+        description: Object that reports request parameters
+      headers:
+        type: object
+        description: A JSON schema object for 'data' object
+      data:
+        type: object
+        properties:
+          nodeId:
+            description: Node identifier
+            type: string
+          distribution:
+            description: Distribution list
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  description: Name of distribution field
+                  type: string
+                distribution:
+                  description: Sub-distribution list
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: Name of distribution field
+                        type: string
+                      value:
+                        description: Value of metric aggregation
+                        type: number
+
+  AnalyticQueryEventDistribution:
     type: "object"
     properties:
       name:
@@ -5481,13 +5869,28 @@ definitions:
           - Europe/Paris
           - Europe/London
         default: Europe/Rome
+      currency:
+        type: string
+        description: default currency of workspace
+        enum:
+          - EUR
+          - USD
+          - JPY
+          - ...
+        default: EUR
       customerUniquenessPolicy:
-          type: string
-          enum:
-          - NO_CHECK
-          - BLOCK
-          description: 'the customer uniqueness check policy (NO_CHECK, BLOCK)'
-          default: BLOCK
+        type: string
+        enum:
+        - NO_CHECK
+        - BLOCK
+        - MERGE
+        description: the customer uniqueness check policy (NO_CHECK, BLOCK, MERGE)
+        default: MERGE
+      tier:
+        type: integer
+        description: the amount of purchased tier
+        default: null
+        readOnly: true
   BasePropertyConfiguration:
     type: object
     properties:
@@ -5519,6 +5922,144 @@ definitions:
           `mergePolicy` with value OBJ_PRIORITY, OBJ_CONCATENATE, ARRAY_UNION,
           ARRAY_INTERSECTION, MATH_SUM, MATH_AVG, MATH_DIFF, MATH_MIN,
           MATH_MAX).
+  ExtendedPropertyExample:
+    type: object
+    properties:
+      membership_card_nr:
+        type: object
+        properties:
+          description:
+            type: string
+            example: 'membership card number'
+          type:
+            type: string
+            example: number
+          contactlabProperties:
+            type: object
+            properties:
+              label:
+                type: string
+                example: 'Membership Card'
+              mergePolicy:
+                type: string
+                example: 'OBJ_PRIORITY'
+              enabled:
+                type: boolean
+                example: true
+      point:
+        type: object
+        properties:
+          description:
+            type: string
+            example: 'membership card collected points'
+          type:
+            type: string
+            example: number
+          exclusiveMinimum:
+            type: boolean
+            example: true
+          contactlabProperties:
+            type: object
+            properties:
+              label:
+                type: string
+                example: 'Membership Card'
+              mergePolicy:
+                type: string
+                example: 'OBJ_PRIORITY'
+              enabled:
+                type: boolean
+                example: true
+      tags:
+        type: object
+        properties:
+          description:
+            type: string
+            example: 'profile tags'
+          type:
+            type: string
+            example: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                example: "string"
+          minItems:
+            type: number
+            example: 1
+          uniqueItems:
+            type: boolean
+            example: true
+          contactlabProperties:
+            type: object
+            properties:
+              label:
+                type: string
+                example: 'Tags'
+              mergePolicy:
+                type: string
+                example: 'ARRAY_INTERSECTION'
+              enabled:
+                type: boolean
+                example: true
+      dimensions:
+        type: object
+        properties:
+          type:
+            type: string
+            example: object
+          contactlabProperties:
+            type: object
+            properties:
+              label:
+                type: string
+                example: 'Physical Measures'
+              mergePolicy:
+                type: string
+                example: 'OBJ_PRIORITY'
+              enabled:
+                type: boolean
+                example: true
+          properties:
+            type: object
+            properties:
+              height:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: 'number'
+                  contactlabProperties:
+                    type: object
+                    properties:
+                      label:
+                        type: string
+                        example: 'Height'
+                      mergePolicy:
+                        type: string
+                        example: 'OBJ_PRIORITY'
+                      enabled:
+                        type: boolean
+                        example: true
+              weight:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: 'number'
+                  contactlabProperties:
+                    type: object
+                    properties:
+                      label:
+                        type: string
+                        example: 'Weight'
+                      mergePolicy:
+                        type: string
+                        example: 'OBJ_PRIORITY'
+                      enabled:
+                        type: boolean
+                        example: true
   UniqueCustomerMatchingPolicyConfiguration:
     type: object
     properties:
@@ -5527,6 +6068,11 @@ definitions:
         items:
           type: string
         description: Rules of aggregations
+      caseSensitive:
+        type: boolean
+        description: >-
+          Flag that specifies if the matching policy check will be performed
+          considering the field text case.
   SourcePriorityConfiguration:
     type: object
     properties:
@@ -5618,6 +6164,15 @@ definitions:
         enum:
           - API
           - JavaScript
+          - MAGENTO
+          - CONTACTSEND
+          - CONTACTPLAN
+          - ANDROID_SDK
+          - OBJECTIVEC_SDK
+          - NODEJS_SDK
+          - JAVA_SDK
+          - SCALA_SDK
+          - DOTNET_SDK
         default: API
         description: the provider of source
       name:
@@ -5638,7 +6193,7 @@ definitions:
         type: boolean
         description: flag for enable-disable source
         default: true
-    required: [provider, name, nodes]
+    required: [provider, name, nodes, properties]
   PutSourceConfiguration:
     allOf:
       - $ref: '#/definitions/PostSourceConfiguration'
@@ -5722,8 +6277,11 @@ definitions:
       base:
         type: object
         description: >-
-          properties predefined in contacthub in base to the model retrived in
-          /models/properties/base
+          base customer data structure included in Contacthub. The model is defined <a href="/documentation/contacthub/schemas/index" target="_blank">[here]</a>
+      consents:
+        type: object
+        description:
+          consents customer data structure included in Contacthub. The model is defined <a href="/documentation/contacthub/schemas/index" target="_blank">[here]</a>
       extended:
         type: object
         description: custom data defined by workspace based on a declarated schema
@@ -5754,6 +6312,16 @@ definitions:
           id:
             type: string
             description: the customer id
+          sourceInfo:
+            type: object
+            description: information about sources that operated on customer
+            properties:
+              registeredBy:
+                type: string
+                description: identifier of the source that created the customer
+              updatedBy:
+                type: string
+                description: identifier of the last source that updated the customer
   PatchCustomer:
     type: object
     properties:
@@ -5763,8 +6331,11 @@ definitions:
       base:
         type: object
         description: >-
-          properties predefined in contacthub in base to the model retrived in
-          /models/properties/base
+          base customer data structure included in Contacthub. The model is defined <a href="/documentation/contacthub/schemas/index" target="_blank">[here]</a>
+      consents:
+        type: object
+        description:
+          consents customer data structure included in Contacthub. The model is defined <a href="/documentation/contacthub/schemas/index" target="_blank">[here]</a>
       extended:
         type: object
         description: custom data defined by workspace based on a declarated schema
@@ -5794,6 +6365,16 @@ definitions:
           id:
             type: string
             description: the customer id
+          sourceInfo:
+            type: object
+            description: information about sources that operated on customer
+            properties:
+              registeredBy:
+                type: string
+                description: identifier of the source that created the customer
+              updatedBy:
+                type: string
+                description: identifier of the last source that updated the customer
           registeredAt:
             type: string
             format: date-time
@@ -5835,6 +6416,10 @@ definitions:
       extra:
         type: string
         description: custom data defined by workspace not based on a declarated schema
+      consents:
+        type: object
+        description:
+          consents customer data structure included in Contacthub. The model is defined <a href="/documentation/contacthub/schemas/index" target="_blank">[here]</a>
       tags:
         description: the default tags property of customers
         type: object
@@ -5877,24 +6462,66 @@ definitions:
       bringBackProperties:
         $ref: '#/definitions/BringBackProperty'
       type:
-        type: string
-        description: the name of type event you are tracking
+        $ref: '#/definitions/EventType'
       context:
-        type: string
-        description: >-
-          the name of context event you are tracking. The value are defined in
-          `id` property of method /model/contexts
-      properties:
-        type: object
-        description: the json schema related to event type
-      contextInfo:
-        type: object
-        description: the json schema related to event context
+        $ref: '#/definitions/EventContext'
       date:
         type: string
         format: date-time
         description: the timestamp of event
+      contextInfo:
+        type: object
+        description: the json schema related to event context. <a href="/documentation/contacthub/schemas/index" target="_blank">[Read here]</a>
+      tracking:
+        $ref: '#/definitions/Tracking'
+      properties:
+        type: object
+        description: the json schema related to event type. <a href="/documentation/contacthub/schemas/index" target="_blank">[Read here]</a>
     required: [type,context,properties]
+
+  PostResponseEvent:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of event
+
+  PutEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of event
+        customerId:
+          type: string
+          description: customer id
+        bringBackProperties:
+          $ref: '#/definitions/BringBackProperty'
+        type:
+          $ref: '#/definitions/EventType'
+        context:
+          $ref: '#/definitions/EventContext'
+        date:
+          type: string
+          format: date-time
+          description: the timestamp of event
+        contextInfo:
+          type: object
+          description: the json schema related to event context. <a href="/documentation/contacthub/schemas/index" target="_blank">[Read here]</a>
+        tracking:
+          $ref: '#/definitions/Tracking'
+        registeredAt:
+          type: string
+          format: date-time
+          description: the creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: the update timestamp
+        properties:
+          type: object
+          description: the json schema related to event type. <a href="/documentation/contacthub/schemas/index" target="_blank">[Read here]</a>
+      required: [id,type,context,registeredAt,updatedAt,properties]
   Event:
     allOf:
       - $ref: '#/definitions/PostEvent'
@@ -5904,32 +6531,6 @@ definitions:
             type: string
             description: Unique identifier of event
 
-  AuditEvent:
-    type: object
-    properties:
-      id:
-        type: string
-        description: Unique identifier of event
-      customerId:
-        type: string
-        description: customer id
-      nodeId:
-        type: string
-        description: node id
-      sourceId:
-        type: string
-        description: source id
-      type:
-        type: string
-        description: the name of type event you're tracking
-      properties:
-        type: object
-        description: the json schema related to event type
-      date:
-        type: string
-        format: date-time
-        description: the timestamp of event
-
   PagedEvent:
     type: object
     properties:
@@ -5938,17 +6539,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Event'
-      page:
-        $ref: '#/definitions/Page'
-
-  PagedAuditEvent:
-    type: object
-    properties:
-      elements:
-        description: the list of events
-        type: array
-        items:
-          $ref: '#/definitions/AuditEvent'
       page:
         $ref: '#/definitions/Page'
 
@@ -5968,6 +6558,30 @@ definitions:
       nodeId:
         type: string
         description: id of entry node
+
+  Tracking:
+    type: object
+    properties:
+      ga:
+        type: object
+        description: Tracking with Google Analytics parameters
+        properties:
+          utm_source:
+            type: string
+            description: Parameter to identify the source of your traffic such as search engine, newsletter, or other referral
+          utm_medium:
+            type: string
+            description: Parameter to identify the medium the link was used upon such as email, CPC, or other method of sharing
+          utm_term:
+            type: string
+            description: Parameter suggested for paid search to identify keywords for your ad
+          utm_content:
+            type: string
+            description: Parameter for additional details for A/B testing and content-targeted ads
+          utm_campaign:
+            type: string
+            description: Parameter to identify a specific product promotion or strategic campaign such as a spring sale or other
+
   PutUser:
     type: object
     properties:
@@ -6167,3 +6781,21 @@ definitions:
               type: string
             value:
               type: string
+
+parameters:
+
+  EventContext:
+    name: context
+    description: The name of event context
+    in: query
+    type: string
+    enum:
+      - WEB
+      - MOBILE
+      - ECOMMERCE
+      - RETAIL
+      - SOCIAL
+      - DIGITAL_CAMPAIGN
+      - CONTACT_CENTER
+      - IOT
+      - OTHER
