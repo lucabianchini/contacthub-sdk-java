@@ -7,7 +7,7 @@ import org.immutables.value.Value;
  */
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
-public abstract class AbstractEcommerceContextInfo {
+public abstract class AbstractIotContextInfo {
 
   /**
    * The client of this Event context info.

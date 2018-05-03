@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
-public abstract class AbstractContactCenterEvent extends AbstractEvent {
+public abstract class AbstractDigitalCampaignEvent extends AbstractEvent {
 
   /**
    * The ID of this Event.
