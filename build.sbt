@@ -61,7 +61,7 @@ lazy val testDependencies = Seq(
 lazy val dependencies = Seq(
   "org.immutables" % "value" % "2.3.7",
   "com.mashape.unirest" % "unirest-java" % "1.4.9",
-  "com.google.code.gson" % "gson" % "2.7",
+  "com.google.code.gson" % "gson" % "2.8.4",
   "com.google.code.findbugs" % "jsr305" % "3.0.0"
 )
 

@@ -7,20 +7,9 @@ import org.immutables.value.Value;
  */
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
-public abstract class AbstractMobileContextInfo {
-
-  /**
-   * The client of this Event context info.
-   */
-  public abstract Client client();
-
+public abstract class AbstractMobileContextInfo extends AbstractContextInfo{
   /**
    * The device of this Event context info.
    */
   public abstract Device device();
-
-  /**
-   * The user for this Event context info.
-   */
-  public abstract User user();
 }

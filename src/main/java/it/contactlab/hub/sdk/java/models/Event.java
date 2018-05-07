@@ -9,9 +9,7 @@ import java.util.Optional;
 /**
  * An Event.
  */
-@Value.Immutable
-@Value.Style(typeImmutable = "*")
-public abstract class AbstractEvent {
+public abstract class Event {
 
   /**
    * The ID of this Event.
@@ -51,17 +49,13 @@ public abstract class AbstractEvent {
   /**
    * The context-specific properties of this Event.
    */
-  public abstract Map<String, Object> contextInfo();
+  public abstract Optional<? extends AbstractContextInfo> contextInfo();
 
   /**
    * The moment when this Event happened.
    *
-   * <p>It defaults to "now()" if not specified when creating a new Event.</p>
    */
-  @Value.Default
-  public OffsetDateTime date() {
-    return OffsetDateTime.now();
-  }
+  public abstract OffsetDateTime date();
 
   /**
    * The moment when this Event was registered.

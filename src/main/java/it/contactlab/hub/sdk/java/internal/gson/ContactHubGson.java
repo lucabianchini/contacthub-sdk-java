@@ -6,6 +6,17 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 
+import it.contactlab.hub.sdk.java.models.ContactCenterEvent;
+import it.contactlab.hub.sdk.java.models.DigitalCampaignEvent;
+import it.contactlab.hub.sdk.java.models.EcommerceEvent;
+import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventContext;
+import it.contactlab.hub.sdk.java.models.MobileEvent;
+import it.contactlab.hub.sdk.java.models.OtherEvent;
+import it.contactlab.hub.sdk.java.models.RetailEvent;
+import it.contactlab.hub.sdk.java.models.SocialEvent;
+import it.contactlab.hub.sdk.java.models.WebEvent;
+
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -50,13 +61,27 @@ public class ContactHubGson {
    * Registering all (de)serializers.
    */
   public static final Gson getInstance() {
+
+    RuntimeTypeAdapterFactory<Event> eventAdapter =
+        RuntimeTypeAdapterFactory
+        .of(Event.class, "context")
+        .registerSubtype(ContactCenterEvent.class, EventContext.CONTACT_CENTER.toString())
+        .registerSubtype(DigitalCampaignEvent.class, EventContext.DIGITAL_CAMPAIGN.toString())
+        .registerSubtype(EcommerceEvent.class, EventContext.ECOMMERCE.toString())
+        .registerSubtype(MobileEvent.class, EventContext.MOBILE.toString())
+        .registerSubtype(OtherEvent.class, EventContext.OTHER.toString())
+        .registerSubtype(RetailEvent.class, EventContext.RETAIL.toString())
+        .registerSubtype(SocialEvent.class, EventContext.SOCIAL.toString())
+        .registerSubtype(WebEvent.class, EventContext.WEB.toString());
+
     GsonBuilder gsonBuilder = new GsonBuilder()
         .registerTypeAdapter(OffsetDateTime.class, dateTimeJsonDeserializer)
         .registerTypeAdapter(OffsetDateTime.class, dateTimeJsonSerializer)
         .registerTypeAdapter(LocalDate.class, dateJsonSerializer)
         .registerTypeAdapter(LocalDate.class, dateJsonDeserializer)
         .registerTypeAdapter(ZoneId.class, zoneIdJsonSerializer)
-        .registerTypeAdapter(ZoneId.class, zoneIdJsonDeserializer);
+        .registerTypeAdapter(ZoneId.class, zoneIdJsonDeserializer)
+        .registerTypeAdapterFactory(eventAdapter);
 
     return gsonBuilder.create();
   }

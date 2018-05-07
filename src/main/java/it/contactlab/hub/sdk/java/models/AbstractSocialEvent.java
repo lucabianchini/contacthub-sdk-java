@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
-public abstract class AbstractSocialEvent extends AbstractEvent {
+public abstract class AbstractSocialEvent extends Event {
 
   /**
    * The ID of this Event.
@@ -41,6 +41,7 @@ public abstract class AbstractSocialEvent extends AbstractEvent {
   /**
    * The event context of this Event.
    */
+  @Value.Derived
   public EventContext context() {
     return EventContext.SOCIAL;
   }
@@ -54,7 +55,7 @@ public abstract class AbstractSocialEvent extends AbstractEvent {
    * The context-specific properties of this Event.
    */
   @Override
-  public abstract SocialContextInfo contextInfo();
+  public abstract Optional<SocialContextInfo> contextInfo();
 
   /**
    * The moment when this Event happened.
