@@ -430,27 +430,32 @@ See [Pagination](#pagination).
 
 ### addEvent
 
-Add a new Event. The API will process the event queue asynchronously, and it can
+To create an `Event` instance, use the builder provided by one the `Event` subtypes object.
+Currently there are 9 `Event` subtypes, that are characterized by their context: they are
+`ContactCenterEvent`,`DigitalCampaignEvent`,`EcommerceEvent`,`IotEvent`,`MobileEvent`,`OtherEvent`,
+`RetailEvent`,`SocialEvent` and `WebEvent`.
+
+
+```java
+event = WebEvent.builder()
+          .customerId(customerId)
+          .type(EventType.viewedPage)
+          .properties(eventProperties)
+          .build();
+```
+
+As `Event` subtypes are characterized by their context, you should not specify it in the builder.
+The type of `eventProperties` must be a subtype of `AbstractContextInfo`, and each `Event` subtype specifies
+its `AbstractContextInfo` subtype. Please check the Javadoc at http://javadoc.io/doc/com.contactlab.hub/sdk-java/
+if you need further information.
+When your event is built, you can add it using the following method:
+
+```java
+queued = ch.addEvent((Event) event)
+```
+
+The API will process the event queue asynchronously, and it can
 take a few seconds for an event to be actually stored.
-
-```java
-queued = ch.addEvent(event)
-```
-
-To create an `Event` instance, use the builder provided by the `Event` object.
-
-```java
-Event.builder()
-  .customerId(customerId)
-  .context(EventContext.WEB)
-  .type(EventType.viewedPage)
-  .properties(eventProperties)
-  .build();
-```
-
-`eventProperties` must be of type `Map<String, Object>`. The
-structure of this object varies according to the event type, and always contains
-a number of optional fields. You should only include the properties that you need.
 
 **Example:**
 
