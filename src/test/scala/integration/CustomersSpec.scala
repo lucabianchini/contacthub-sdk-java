@@ -233,6 +233,83 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Then("the patch should fail")
       an [ApiException] should be thrownBy patch
     }
+
+    scenario("patching a customer's privacy consents, on a customer that has no existing privacy consent") {
+      Given("a customer previously added, without any privacy consent")
+      val customer = genCustomer.sample.get
+      val newCustomer = ch.addCustomer(customer)
+
+      When("the user patches the customer")
+      val consents = Consents.builder
+        .thirdPartyTransfer(
+          ThirdPartyTransfer.builder.profiling(
+            Consent.builder.status(true).limitation(false).objection(false).build
+          )
+          .build)
+        .build
+
+      val patchCustomer = Customer.builder
+        .consents(consents)
+        .build
+
+      val updatedCustomer = ch.patchCustomer(newCustomer.id.get, patchCustomer)
+
+      Then("the customer's privacy consents should be updated")
+      updatedCustomer.consents.get.thirdPartyTransfer.get.profiling.get shouldBe consents.thirdPartyTransfer.get.profiling.get
+      Then("the customer's updatedAt date should be updated")
+      updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
+    }
+
+    scenario("patching a customer's privacy consents, on a customer that has existing privacy consents") {
+      Given("a customer previously added that has specified some privacy consent")
+      val base = BaseProperties.builder
+        .firstName("Mario")
+        .lastName("Rossi")
+        .contacts(Contacts.builder
+          .email(Gen.alphaStr.sample.get + "@example.com")
+          .build)
+        .build
+
+      val consents = Consents.builder
+        .thirdPartyTransfer(
+          ThirdPartyTransfer.builder.profiling(
+            Consent.builder.status(true).limitation(false).objection(false).build
+          )
+          .build)
+        .build
+
+      val customer = Customer.builder
+        .base(base)
+        .consents(consents)
+        .build
+
+      val newCustomer = ch.addCustomer(customer)
+
+      When("the user patches the customer")
+      val newConsents = Consents.builder
+        .softSpam(
+          SoftSpam.builder.email(
+            Consent.builder.status(true).limitation(true).objection(true).build
+          )
+          .build)
+        .build
+
+      val patchCustomer = Customer.builder
+        .consents(newConsents)
+        .build
+
+      val updatedCustomer = ch.patchCustomer(newCustomer.id.get, patchCustomer)
+
+      Then("the new privacy consent is added")
+      updatedCustomer.consents.get.softSpam.get.email.get shouldBe newConsents.softSpam.get.email.get
+
+      Then("the existing privacy consent is left untouched")
+      updatedCustomer.consents.get.thirdPartyTransfer.get.profiling.get shouldBe consents.thirdPartyTransfer.get.profiling.get
+
+      Then("the customer's updatedAt date should be updated")
+      updatedCustomer.updatedAt.get should be > newCustomer.updatedAt.get
+    }
+
   }
 
   feature("creating and reading base properties") {
@@ -336,6 +413,41 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
 
       Then("all the properties match")
       retrievedCustomer.base.get shouldBe base
+      ch.deleteCustomer(retrievedCustomer.id.get)
+    }
+  }
+
+  feature("creating and reading privacy consents") {
+    scenario("creating a new customer with privacy consents") {
+      Given("a customer with privacy consents")
+
+      val base = BaseProperties.builder
+        .firstName("Mario")
+        .lastName("Rossi")
+        .contacts(Contacts.builder
+          .email(Gen.alphaStr.sample.get + "@example.com")
+          .build)
+        .build
+
+      val consents = Consents.builder
+        .thirdPartyTransfer(
+          ThirdPartyTransfer.builder.profiling(
+            Consent.builder.status(true).limitation(false).objection(false).build
+          )
+          .build)
+        .build
+
+      val customer = Customer.builder
+        .base(base)
+        .consents(consents)
+        .build
+
+      When("the user creates and retrieves the customer")
+      val newCustomer = ch.addCustomer(customer)
+      val retrievedCustomer = ch.getCustomer(newCustomer.id.get)
+
+      Then("all the consents match")
+      retrievedCustomer.consents.get.thirdPartyTransfer.get.profiling.get shouldBe consents.thirdPartyTransfer.get.profiling.get
       ch.deleteCustomer(retrievedCustomer.id.get)
     }
   }

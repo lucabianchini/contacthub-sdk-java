@@ -197,6 +197,7 @@ builder provided by the `Customer` object.
 Customer.builder()
         .base(...)
         .extended(...)
+        .consents(...)
         // ...
         .build();
 ```
@@ -275,6 +276,10 @@ To **patch** a `Customer`, you create a "patch" instance with the same
 fields you want to patch. All the fields that are not explicitly set in the
 "patch" object will be left untouched.
 
+Further details about the `Customer` class can be found in Contactlab Developer Site schemas documentation:
+https://developer.contactlab.com/documentation/contacthub/schemas/index
+or in the Javadoc of this project:
+http://javadoc.io/doc/com.contactlab.hub/sdk-java/1.3.0
 
 ## Education API
 
