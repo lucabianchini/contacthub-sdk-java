@@ -17,7 +17,6 @@ import it.contactlab.hub.sdk.java.models.Event;
 import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.ClientData;
-import it.contactlab.hub.sdk.java.models.ContactCenterEvent;
 import it.contactlab.hub.sdk.java.models.Job;
 import it.contactlab.hub.sdk.java.models.Like;
 import it.contactlab.hub.sdk.java.models.Paginated;
