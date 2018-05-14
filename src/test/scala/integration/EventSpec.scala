@@ -48,7 +48,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      def create = ch.addEvent(event.asInstanceOf[Event])
+      def create = ch.addEvent(event)
 
       Then("the event is created successfully")
       noException should be thrownBy create
@@ -63,7 +63,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      def addEvent = Try(ch.addEvent(event.asInstanceOf[Event]))
+      def addEvent = Try(ch.addEvent(event))
 
       Then("the event is created successfully")
       addEvent should be a 'success
@@ -77,7 +77,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      def addEvent = Try(ch.addEvent(event.asInstanceOf[Event]))
+      def addEvent = Try(ch.addEvent(event))
 
       Then("the event is created successfully")
       addEvent should be a 'success
@@ -92,7 +92,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      def addEvent = Try(ch.addEvent(event.asInstanceOf[Event]))
+      def addEvent = Try(ch.addEvent(event))
 
       Then("the event is created successfully")
       addEvent should be a 'success

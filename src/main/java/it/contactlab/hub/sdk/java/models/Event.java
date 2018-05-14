@@ -1,13 +1,11 @@
 package it.contactlab.hub.sdk.java.models;
 
-import org.immutables.value.Value;
-
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * An Event.
+ * An Event. Abstract class that is extended by Event subclasses.
  */
 public abstract class Event {
 

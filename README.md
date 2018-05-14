@@ -451,7 +451,7 @@ if you need further information.
 When your event is built, you can add it using the following method:
 
 ```java
-queued = ch.addEvent((Event) event)
+queued = ch.addEvent(event)
 ```
 
 The API will process the event queue asynchronously, and it can
