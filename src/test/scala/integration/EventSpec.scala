@@ -14,9 +14,11 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Inspectors._
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
+import org.scalatest.TryValues._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable._
+import scala.util.Try
 
 class EventSpec extends FeatureSpec with GivenWhenThen {
 
@@ -36,10 +38,9 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
   feature("adding a new event") {
     scenario("adding a simple event", Integration) {
       Given("a new event object")
-      val event = Event.builder
+      val event = WebEvent.builder
         .customerId(customerId)
         .`type`(EventType.viewedPage)
-        .context(EventContext.WEB)
         .properties(HashMap(
           "url" -> "https://example.com",
           "title" -> "Page Title"
@@ -56,48 +57,45 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
 
     scenario("adding an event with a sessionId", Integration) {
       Given("a new event object with a sessionId")
-      val event = Event.builder
+      val event = WebEvent.builder
         .sessionId("ses123")
         .`type`(EventType.viewedPage)
-        .context(EventContext.WEB)
         .build
 
       When("the user adds the event")
-      def addEvent = ch.addEvent(event)
+      def addEvent = Try(ch.addEvent(event))
 
       Then("the event is created successfully")
-      noException should be thrownBy addEvent
+      addEvent should be a 'success
     }
 
     scenario("adding an event with an externalId", Integration) {
       Given("a new event object with a externalId")
-      val event = Event.builder
+      val event = WebEvent.builder
         .externalId("ext123")
         .`type`(EventType.viewedPage)
-        .context(EventContext.WEB)
         .build
 
       When("the user adds the event")
-      def addEvent = ch.addEvent(event)
+      def addEvent = Try(ch.addEvent(event))
 
       Then("the event is created successfully")
-      noException should be thrownBy addEvent
+      addEvent should be a 'success
     }
 
     scenario("adding an event with sessionId and externalId", Integration) {
       Given("a new event object with both a sessionId and a externalId")
-      val event = Event.builder
+      val event = WebEvent.builder
         .sessionId("ses123")
         .externalId("ext123")
         .`type`(EventType.viewedPage)
-        .context(EventContext.WEB)
         .build
 
       When("the user adds the event")
-      def addEvent = ch.addEvent(event)
+      def addEvent = Try(ch.addEvent(event))
 
       Then("the event is created successfully")
-      noException should be thrownBy addEvent
+      addEvent should be a 'success
 
       And("the sessionId is ignored (externalId has precedence)")
       // FIXME: it's not trivial to test this condition
@@ -119,8 +117,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       event.context should be (EventContext.WEB)
       event.date should be (OffsetDateTime.parse("2016-12-29T14:36:49.339Z"))
       event.properties.get("title") should be("The Title")
-      event.contextInfo.get("client").asInstanceOf[java.util.Map[String,Object]]
-        .get("userAgent") should be ("testUserAgent")
+      event.contextInfo.get.client.userAgent.get should be ("testUserAgent")
       event.registeredAt.get shouldBe (OffsetDateTime.parse("2017-03-09T10:34:03.547Z"))
     }
 

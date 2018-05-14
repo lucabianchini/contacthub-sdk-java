@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * An Event.
+ * An Event made in e-commerce context.
  */
 @Value.Immutable
 @Value.Style(typeImmutable = "*")
-public abstract class AbstractEvent {
+public abstract class AbstractEcommerceEvent extends Event {
 
   /**
    * The ID of this Event.
@@ -41,7 +41,10 @@ public abstract class AbstractEvent {
   /**
    * The event context of this Event.
    */
-  public abstract EventContext context();
+  @Value.Derived
+  public EventContext context() {
+    return EventContext.ECOMMERCE;
+  }
 
   /**
    * The properties of this Event.
@@ -51,7 +54,8 @@ public abstract class AbstractEvent {
   /**
    * The context-specific properties of this Event.
    */
-  public abstract Map<String, Object> contextInfo();
+  @Override
+  public abstract Optional<EcommerceContextInfo> contextInfo();
 
   /**
    * The moment when this Event happened.

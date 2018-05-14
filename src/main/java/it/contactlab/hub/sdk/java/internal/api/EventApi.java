@@ -2,6 +2,9 @@ package it.contactlab.hub.sdk.java.internal.api;
 
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.models.ClientData;
+import it.contactlab.hub.sdk.java.models.ContactCenterEvent;
+import it.contactlab.hub.sdk.java.models.DigitalCampaignEvent;
+import it.contactlab.hub.sdk.java.models.EcommerceEvent;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
 import it.contactlab.hub.sdk.java.exceptions.ContactHubException;
 import it.contactlab.hub.sdk.java.exceptions.HttpException;
@@ -10,9 +13,16 @@ import it.contactlab.hub.sdk.java.internal.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.internal.http.Request;
 import it.contactlab.hub.sdk.java.models.AsyncPaginated;
 import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventContext;
 import it.contactlab.hub.sdk.java.models.EventFilters;
+import it.contactlab.hub.sdk.java.models.IotEvent;
+import it.contactlab.hub.sdk.java.models.MobileEvent;
+import it.contactlab.hub.sdk.java.models.OtherEvent;
 import it.contactlab.hub.sdk.java.models.Paged;
 import it.contactlab.hub.sdk.java.models.Paginated;
+import it.contactlab.hub.sdk.java.models.RetailEvent;
+import it.contactlab.hub.sdk.java.models.SocialEvent;
+import it.contactlab.hub.sdk.java.models.WebEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -157,7 +167,7 @@ public class EventApi {
 
   /**
    * Retrieves an Event by id.
- * @param clientData 
+ * @param clientData
    */
   public static Event getById(Auth auth, ClientData clientData, String id)
       throws ApiException, ServerException, HttpException {
