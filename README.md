@@ -510,7 +510,15 @@ saved as `target/classes/.../Customer.java`.
 `sbt publishSigned` followed by `sbt sonatypeRelease` will publish a new version
 to Maven Central.
 
-Prerequisites:
+#### Versioning
+
+The version number will be generated automatically from the latest git tag by
+the [sbt-git](https://github.com/sbt/sbt-git) plugin. Before releasing, add a
+new git tag using the format `vX.Y.Z` and make sure you don't have any
+uncommitted changes. If there is not a tag on the latest commit or if there are
+uncommitted changes, a SNAPSHOT version will be created.
+
+### Prerequisites
 
 * you must have the Contactlab PGP key stored in `~/.sbt/gpg/secring.asc`
 * you must have the pass phrase for the Contactlab PGP key
