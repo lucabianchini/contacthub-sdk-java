@@ -100,6 +100,50 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       And("the sessionId is ignored (externalId has precedence)")
       // FIXME: it's not trivial to test this condition
     }
+
+    scenario("adding a retail event with a store type", Integration) {
+      Given("a new event object")
+      val event = RetailEvent.builder
+        .customerId(customerId)
+        .`type`(EventType.viewedPage)
+        .properties(HashMap(
+          "url" -> "https://example.com",
+          "title" -> "Page Title"
+        ))
+        .contextInfo(RetailContextInfo.builder
+          .client(Client.builder
+            .ip("127.0.0.1")
+            .build
+          )
+          .user(User.builder
+            .id("userId")
+            .build
+          )
+          .store(Store.builder
+            .id("storeId")
+            .name("storeName")
+            .`type`(StoreType.FREE_STANDING)
+            .street("Via Malaga")
+            .city("Milano")
+            .country("Italy")
+            .province("MI")
+            .region("Lombardy")
+            .zip("20143")
+            .geo(Geo.builder.lat(45.4654).lon(9.1859).build)
+            .website("https://www.awesomestore.com")
+            .build
+          )
+          .build
+        )
+        .build
+
+      When("the user adds the event")
+      def create = ch.addEvent(event)
+
+      Then("the event is created successfully")
+      noException should be thrownBy create
+
+    }
   }
 
   feature("retrieving events") {

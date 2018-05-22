@@ -27,7 +27,7 @@ public abstract class AbstractStore {
   /**
    * The street of the store.
    */
-  public abstract String store();
+  public abstract String street();
 
   /**
    * The city of the store.
