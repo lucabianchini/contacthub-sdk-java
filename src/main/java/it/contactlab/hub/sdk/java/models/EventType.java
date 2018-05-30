@@ -10,6 +10,7 @@ public enum EventType {
   campaignLinkClicked,
   campaignMarkedSpam,
   campaignOpened,
+  campaignOptinRequested,
   campaignSent,
   campaignSubscribed,
   campaignUnsubscribed,
