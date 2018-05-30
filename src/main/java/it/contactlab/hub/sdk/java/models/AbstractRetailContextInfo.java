@@ -18,5 +18,5 @@ public abstract class AbstractRetailContextInfo extends AbstractContextInfo{
   /**
    * The store of this Event context info.
    */
-  public abstract Store store();
+  public abstract Optional<Store> store();
 }
