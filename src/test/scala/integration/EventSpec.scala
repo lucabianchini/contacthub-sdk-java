@@ -161,7 +161,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       event.context should be (EventContext.WEB)
       event.date should be (OffsetDateTime.parse("2016-12-29T14:36:49.339Z"))
       event.properties.get("title") should be("The Title")
-      event.contextInfo.get.client.userAgent.get should be ("testUserAgent")
+      event.contextInfo.get.client.get.userAgent.get should be ("testUserAgent")
       event.registeredAt.get shouldBe (OffsetDateTime.parse("2017-03-09T10:34:03.547Z"))
     }
 
