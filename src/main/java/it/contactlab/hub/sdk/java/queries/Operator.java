@@ -11,5 +11,6 @@ public enum Operator {
   IS_NULL,
   IS_NOT_NULL,
   IN,
-  NOT_IN
+  NOT_IN,
+  LIKE
 }
