@@ -21,7 +21,7 @@ class PaginationSpec extends FeatureSpec with GivenWhenThen {
 
   // FIXME: Given it takes about 30 seconds for new events to be indexed, we
   // rely on some existing events that were added manually to the test workspace
-  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
+  val customerId = "9d066fe2-0d14-4027-8191-2892c663ad76"
 
   feature("Paginating Customers") {
     scenario("Reading pagination attributes") {
