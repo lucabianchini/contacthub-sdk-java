@@ -26,7 +26,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
   )
 
   val ch = new ContactHub(auth)
-  val customerId = "9d066fe2-0d14-4027-8191-2892c663ad76"
+  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
   val extIdSingle = "test-extIdSingle"
   val extIdMultiple = "multipleExternalIdTest"
 
