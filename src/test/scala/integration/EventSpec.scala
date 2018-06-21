@@ -32,8 +32,8 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
 
   // FIXME: Given it takes about 30 seconds for new events to be indexed, we
   // rely on some existing events that were added manually to the test workspace
-  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
-  val eventId = "ee542c93-bec1-476d-bdbf-a417f342438c"
+  val customerId = "9d066fe2-0d14-4027-8191-2892c663ad76"
+  val eventId = "60717ebd-2819-4d54-9d5e-e269e4db5f04"
 
   feature("adding a new event") {
     scenario("adding a simple event", Integration) {
