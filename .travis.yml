@@ -6,3 +6,6 @@ jdk:
 env:
   global:
     secure: hdXe2OmXMtWlMdMcCAPUCR/+vY6vqwtLmq9Eu94rfvRIe5uuNoSppePdO0FUSF5vB1FZbj98DwKCxEDKe8l8r3AIEiiBP8jTkw19g8j+1PBkD4Uz155tPaaqzH8Bi1aGuyHgA/idirjykFtb2qPgl368L6QajcXIujI332B9g4pgCPM3DtdQYNT7FhRUKf6D4cm2btjq4TNE5+7pa71uiEKVB3VjdYycIYyJBK14td1VG8rgB+zPH5h2kkVaiaV847UKexssCQZoHbIJEHhY+wHg5IubYqm0uspwkiozm4En+IJ+vDuerM1MXgvP1DYHaM7+poF81JktFXCN2RWd78lwCu6xsrHdKyZzs3N9N4h2P8qAlkuMfFcBnsZG/lA02OnYa45uX5XA+Co/wTVDzUAkzpVkKXGqTk1AeDhoXQkHqxCMkJt9oNU/+Qkbvhj0cOR5KETghEi1WznkMJPZibNtEyA4BI7oIbgoZSQIiTTMCznqIbF+OR+aMFZGuHUWgOrtTkEdfRLMmojvv3HmqeXgABbX4kdeX3Gb1YwUb2gnt4M0o1+D7zKYe97+hdHgKkwBXt570CW4rZltPju33MsrKuPm4VddyGzR/wjCLUC/kLEtDhoaPsPWqD3FRDGsv/aHfz3CIaqTSjMXN6j/IQ1TPpxeFd6OOXDM2aQ/Izs=
+script:
+   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then sbt ++$TRAVIS_SCALA_VERSION test; fi'
+   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then sbt ++$TRAVIS_SCALA_VERSION compile; fi'
