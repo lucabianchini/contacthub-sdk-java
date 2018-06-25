@@ -532,3 +532,20 @@ credentials += Credentials("Sonatype Nexus Repository Manager",
                            "PASSWORD_FOR_THE_SONATYPE_ACCOUNT")
 
 ```
+
+#### Troubleshooting
+
+**Problem:** command `sbt publishSigned` failed with output:
+```
+[error] java.io.IOException: secret key ring doesn't start with secret key tag: tag 0xffffffff
+[error]     at org.bouncycastle.openpgp.PGPSecretKeyRing.<init>(Unknown Source)
+[error]     at com.jsuereth.pgp.SecretKeyRing$.load(SecretKeyRing.scala:49)
+[error]     at com.jsuereth.pgp.SecretKeyRing$.load(SecretKeyRing.scala:45)
+
+```
+The problem could be checking Contactlab PGP under path `~/.gnupg/secring.gpg` instead of `~/.sbt/gpg/secring.asc`
+
+**To fix it:**
+Possible solutions:
+1) **Preferred** - store the Contactlab PGP key in `~/.gnupg/secring.gpg`.
+2) rename the `~/.gnupg` folder in order to force sbt to search the GPG key inside `~/.sbt/gpg/`.
