@@ -9,6 +9,8 @@ import it.contactlab.hub.sdk.java.internal.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.internal.http.Request;
 import it.contactlab.hub.sdk.java.models.Education;
 
+import org.apache.http.client.HttpClient;
+
 import com.google.gson.Gson;
 
 public class EducationApi {
@@ -17,41 +19,41 @@ public class EducationApi {
 
   /**
    * Add a new Education to a Customer.
- * @param clientData 
+   * @param clientData 
    */
-  public static Education add(Auth auth, ClientData clientData, String customerId, Education education)
+  public static Education add(Auth auth, ClientData clientData, String customerId, Education education, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/educations";
     String payload = gson.toJson(education);
-    String response = Request.doPost(auth, clientData, endpoint, payload);
+    String response = Request.doPost(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Education.class);
   }
 
   /**
    * Update an existing Education.
- * @param clientData 
+   * @param clientData 
    */
-  public static Education update(Auth auth, ClientData clientData, String customerId, Education education)
+  public static Education update(Auth auth, ClientData clientData, String customerId, Education education, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/educations/" + education.id();
     String payload = gson.toJson(education);
-    String response = Request.doPut(auth, clientData, endpoint, payload);
+    String response = Request.doPut(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Education.class);
   }
 
   /**
    * Remove a tag from a Customer.
- * @param clientData 
+   * @param clientData 
    */
-  public static void remove(Auth auth, ClientData clientData, String customerId, String educationId)
+  public static void remove(Auth auth, ClientData clientData, String customerId, String educationId, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/educations/" + educationId;
-    String response = Request.doDelete(auth, clientData, endpoint);
+    String response = Request.doDelete(auth, clientData, endpoint, httpClient);
   }
 
 }

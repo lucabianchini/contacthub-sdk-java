@@ -12,16 +12,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.http.client.HttpClient;
+
 public class TagApi {
 
   /**
    * Add a new tag to a Customer.
  * @param clientData 
    */
-  public static Customer add(Auth auth, ClientData clientData, String customerId, String tag)
+  public static Customer add(Auth auth, ClientData clientData, String customerId, String tag, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
-    Customer customer = CustomerApi.getById(auth, clientData, customerId);
+    Customer customer = CustomerApi.getById(auth, clientData, customerId, httpClient);
     Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet<>());
 
     boolean changed = manualTags.add(tag);
@@ -29,7 +31,7 @@ public class TagApi {
     if (changed) {
       return CustomerApi.patch(auth, clientData, customerId, Customer.builder()
           .tags(CustomerTags.builder().manual(manualTags).build())
-          .build());
+          .build(), httpClient);
     } else {
       return customer;
     }
@@ -39,10 +41,10 @@ public class TagApi {
    * Remove a tag from a Customer.
  * @param clientData 
    */
-  public static Customer remove(Auth auth, ClientData clientData, String customerId, String tag)
+  public static Customer remove(Auth auth, ClientData clientData, String customerId, String tag, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
-    Customer customer = CustomerApi.getById(auth, clientData, customerId);
+    Customer customer = CustomerApi.getById(auth, clientData, customerId, httpClient);
     Set<String> manualTags = customer.tags().map(t -> t.manual()).orElse(new HashSet<>());
 
     boolean changed = manualTags.remove(tag);
@@ -50,7 +52,7 @@ public class TagApi {
     if (changed) {
       return CustomerApi.patch(auth, clientData, customerId, Customer.builder()
           .tags(CustomerTags.builder().manual(manualTags).build())
-          .build());
+          .build(), httpClient);
     } else {
       return customer;
     }

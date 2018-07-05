@@ -28,24 +28,36 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 
+import org.apache.http.client.HttpClient;
+
 /**
  * ContactHub Java SDK (Async version).
  */
 
 public class AsyncContactHub {
 
-  public Auth auth;
+  private final Auth auth;
   private final ClientData clientData;
+  private final HttpClient httpClient;
 
   public AsyncContactHub(Auth auth) {
-    this(auth, null);
+    this(auth, null, null);
   }
   
-  public AsyncContactHub(Auth auth, ClientData clientData) {
-      this.auth = auth;
-      this.clientData = clientData;
+  public AsyncContactHub(Auth auth, HttpClient httpClient) {
+    this(auth, null, httpClient);
   }
 
+  public AsyncContactHub(Auth auth, ClientData clientData) {
+    this(auth, clientData, null);
+  }
+  
+  public AsyncContactHub(Auth auth, ClientData clientData, HttpClient httpClient) {
+    this.auth = auth;
+    this.clientData = clientData;
+    this.httpClient = httpClient;
+}
+  
   @FunctionalInterface
   private interface ThrowingSupplier<T> {
     T get() throws ContactHubException;
@@ -93,7 +105,7 @@ public class AsyncContactHub {
    * @return            A {@link CompletionStage}.
    */
   public CompletionStage<Void> addCustomerSession(String customerId, String sessionId) {
-    return wrapAsync(() -> SessionApi.reconcile(this.auth, this.clientData, customerId, sessionId));
+    return wrapAsync(() -> SessionApi.reconcile(this.auth, this.clientData, customerId, sessionId, this.httpClient));
   }
 
   /**
@@ -103,7 +115,7 @@ public class AsyncContactHub {
    * @return   A {@link CompletionStage} of {@link Customer}.
    */
   public CompletionStage<Customer> getCustomer(String id) {
-    return wrapAsync(() -> CustomerApi.getById(this.auth, this.clientData, id));
+    return wrapAsync(() -> CustomerApi.getById(this.auth, this.clientData, id, this.httpClient));
   }
 
   /**
@@ -112,7 +124,7 @@ public class AsyncContactHub {
    * @return A {@link CompletionStage} of {@link AsyncPaginated} {@link Customer} objects.
    */
   public CompletionStage<AsyncPaginated<Customer>> getCustomers() {
-    return CustomerApi.asyncGet(this.auth, this.clientData, GetCustomersOptions.builder().build());
+    return CustomerApi.asyncGet(this.auth, this.clientData, GetCustomersOptions.builder().build(), this.httpClient);
   }
 
   /**
@@ -122,7 +134,7 @@ public class AsyncContactHub {
    * @return        A {@link CompletionStage} of {@link AsyncPaginated} {@link Customer} objects.
    */
   public CompletionStage<AsyncPaginated<Customer>> getCustomers(GetCustomersOptions options) {
-    return CustomerApi.asyncGet(this.auth, this.clientData, options);
+    return CustomerApi.asyncGet(this.auth, this.clientData, options, this.httpClient);
   }
 
   /**
@@ -134,7 +146,7 @@ public class AsyncContactHub {
   public CompletionStage<AsyncPaginated<Customer>> getCustomerByExternalId(String externalId) {
     GetCustomersOptions options = GetCustomersOptions.builder()
                                   .externalId(externalId).build();
-    return CustomerApi.asyncGet(this.auth, this.clientData, options);
+    return CustomerApi.asyncGet(this.auth, this.clientData, options, this.httpClient);
   }
 
   /**
@@ -144,7 +156,7 @@ public class AsyncContactHub {
    * @return         A {@link CompletionStage} of {@link Customer}.
    */
   public CompletionStage<Customer> addCustomer(Customer customer) {
-    return wrapAsync(() -> CustomerApi.add(this.auth, this.clientData, customer));
+    return wrapAsync(() -> CustomerApi.add(this.auth, this.clientData, customer, this.httpClient));
   }
 
   /**
@@ -154,7 +166,7 @@ public class AsyncContactHub {
    * @return   A {@link CompletionStage}
    */
   public CompletionStage<Void> deleteCustomer(String id) {
-    return wrapAsync(() -> CustomerApi.delete(this.auth, this.clientData, id));
+    return wrapAsync(() -> CustomerApi.delete(this.auth, this.clientData, id, this.httpClient));
   }
 
   /**
@@ -164,7 +176,7 @@ public class AsyncContactHub {
    * @return         A {@link CompletionStage} of {@link Customer}.
    */
   public CompletionStage<Customer> updateCustomer(Customer customer) {
-    return wrapAsync(() -> CustomerApi.update(this.auth, this.clientData, customer));
+    return wrapAsync(() -> CustomerApi.update(this.auth, this.clientData, customer, this.httpClient));
   }
 
 
@@ -176,7 +188,7 @@ public class AsyncContactHub {
    * @return              A {@link CompletionStage} of {@link Customer}.
    */
   public CompletionStage<Customer> patchCustomer(String customerId, Customer patchCustomer) {
-    return wrapAsync(() -> CustomerApi.patch(this.auth, this.clientData, customerId, patchCustomer));
+    return wrapAsync(() -> CustomerApi.patch(this.auth, this.clientData, customerId, patchCustomer, this.httpClient));
   }
 
   /**
@@ -189,7 +201,7 @@ public class AsyncContactHub {
    * @return           The Like object that was persisted by the API.
    */
   public CompletionStage<Like> addLike(String customerId, Like like) {
-    return wrapAsync(() -> LikeApi.add(this.auth, this.clientData, customerId, like));
+    return wrapAsync(() -> LikeApi.add(this.auth, this.clientData, customerId, like, this.httpClient));
   }
 
   /**
@@ -203,7 +215,7 @@ public class AsyncContactHub {
    */
 
   public CompletionStage<Like> updateLike(String customerId, Like like) {
-    return wrapAsync(() -> LikeApi.update(this.auth, this.clientData, customerId, like));
+    return wrapAsync(() -> LikeApi.update(this.auth, this.clientData, customerId, like, this.httpClient));
   }
 
   /**
@@ -216,7 +228,7 @@ public class AsyncContactHub {
    * @return           A {@link CompletionStage}.
    */
   public CompletionStage<Void> removeLike(String customerId, String likeId) {
-    return wrapAsync(() -> LikeApi.remove(this.auth, this.clientData, customerId, likeId));
+    return wrapAsync(() -> LikeApi.remove(this.auth, this.clientData, customerId, likeId, this.httpClient));
   }
 
   /**
@@ -229,7 +241,7 @@ public class AsyncContactHub {
    * @return           The Job object that was persisted by the API.
    */
   public CompletionStage<Job> addJob(String customerId, Job job) {
-    return wrapAsync(() -> JobApi.add(this.auth, this.clientData, customerId, job));
+    return wrapAsync(() -> JobApi.add(this.auth, this.clientData, customerId, job, this.httpClient));
   }
 
   /**
@@ -243,7 +255,7 @@ public class AsyncContactHub {
    */
 
   public CompletionStage<Job> updateJob(String customerId, Job job) {
-    return wrapAsync(() -> JobApi.update(this.auth, this.clientData, customerId, job));
+    return wrapAsync(() -> JobApi.update(this.auth, this.clientData, customerId, job, this.httpClient));
   }
 
   /**
@@ -256,7 +268,7 @@ public class AsyncContactHub {
    * @return           A {@link CompletionStage}.
    */
   public CompletionStage<Void> removeJob(String customerId, String jobId) {
-    return wrapAsync(() -> JobApi.remove(this.auth, this.clientData, customerId, jobId));
+    return wrapAsync(() -> JobApi.remove(this.auth, this.clientData, customerId, jobId, this.httpClient));
   }
 
   /**
@@ -269,7 +281,7 @@ public class AsyncContactHub {
    * @return           The Education object that was persisted by the API.
    */
   public CompletionStage<Education> addEducation(String customerId, Education education) {
-    return wrapAsync(() -> EducationApi.add(this.auth, this.clientData, customerId, education));
+    return wrapAsync(() -> EducationApi.add(this.auth, this.clientData, customerId, education, this.httpClient));
   }
 
   /**
@@ -283,7 +295,7 @@ public class AsyncContactHub {
    */
 
   public CompletionStage<Education> updateEducation(String customerId, Education education) {
-    return wrapAsync(() -> EducationApi.update(this.auth, this.clientData, customerId, education));
+    return wrapAsync(() -> EducationApi.update(this.auth, this.clientData, customerId, education, this.httpClient));
   }
 
   /**
@@ -296,7 +308,7 @@ public class AsyncContactHub {
    * @return            A {@link CompletionStage}.
    */
   public CompletionStage<Void> removeEducation(String customerId, String educationId) {
-    return wrapAsync(() -> EducationApi.remove(this.auth, this.clientData, customerId, educationId));
+    return wrapAsync(() -> EducationApi.remove(this.auth, this.clientData, customerId, educationId, this.httpClient));
   }
 
   /**
@@ -309,7 +321,7 @@ public class AsyncContactHub {
    * @return           The full Customer object after the update.
    */
   public CompletionStage<Customer> addTag(String customerId, String tag) {
-    return wrapAsync(() -> TagApi.add(this.auth, this.clientData, customerId, tag));
+    return wrapAsync(() -> TagApi.add(this.auth, this.clientData, customerId, tag, this.httpClient));
   }
 
   /**
@@ -322,7 +334,7 @@ public class AsyncContactHub {
    * @return           The full Customer object after the update.
    */
   public CompletionStage<Customer> removeTag(String customerId, String tag) {
-    return wrapAsync(() -> TagApi.remove(this.auth, this.clientData, customerId, tag));
+    return wrapAsync(() -> TagApi.remove(this.auth, this.clientData, customerId, tag, this.httpClient));
   }
 
   /**
@@ -332,7 +344,7 @@ public class AsyncContactHub {
    * @return         A {@link CompletionStage}.
    */
   public CompletionStage<Void> addEvent(Event newEvent) {
-    return wrapAsync(() -> EventApi.add(this.auth, this.clientData, newEvent));
+    return wrapAsync(() -> EventApi.add(this.auth, this.clientData, newEvent, this.httpClient));
   }
 
   /**
@@ -342,7 +354,7 @@ public class AsyncContactHub {
    * @return   An {@link Event}.
    */
   public CompletionStage<Event> getEvent(String id) {
-    return wrapAsync(() -> EventApi.getById(this.auth, this.clientData, id));
+    return wrapAsync(() -> EventApi.getById(this.auth, this.clientData, id, this.httpClient));
   }
 
   /**
@@ -352,7 +364,7 @@ public class AsyncContactHub {
    * @return           A {@link CompletionStage} of {@link AsyncPaginated} {@link Event} objects.
    */
   public CompletionStage<AsyncPaginated<Event>> getEvents(String customerId) {
-    return EventApi.asyncGet(this.auth, this.clientData, customerId, EventFilters.builder().build());
+    return EventApi.asyncGet(this.auth, this.clientData, customerId, EventFilters.builder().build(), this.httpClient);
   }
 
   /**
@@ -365,7 +377,7 @@ public class AsyncContactHub {
   public CompletionStage<AsyncPaginated<Event>> getEvents(
       String customerId, EventFilters filters
   ) {
-    return EventApi.asyncGet(this.auth, this.clientData, customerId, filters);
+    return EventApi.asyncGet(this.auth, this.clientData, customerId, filters, this.httpClient);
   }
 
   /**

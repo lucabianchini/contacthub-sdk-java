@@ -31,6 +31,8 @@ import com.google.gson.reflect.TypeToken;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+
+import org.apache.http.client.HttpClient;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -49,9 +51,9 @@ public class EventApi {
 
   /**
    * Add a new Event.
- * @param clientData 
+   * @param clientData 
    */
-  public static void add(Auth auth, ClientData clientData, Event event)
+  public static void add(Auth auth, ClientData clientData, Event event, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     final String endpoint = "/events";
     String payload = "";
@@ -93,11 +95,11 @@ public class EventApi {
 
     }
 
-    Request.doPost(auth, clientData, endpoint, payload);
+    Request.doPost(auth, clientData, endpoint, payload, httpClient);
   }
 
   private static Paged<Event> getPaged(
-      Auth auth, ClientData clientData, String customerId, EventFilters filters
+      Auth auth, ClientData clientData, String customerId, EventFilters filters, HttpClient httpClient
   ) throws ApiException, ServerException, HttpException {
     final String endpoint = "/events";
 
@@ -116,7 +118,7 @@ public class EventApi {
           "dateTo", ContactHubGson.formatDate(date)
     ));
 
-    String response = Request.doGet(auth, clientData, endpoint, queryString);
+    String response = Request.doGet(auth, clientData, endpoint, queryString, httpClient);
 
     Type pagedEventType = new TypeToken<Paged<Event>>(){}.getType();
     Paged<Event> pagedEvents = gson.fromJson(response, pagedEventType);
@@ -128,15 +130,15 @@ public class EventApi {
    * Async version of get.
    */
   public static CompletionStage<AsyncPaginated<Event>> asyncGet(
-      Auth auth, ClientData clientData, String customerId, EventFilters filters
+      Auth auth, ClientData clientData, String customerId, EventFilters filters, HttpClient httpClient
   ) {
     Function<Integer, CompletionStage<AsyncPaginated<Event>>>
         requestFunction = (Integer pageNumber) ->
-            asyncGet(auth, clientData, customerId, filters.withPage(pageNumber));
+            asyncGet(auth, clientData, customerId, filters.withPage(pageNumber), httpClient);
 
     return CompletableFuture.supplyAsync(() -> {
       try {
-        Paged<Event> pagedEvents = getPaged(auth, clientData, customerId, filters);
+        Paged<Event> pagedEvents = getPaged(auth, clientData, customerId, filters, httpClient);
 
         return new AsyncPaginated<Event>(pagedEvents, requestFunction);
       } catch (ContactHubException ex) {
@@ -147,16 +149,16 @@ public class EventApi {
 
   /**
    * Retrieves all Events for a Customer, with filters.
- * @param clientData 
+   * @param clientData 
    */
   public static Paginated<Event> get(
-      Auth auth, ClientData clientData, String customerId, EventFilters filters
+      Auth auth, ClientData clientData, String customerId, EventFilters filters, HttpClient httpClient
   ) throws ApiException, ServerException, HttpException {
-    Paged<Event> pagedEvents = getPaged(auth, clientData, customerId, filters);
+    Paged<Event> pagedEvents = getPaged(auth, clientData, customerId, filters, httpClient);
 
     Function<Integer, Paginated<Event>> requestFunction = (Integer pageNumber) -> {
       try {
-        return get(auth, clientData, customerId, filters.withPage(pageNumber));
+        return get(auth, clientData, customerId, filters.withPage(pageNumber), httpClient);
       } catch (ContactHubException exception) {
         throw new RuntimeException(exception);
       }
@@ -167,12 +169,12 @@ public class EventApi {
 
   /**
    * Retrieves an Event by id.
- * @param clientData
+   * @param clientData
    */
-  public static Event getById(Auth auth, ClientData clientData, String id)
+  public static Event getById(Auth auth, ClientData clientData, String id, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/events/" + id;
-    String response = Request.doGet(auth, clientData, endpoint);
+    String response = Request.doGet(auth, clientData, endpoint, httpClient);
 
     return gson.fromJson(response, Event.class);
   }

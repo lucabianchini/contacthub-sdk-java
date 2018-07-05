@@ -13,6 +13,10 @@ import com.google.gson.JsonObject;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
+import org.apache.http.client.HttpClient;
+
 public class SessionApi {
 
   private static Gson gson = ContactHubGson.getInstance();
@@ -30,14 +34,13 @@ public class SessionApi {
    * Reconcile a SessionId with a Customer.
  * @param clientData 
    */
-  public static void reconcile(Auth auth, ClientData clientData, String customerId, String sessionId)
+  public static void reconcile(Auth auth, ClientData clientData, String customerId, String sessionId, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId + "/sessions";
     JsonObject session = new JsonObject();
     session.addProperty("value", sessionId);
-
+    
     String payload = gson.toJson(session);
-    Request.doPost(auth, clientData, endpoint, payload);
+    Request.doPost(auth, clientData, endpoint, payload, httpClient);
   }
-
 }

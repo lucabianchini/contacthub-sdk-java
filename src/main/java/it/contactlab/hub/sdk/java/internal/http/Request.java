@@ -17,16 +17,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.client.HttpClient;
+
 public class Request {
 
   /**
    * Sends a generic GET request and returns the response String.
    */
   public static String doGet(
-      Auth auth, ClientData clientData, String endpoint, Map<String, Object> queryString
+      Auth auth, ClientData clientData, String endpoint, Map<String, Object> queryString, HttpClient httpClient
   ) throws ApiException, ServerException, HttpException {
     String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
+    if (httpClient != null) {
+      Unirest.setHttpClient(httpClient);
+    }
+    
     try {
       HttpResponse<String> response = Unirest
           .get(url)
@@ -46,19 +52,23 @@ public class Request {
     }
   }
 
-  public static String doGet(Auth auth, ClientData clientData, String endpoint)
+  public static String doGet(Auth auth, ClientData clientData, String endpoint, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
-    return doGet(auth, clientData, endpoint, Collections.emptyMap());
+    return doGet(auth, clientData, endpoint, Collections.emptyMap(), httpClient);
   }
 
   /**
    * Sends a generic POST request and returns the response String.
    */
-  public static String doPost(Auth auth, ClientData clientData, String endpoint, String payload)
+  public static String doPost(Auth auth, ClientData clientData, String endpoint, String payload, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     try {
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
+      if (httpClient != null) {
+        Unirest.setHttpClient(httpClient);
+      }
+      
       HttpResponse<String> response = Unirest
           .post(url)
           .headers(headersWithContent(auth, clientData))
@@ -80,11 +90,15 @@ public class Request {
   /**
    * Sends a generic DELETE request and returns the response String.
    */
-  public static String doDelete(Auth auth, ClientData clientData, String endpoint)
+  public static String doDelete(Auth auth, ClientData clientData, String endpoint, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     try {
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
+      if (httpClient != null) {
+        Unirest.setHttpClient(httpClient);
+      }
+      
       HttpResponse<String> response = Unirest
           .delete(url)
           .headers(headersNoContent(auth, clientData))
@@ -105,11 +119,15 @@ public class Request {
   /**
    * Sends a generic PUT request and returns the response String.
    */
-  public static String doPut(Auth auth, ClientData clientData, String endpoint, String payload)
+  public static String doPut(Auth auth, ClientData clientData, String endpoint, String payload, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     try {
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
+      if (httpClient != null) {
+        Unirest.setHttpClient(httpClient);
+      }
+      
       HttpResponse<String> response = Unirest
           .put(url)
           .headers(headersWithContent(auth, clientData))
@@ -131,11 +149,15 @@ public class Request {
   /**
    * Sends a generic PATCH request and returns the response String.
    */
-  public static String doPatch(Auth auth, ClientData clientData, String endpoint, String payload)
+  public static String doPatch(Auth auth, ClientData clientData, String endpoint, String payload, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     try {
       String url = auth.apiUrl + "/workspaces/" + auth.workspaceId + endpoint;
 
+      if (httpClient != null) {
+        Unirest.setHttpClient(httpClient);
+      }
+      
       HttpResponse<String> response = Unirest
           .patch(url)
           .headers(headersWithContent(auth, clientData))

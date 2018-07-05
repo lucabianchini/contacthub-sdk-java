@@ -9,6 +9,8 @@ import it.contactlab.hub.sdk.java.internal.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.internal.http.Request;
 import it.contactlab.hub.sdk.java.models.Job;
 
+import org.apache.http.client.HttpClient;
+
 import com.google.gson.Gson;
 
 public class JobApi {
@@ -17,41 +19,41 @@ public class JobApi {
 
   /**
    * Add a new Job to a Customer.
- * @param clientData 
+   * @param clientData 
    */
-  public static Job add(Auth auth, ClientData clientData, String customerId, Job job)
+  public static Job add(Auth auth, ClientData clientData, String customerId, Job job, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/jobs";
     String payload = gson.toJson(job);
-    String response = Request.doPost(auth, clientData, endpoint, payload);
+    String response = Request.doPost(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Job.class);
   }
 
   /**
    * Update an existing Job.
- * @param clientData 
+   * @param clientData 
    */
-  public static Job update(Auth auth, ClientData clientData, String customerId, Job job)
+  public static Job update(Auth auth, ClientData clientData, String customerId, Job job, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/jobs/" + job.id();
     String payload = gson.toJson(job);
-    String response = Request.doPut(auth, clientData, endpoint, payload);
+    String response = Request.doPut(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Job.class);
   }
 
   /**
    * Remove a tag from a Customer.
- * @param clientData 
+   * @param clientData 
    */
-  public static void remove(Auth auth, ClientData clientData, String customerId, String jobId)
+  public static void remove(Auth auth, ClientData clientData, String customerId, String jobId, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/jobs/" + jobId;
-    String response = Request.doDelete(auth, clientData, endpoint);
+    String response = Request.doDelete(auth, clientData, endpoint, httpClient);
   }
 
 }

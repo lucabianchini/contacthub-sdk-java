@@ -27,11 +27,13 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
+import org.apache.http.client.HttpClient;
+
 public class CustomerApi {
 
   private static Gson gson = ContactHubGson.getInstance();
 
-  private static Paged<Customer> getPaged(Auth auth, ClientData clientData, GetCustomersOptions options)
+  private static Paged<Customer> getPaged(Auth auth, ClientData clientData, GetCustomersOptions options, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     Map<String, Object> queryString = new HashMap<>();
 
@@ -56,7 +58,7 @@ public class CustomerApi {
           sortField + options.direction().map(dir -> "," + dir).orElse(""));
     });
 
-    String response = Request.doGet(auth, clientData, endpoint, queryString);
+    String response = Request.doGet(auth, clientData, endpoint, queryString, httpClient);
 
     Type paginatedCustomerType = new TypeToken<Paged<Customer>>(){}.getType();
     Paged<Customer> pagedCustomers = gson.fromJson(response, paginatedCustomerType);
@@ -72,15 +74,15 @@ public class CustomerApi {
    * @return           A {@link CompletionStage} of {@link AsyncPaginated} {@link Customer} objects.
    */
   public static CompletionStage<AsyncPaginated<Customer>> asyncGet(
-      Auth auth, ClientData clientData, GetCustomersOptions options) {
+      Auth auth, ClientData clientData, GetCustomersOptions options, HttpClient httpClient) {
 
     Function<Integer, CompletionStage<AsyncPaginated<Customer>>>
         requestFunction = (Integer pageNumber) ->
-            asyncGet(auth, clientData, options.withPage(pageNumber));
+            asyncGet(auth, clientData, options.withPage(pageNumber), httpClient);
 
     return CompletableFuture.supplyAsync(() -> {
       try {
-        Paged<Customer> pagedCustomers = getPaged(auth, clientData, options);
+        Paged<Customer> pagedCustomers = getPaged(auth, clientData, options, httpClient);
 
         return new AsyncPaginated<Customer>(pagedCustomers, requestFunction);
       } catch (ContactHubException ex) {
@@ -93,21 +95,21 @@ public class CustomerApi {
    * Retrieves all the Customers for a Node, with options
    *
    * @param auth       A ContactHub Auth object.
- * @param clientData 
+   * @param clientData 
    * @param options    An instance of {@link GetCustomersOptions}.
    * @return           A {@link Paginated} list of matching Customer objects.
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public static Paginated<Customer> get(Auth auth, ClientData clientData, GetCustomersOptions options)
+  public static Paginated<Customer> get(Auth auth, ClientData clientData, GetCustomersOptions options, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
-    Paged<Customer> pagedCustomers = getPaged(auth, clientData, options);
+    Paged<Customer> pagedCustomers = getPaged(auth, clientData, options, httpClient);
 
     Function<Integer, Paginated<Customer>> requestFunction = (Integer pageNumber) -> {
       try {
-        return get(auth, clientData, options.withPage(pageNumber));
+        return get(auth, clientData, options.withPage(pageNumber), httpClient);
       } catch (ContactHubException exception) {
         throw new RuntimeException(exception);
       }
@@ -128,10 +130,10 @@ public class CustomerApi {
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public static Customer getById(Auth auth, ClientData clientData, String id)
+  public static Customer getById(Auth auth, ClientData clientData, String id, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + id;
-    String response = Request.doGet(auth, clientData, endpoint);
+    String response = Request.doGet(auth, clientData, endpoint, httpClient);
 
     return gson.fromJson(response, Customer.class);
   }
@@ -148,12 +150,12 @@ public class CustomerApi {
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public static Customer add(Auth auth, ClientData clientData, Customer customer)
+  public static Customer add(Auth auth, ClientData clientData, Customer customer, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers";
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
-    String response = Request.doPost(auth, clientData, endpoint, payload);
+    String response = Request.doPost(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Customer.class);
   }
@@ -169,10 +171,10 @@ public class CustomerApi {
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public static void delete(Auth auth, ClientData clientData, String customerId)
+  public static void delete(Auth auth, ClientData clientData, String customerId, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
-    String response = Request.doDelete(auth, clientData, endpoint);
+    String response = Request.doDelete(auth, clientData, endpoint, httpClient);
   }
 
   /**
@@ -181,18 +183,19 @@ public class CustomerApi {
    * @param auth     A ContactHub Auth object.
  * @param clientData 
    * @param customer The Customer object.
+   * @param httpClient An implementation of {@link HttpClient}
    * @return         The updated Customer object
    *
    * @throws ApiException    if the API returns an error.
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public static Customer update(Auth auth, ClientData clientData, Customer customer)
+  public static Customer update(Auth auth, ClientData clientData, Customer customer, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customer.id().get();
     Customer expectedCustomer = customer.withNodeId(auth.nodeId);
     String payload = gson.toJson(expectedCustomer);
-    String response = Request.doPut(auth, clientData, endpoint, payload);
+    String response = Request.doPut(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response.toString(), Customer.class);
   }
@@ -210,11 +213,11 @@ public class CustomerApi {
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public static Customer patch(Auth auth, ClientData clientData, String customerId, Customer patchCustomer)
+  public static Customer patch(Auth auth, ClientData clientData, String customerId, Customer patchCustomer, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     String endpoint = "/customers/" + customerId;
     String payload = gson.toJson(patchCustomer);
-    String response = Request.doPatch(auth, clientData, endpoint, payload);
+    String response = Request.doPatch(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Customer.class);
   }

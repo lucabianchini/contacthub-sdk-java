@@ -9,6 +9,8 @@ import it.contactlab.hub.sdk.java.internal.gson.ContactHubGson;
 import it.contactlab.hub.sdk.java.internal.http.Request;
 import it.contactlab.hub.sdk.java.models.Like;
 
+import org.apache.http.client.HttpClient;
+
 import com.google.gson.Gson;
 
 public class LikeApi {
@@ -19,12 +21,12 @@ public class LikeApi {
    * Add a new Like to a Customer.
  * @param clientData 
    */
-  public static Like add(Auth auth, ClientData clientData, String customerId, Like like)
+  public static Like add(Auth auth, ClientData clientData, String customerId, Like like, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes";
     String payload = gson.toJson(like);
-    String response = Request.doPost(auth, clientData, endpoint, payload);
+    String response = Request.doPost(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Like.class);
   }
@@ -33,12 +35,12 @@ public class LikeApi {
    * Update an existing Like.
  * @param clientData 
    */
-  public static Like update(Auth auth, ClientData clientData, String customerId, Like like)
+  public static Like update(Auth auth, ClientData clientData, String customerId, Like like, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes/" + like.id();
     String payload = gson.toJson(like);
-    String response = Request.doPut(auth, clientData, endpoint, payload);
+    String response = Request.doPut(auth, clientData, endpoint, payload, httpClient);
 
     return gson.fromJson(response, Like.class);
   }
@@ -47,10 +49,10 @@ public class LikeApi {
    * Remove a tag from a Customer.
  * @param clientData 
    */
-  public static void remove(Auth auth, ClientData clientData, String customerId, String likeId)
+  public static void remove(Auth auth, ClientData clientData, String customerId, String likeId, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
 
     String endpoint = "/customers/" + customerId + "/likes/" + likeId;
-    String response = Request.doDelete(auth, clientData, endpoint);
+    String response = Request.doDelete(auth, clientData, endpoint, httpClient);
   }
 }
