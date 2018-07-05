@@ -14,10 +14,12 @@ import org.scalacheck.Gen
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
+import org.scalatest.BeforeAndAfter
 
 import scala.collection.convert.ImplicitConversions._
+import scala.collection.mutable.ListBuffer
 
-class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
+class CustomersSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -29,7 +31,15 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
   val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
   val extIdSingle = "test-extIdSingle"
   val extIdMultiple = "multipleExternalIdTest"
+  val createdCustomers = new ListBuffer[Customer]
 
+  after {
+    for (createdCustomer <- createdCustomers) {
+      ch.deleteCustomer(createdCustomer.id.get)
+    }
+    createdCustomers.clear()
+  }
+  
   feature("retrieving customers") {
     scenario("retrieving the first page of customers of a node", Integration) {
       Given("a node")
@@ -157,6 +167,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Given("a customer previously added")
       val customer = genCustomer.sample.get
       val newCustomer = ch.addCustomer(customer)
+      createdCustomers.append(newCustomer)
 
       When("the user updates the customer")
       val base = newCustomer.base.get
@@ -197,7 +208,8 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Given("a customer previously added")
       val customer = genCustomer.sample.get
       val newCustomer = ch.addCustomer(customer)
-
+      createdCustomers.append(newCustomer)
+      
       When("the user patches the customer")
       val newEmail = Gen.alphaStr.sample.get + "@example.com"
 
@@ -238,7 +250,8 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
       Given("a customer previously added, without any privacy consent")
       val customer = genCustomer.sample.get
       val newCustomer = ch.addCustomer(customer)
-
+      createdCustomers.append(newCustomer)
+      
       When("the user patches the customer")
       val consents = Consents.builder
         .thirdPartyTransfer(
@@ -284,6 +297,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
         .build
 
       val newCustomer = ch.addCustomer(customer)
+      createdCustomers.append(newCustomer)
 
       When("the user patches the customer")
       val newConsents = Consents.builder
@@ -409,11 +423,12 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
 
       When("the user creates and retrieves the customer")
       val newCustomer = ch.addCustomer(customer)
+      createdCustomers.append(newCustomer)
+      
       val retrievedCustomer = ch.getCustomer(newCustomer.id.get)
 
       Then("all the properties match")
       retrievedCustomer.base.get shouldBe base
-      ch.deleteCustomer(retrievedCustomer.id.get)
     }
   }
 
@@ -444,11 +459,12 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
 
       When("the user creates and retrieves the customer")
       val newCustomer = ch.addCustomer(customer)
+      createdCustomers.append(newCustomer)
+      
       val retrievedCustomer = ch.getCustomer(newCustomer.id.get)
 
       Then("all the consents match")
       retrievedCustomer.consents.get.thirdPartyTransfer.get.profiling.get shouldBe consents.thirdPartyTransfer.get.profiling.get
-      ch.deleteCustomer(retrievedCustomer.id.get)
     }
   }
 

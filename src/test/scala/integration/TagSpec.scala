@@ -9,10 +9,12 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
 
-class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with DataGenerators {
+class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -23,16 +25,28 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
 
   val customer = genCustomer.sample.get
   val customerId = ch.addCustomer(customer).id.get
+  val createdCustomers = new ListBuffer[Customer]
 
   before {
     ch.patchCustomer(customerId, Customer.builder
-      .tags(CustomerTags.builder
-        .manual(Set("existing-tag", "another-tag"))
-        .auto(Set("existing-auto-tag"))
-        .build)
-      .build)
+            .tags(CustomerTags.builder
+                    .manual(Set("existing-tag", "another-tag"))
+                    .auto(Set("existing-auto-tag"))
+                    .build)
+            .build)
+  }
+  
+  after {
+    for (createdCustomer <- createdCustomers) {
+      ch.deleteCustomer(createdCustomer.id.get)
+    }
+    createdCustomers.clear()
   }
 
+  override def afterAll() {
+    ch.deleteCustomer(customerId)
+  }
+  
   feature("adding a tag") {
     scenario("when the tag is new", Integration) {
       Given("a known customer")
@@ -66,7 +80,9 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
     scenario("when the Customer has no other tags", Integration) {
       Given("a new Customer with no tags")
       val customer = genCustomer.sample.get
-      val cid = ch.addCustomer(customer).id.get
+      val newCustomer = ch.addCustomer(customer)
+      createdCustomers.append(newCustomer)
+      val cid = newCustomer.id.get
 
       When("I add a new tag")
       val updated = ch.addTag(cid, "new-tag")
@@ -109,8 +125,10 @@ class TagSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with Da
       Given("a new Customer with no tags")
       val customer = genCustomer.sample.get
 
-      val cid = ch.addCustomer(customer).id.get
-
+      val newCustomer = ch.addCustomer(customer)
+      createdCustomers.append(newCustomer)
+      val cid = newCustomer.id.get
+      
       When("I try to remove a tag that is not present")
       val updated = ch.removeTag(cid, "non-existing-tag")
 

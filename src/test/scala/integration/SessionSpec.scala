@@ -5,8 +5,9 @@ import it.contactlab.hub.sdk.java.Auth
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
+import org.scalatest.BeforeAndAfterAll
 
-class SessionSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
+class SessionSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfterAll with DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -19,6 +20,10 @@ class SessionSpec extends FeatureSpec with GivenWhenThen with DataGenerators {
   val customer = genCustomer.sample.get
   val customerId = ch.addCustomer(customer).id.get
 
+  override def afterAll() {
+    ch.deleteCustomer(customerId)
+  }
+  
   feature("sessions") {
     scenario("generating a new sessionId", Integration) {
       Given("the user needs a new sessionId")

@@ -9,10 +9,11 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
 
 import scala.collection.JavaConversions._
 
-class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter
+class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll
     with DataGenerators {
 
   val auth = new Auth(
@@ -37,6 +38,10 @@ class EducationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter
       .build)
   }
 
+  override def afterAll() {
+    ch.deleteCustomer(customerId)
+  }
+  
   feature("managing educations") {
     scenario("adding a new education", Integration) {
       Given("a known customer")

@@ -9,10 +9,11 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
 
 import scala.collection.JavaConversions._
 
-class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with
+class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with
     DataGenerators {
 
   val auth = new Auth(
@@ -37,6 +38,10 @@ class LikeSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with
       .build)
   }
 
+  override def afterAll() {
+    ch.deleteCustomer(customerId)
+  }
+  
   feature("managing likes") {
     scenario("adding a new like", Integration) {
       Given("a known customer")
