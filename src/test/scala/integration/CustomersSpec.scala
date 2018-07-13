@@ -15,11 +15,12 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
 import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
 
 import scala.collection.convert.ImplicitConversions._
 import scala.collection.mutable.ListBuffer
 
-class CustomersSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with DataGenerators {
+class CustomersSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -28,11 +29,57 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter w
   )
 
   val ch = new ContactHub(auth)
-  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
-  val extIdSingle = "test-extIdSingle"
-  val extIdMultiple = "multipleExternalIdTest"
+  var customerId: String = _
+  val exampleTag =  "example-tag-" + Gen.alphaStr.sample.get
+  val extIdSingle = "test-extIdSingle-" + Gen.alphaStr.sample.get
+  val extIdMultiple = "multipleExternalIdTest-" + Gen.alphaStr.sample.get
+  val initialCreatedCustomers = new ListBuffer[Customer]
   val createdCustomers = new ListBuffer[Customer]
+  val sleepAmountInSecs = 60
 
+  override def beforeAll() {
+    // create new customer with a known manual tag
+    val customerWithManualTag = genCustomer.sample.get.withTags(CustomerTags.builder.addManual(exampleTag).build)
+    val createdCustomerWithManualTag = ch.addCustomer(customerWithManualTag)
+    initialCreatedCustomers.append(createdCustomerWithManualTag)
+    customerId = createdCustomerWithManualTag.id.get
+
+    // create new customer with a known external id
+    val customerWithExternalId = genCustomer.sample.get.withExternalId(extIdSingle)
+    val createdCustomerWithExternalId = ch.addCustomer(customerWithExternalId)
+    initialCreatedCustomers.append(createdCustomerWithExternalId)
+    
+    // create 2 new customers with a known external id (must be different than the one used before)
+    val customerWithExternalIdFirst = genCustomer.sample.get.withExternalId(extIdMultiple)
+    val createdCustomerWithExternalIdFirst = ch.addCustomer(customerWithExternalIdFirst)
+    initialCreatedCustomers.append(createdCustomerWithExternalIdFirst)
+    
+    val customerWithExternalIdSecond = genCustomer.sample.get.withExternalId(extIdMultiple)
+    val createdCustomerWithExternalIdSecond = ch.addCustomer(customerWithExternalIdSecond)
+    initialCreatedCustomers.append(createdCustomerWithExternalIdSecond)
+    
+    for (x <- 1 to 10) {
+      initialCreatedCustomers.append(ch.addCustomer(genCustomer.sample.get))
+    }
+    
+    println("Created customers: " + initialCreatedCustomers)
+    
+    println("Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers")
+    for( a <- 1 to sleepAmountInSecs){
+       print("z")
+       Thread.sleep(1000l)
+    }
+    println("\nback to work")
+  }
+  
+  override def afterAll() {
+    for (createdCustomer <- initialCreatedCustomers) {
+      println("Deleting customer [" + createdCustomer.id.get + "]")
+      ch.deleteCustomer(createdCustomer.id.get)
+    }
+    initialCreatedCustomers.clear()
+  }
+  
   after {
     for (createdCustomer <- createdCustomers) {
       ch.deleteCustomer(createdCustomer.id.get)
@@ -112,7 +159,7 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter w
       customer.id.get shouldBe customerId
 
       And("the customer should have the expected tags")
-      customer.tags.get.manual.toArray shouldBe Array("example-tag")
+      customer.tags.get.manual.toArray shouldBe Array(exampleTag)
     }
 
     scenario("specifying a whitelist of fields") {

@@ -14,6 +14,7 @@ import it.contactlab.hub.sdk.java.models.AsyncPaginated;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.Education;
 import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventCreated;
 import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
@@ -343,10 +344,20 @@ public class AsyncContactHub {
    * @param newEvent The {@link Event} to create.
    * @return         A {@link CompletionStage}.
    */
-  public CompletionStage<Void> addEvent(Event newEvent) {
+  public CompletionStage<EventCreated> addEvent(Event newEvent) {
     return wrapAsync(() -> EventApi.add(this.auth, this.clientData, newEvent, this.httpClient));
   }
 
+  /**
+   * Deletes an Event.
+   *
+   * @param id An Event id.
+   * @return   A {@link CompletionStage}
+   */
+  public CompletionStage<Void> deleteEvent(String id) {
+    return wrapAsync(() -> EventApi.delete(this.auth, this.clientData, id, this.httpClient));
+  }
+  
   /**
    * Retrieves an Event.
    *

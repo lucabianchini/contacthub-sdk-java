@@ -18,6 +18,7 @@ import it.contactlab.hub.sdk.java.models.ClientData;
 import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.Education;
 import it.contactlab.hub.sdk.java.models.Event;
+import it.contactlab.hub.sdk.java.models.EventCreated;
 import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.GetCustomersOptions;
 import it.contactlab.hub.sdk.java.models.Job;
@@ -406,11 +407,25 @@ public class ContactHub {
    * @throws ServerException if the API returns an unexpected response.
    * @throws HttpException   if the API request cannot be completed.
    */
-  public void addEvent(Event newEvent)
+  public EventCreated addEvent(Event newEvent)
       throws ApiException, ServerException, HttpException {
-    EventApi.add(this.auth, this.clientData, newEvent, this.httpClient);
+    return EventApi.add(this.auth, this.clientData, newEvent, this.httpClient);
   }
 
+  /**
+   * Deletes an Event.
+   *
+   * @param id An Event id.
+   *
+   * @throws ApiException    if the API returns an error.
+   * @throws ServerException if the API returns an unexpected response.
+   * @throws HttpException   if the API request cannot be completed.
+   */
+  public void deleteEvent(String id)
+      throws ApiException, ServerException, HttpException {
+    EventApi.delete(this.auth, this.clientData, id, this.httpClient);
+  }
+  
   /**
    * Retrieves an Event.
    *

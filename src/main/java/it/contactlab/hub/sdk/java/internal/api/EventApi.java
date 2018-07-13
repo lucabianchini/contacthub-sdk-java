@@ -3,6 +3,7 @@ package it.contactlab.hub.sdk.java.internal.api;
 import it.contactlab.hub.sdk.java.Auth;
 import it.contactlab.hub.sdk.java.models.ClientData;
 import it.contactlab.hub.sdk.java.models.ContactCenterEvent;
+import it.contactlab.hub.sdk.java.models.Customer;
 import it.contactlab.hub.sdk.java.models.DigitalCampaignEvent;
 import it.contactlab.hub.sdk.java.models.EcommerceEvent;
 import it.contactlab.hub.sdk.java.exceptions.ApiException;
@@ -14,6 +15,7 @@ import it.contactlab.hub.sdk.java.internal.http.Request;
 import it.contactlab.hub.sdk.java.models.AsyncPaginated;
 import it.contactlab.hub.sdk.java.models.Event;
 import it.contactlab.hub.sdk.java.models.EventContext;
+import it.contactlab.hub.sdk.java.models.EventCreated;
 import it.contactlab.hub.sdk.java.models.EventFilters;
 import it.contactlab.hub.sdk.java.models.IotEvent;
 import it.contactlab.hub.sdk.java.models.MobileEvent;
@@ -53,7 +55,7 @@ public class EventApi {
    * Add a new Event.
    * @param clientData 
    */
-  public static void add(Auth auth, ClientData clientData, Event event, HttpClient httpClient)
+  public static EventCreated add(Auth auth, ClientData clientData, Event event, HttpClient httpClient)
       throws ApiException, ServerException, HttpException {
     final String endpoint = "/events";
     String payload = "";
@@ -95,9 +97,16 @@ public class EventApi {
 
     }
 
-    Request.doPost(auth, clientData, endpoint, payload, httpClient);
+    String response = Request.doPost(auth, clientData, endpoint, payload, httpClient);
+    return gson.fromJson(response, EventCreated.class);
   }
 
+  public static void delete(Auth auth, ClientData clientData, String id, HttpClient httpClient)
+      throws ApiException, ServerException, HttpException {
+    String endpoint = "/events/" + id;
+    Request.doDelete(auth, clientData, endpoint, httpClient);
+  }
+  
   private static Paged<Event> getPaged(
       Auth auth, ClientData clientData, String customerId, EventFilters filters, HttpClient httpClient
   ) throws ApiException, ServerException, HttpException {

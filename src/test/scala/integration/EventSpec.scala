@@ -14,13 +14,15 @@ import org.scalatest.FeatureSpec
 import org.scalatest.Inspectors._
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
+import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.TryValues._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable._
 import scala.util.Try
 
-class EventSpec extends FeatureSpec with GivenWhenThen {
+class EventSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with DataGenerators {
 
   val auth = new Auth(
     sys.env("CONTACTHUB_TEST_TOKEN"),
@@ -32,9 +34,102 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
 
   // FIXME: Given it takes about 30 seconds for new events to be indexed, we
   // rely on some existing events that were added manually to the test workspace
-  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
-  val eventId = "ee542c93-bec1-476d-bdbf-a417f342438c"
+//  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
+  var customerId: String = _
+  val initialCreatedCustomers = new ListBuffer[Customer]
+  val createdCustomers = new ListBuffer[Customer]
+  val initialCreatedEvents = new ListBuffer[EventCreated]
+  val createdEvents = new ListBuffer[EventCreated]
+  val sleepAmountInSecs = 60
+  
+//  val eventId = "ee542c93-bec1-476d-bdbf-a417f342438c"
+  var eventId: String = _
+  val eventTitle = "The Title"
+  val eventDate = "2016-12-29T14:36:49.339Z"
+  val eventUserAgent = "testUserAgent"
 
+  override def beforeAll() {
+    // create new customer with a known manual tag
+    val createdCustomer = ch.addCustomer(genCustomer.sample.get)
+    initialCreatedCustomers.append(createdCustomer)
+    customerId = createdCustomer.id.get
+    
+     val webEvent = WebEvent.builder
+        .customerId(customerId)
+        .`type`(EventType.viewedPage)
+        .date(OffsetDateTime.parse(eventDate))
+        .properties(HashMap(
+          "title" -> eventTitle
+        ))
+        .contextInfo(
+              WebContextInfo.builder.client(
+                Client.builder
+                .userAgent(eventUserAgent)
+                .ip("127.0.0.1")
+                .build
+            ).build
+        ).build
+    val createdWebEvent = ch.addEvent(webEvent)
+    initialCreatedEvents.append(createdWebEvent)
+    eventId = createdWebEvent.id.get
+    
+    val ecommerceEvent = EcommerceEvent.builder
+      .customerId(customerId)
+      .`type`(EventType.addedProduct)
+      .date(OffsetDateTime.parse(eventDate))
+      .contextInfo(
+        EcommerceContextInfo.builder.client(
+            Client.builder
+            .userAgent(eventUserAgent)
+            .ip("127.0.0.1")
+            .build
+        ).build
+      )
+      .build
+    val createdEcommerceEvent = ch.addEvent(ecommerceEvent)
+    initialCreatedEvents.append(createdEcommerceEvent)
+    
+    println("Created customers: " + initialCreatedCustomers)
+    println("Created events: " + initialCreatedEvents)
+    
+    println("Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers and events")
+    for( a <- 1 to sleepAmountInSecs){
+       print("z")
+       Thread.sleep(1000l)
+    }
+    println("\nback to work")
+    
+  }
+  
+  override def afterAll() {
+    for (createdCustomer <- initialCreatedCustomers) {
+      println("Deleting customer [" + createdCustomer.id.get + "]")
+      ch.deleteCustomer(createdCustomer.id.get)
+    }
+    initialCreatedCustomers.clear()
+    
+    for (createdEvent <- initialCreatedEvents) {
+      if (Try(ch.deleteEvent(createdEvent.id.get)).isFailure) {
+        println("Cannot delete event [" + createdEvent.id.get + "]")
+      }
+    }
+    initialCreatedEvents.clear()
+  }
+  
+  after {
+    for (createdCustomer <- createdCustomers) {
+      ch.deleteCustomer(createdCustomer.id.get)
+    }
+    createdCustomers.clear()
+    
+    for (createdEvent <- createdEvents) {
+      if (Try(ch.deleteEvent(createdEvent.id.get)).isFailure) {
+        println("Cannot delete event [" + createdEvent.id.get + "]") 
+      }
+    }
+    createdEvents.clear()
+  }
+  
   feature("adding a new event") {
     scenario("adding a simple event", Integration) {
       Given("a new event object")
@@ -49,6 +144,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
 
       When("the user adds the event")
       def create = ch.addEvent(event)
+      createdEvents.append(create)
 
       Then("the event is created successfully")
       noException should be thrownBy create
@@ -65,6 +161,10 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       When("the user adds the event")
       def addEvent = Try(ch.addEvent(event))
 
+      if (addEvent.isSuccess) {
+        createdEvents.append(addEvent.get)
+      }
+
       Then("the event is created successfully")
       addEvent should be a 'success
     }
@@ -78,6 +178,10 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
 
       When("the user adds the event")
       def addEvent = Try(ch.addEvent(event))
+      
+      if (addEvent.isSuccess) {
+        createdEvents.append(addEvent.get)
+      }
 
       Then("the event is created successfully")
       addEvent should be a 'success
@@ -94,6 +198,10 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       When("the user adds the event")
       def addEvent = Try(ch.addEvent(event))
 
+      if (addEvent.isSuccess) {
+        createdEvents.append(addEvent.get)
+      }
+      
       Then("the event is created successfully")
       addEvent should be a 'success
 
@@ -138,10 +246,11 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
         .build
 
       When("the user adds the event")
-      def create = ch.addEvent(event)
-
+      def createdEvent = ch.addEvent(event)
+      createdEvents.append(createdEvent)
+      
       Then("the event is created successfully")
-      noException should be thrownBy create
+      noException should be thrownBy createdEvent
 
     }
   }
@@ -159,10 +268,9 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       event.customerId.get should be (customerId)
       event.`type` should be (EventType.viewedPage)
       event.context should be (EventContext.WEB)
-      event.date should be (OffsetDateTime.parse("2016-12-29T14:36:49.339Z"))
-      event.properties.get("title") should be("The Title")
-      event.contextInfo.get.client.get.userAgent.get should be ("testUserAgent")
-      event.registeredAt.get shouldBe (OffsetDateTime.parse("2017-03-09T10:34:03.547Z"))
+      event.date should be (OffsetDateTime.parse(eventDate))
+      event.properties.get("title") should be(eventTitle)
+      event.contextInfo.get.client.get.userAgent.get should be (eventUserAgent)
     }
 
     scenario("retrieve all events for a customer", Integration) {
@@ -229,8 +337,8 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       val cid = customerId
 
       And("a date range filter")
-      val dateFrom = OffsetDateTime.now.minus(7, DAYS)
-      val dateTo = OffsetDateTime.now.minus(1, HOURS)
+      val dateFrom = OffsetDateTime.parse(eventDate).minus(1, HOURS)
+      val dateTo = OffsetDateTime.parse(eventDate).plus(1, HOURS)
       val filters = EventFilters.builder.dateFrom(dateFrom).dateTo(dateTo).build
 
       When("the user retrieves the events for that customer")
@@ -267,5 +375,4 @@ class EventSpec extends FeatureSpec with GivenWhenThen {
       forAll(events)(_.date.isBefore(dateTo) should be (true))
     }
   }
-
 }
