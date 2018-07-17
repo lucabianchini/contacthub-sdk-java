@@ -22,12 +22,21 @@ import scala.collection.mutable.ListBuffer
 
 class CustomersSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with DataGenerators {
 
-  val auth = new Auth(
-    sys.env("CONTACTHUB_TEST_TOKEN"),
-    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
-    sys.env("CONTACTHUB_TEST_NODE_ID")
-  )
-
+  val auth = if (sys.env.get("CONTACTHUB_TEST_API_URL").isDefined) {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID"),
+      sys.env("CONTACTHUB_TEST_API_URL")
+    )
+  } else {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID")
+    )
+  }
+  
   val ch = new ContactHub(auth)
   var customerId: String = _
   val exampleTag =  "example-tag-" + Gen.alphaStr.sample.get
@@ -62,19 +71,18 @@ class CustomersSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter w
       initialCreatedCustomers.append(ch.addCustomer(genCustomer.sample.get))
     }
     
-    println("Created customers: " + initialCreatedCustomers)
+    println("[" + Thread.currentThread.getId() + "] Created [" + initialCreatedCustomers.size + "] customers: " + initialCreatedCustomers)
     
-    println("Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers")
+    println("[" + Thread.currentThread.getId() + "] Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers")
     for( a <- 1 to sleepAmountInSecs){
-       print("z")
        Thread.sleep(1000l)
     }
-    println("\nback to work")
+    println("[" + Thread.currentThread.getId() + "] back to work")
   }
   
   override def afterAll() {
     for (createdCustomer <- initialCreatedCustomers) {
-      println("Deleting customer [" + createdCustomer.id.get + "]")
+      println("[" + Thread.currentThread.getId() + "] Deleting customer [" + createdCustomer.id.get + "]")
       ch.deleteCustomer(createdCustomer.id.get)
     }
     initialCreatedCustomers.clear()

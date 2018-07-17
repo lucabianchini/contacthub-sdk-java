@@ -24,17 +24,25 @@ import scala.util.Try
 
 class EventSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with DataGenerators {
 
-  val auth = new Auth(
-    sys.env("CONTACTHUB_TEST_TOKEN"),
-    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
-    sys.env("CONTACTHUB_TEST_NODE_ID")
-  )
+  val auth = if (sys.env.get("CONTACTHUB_TEST_API_URL").isDefined) {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID"),
+      sys.env("CONTACTHUB_TEST_API_URL")
+    )
+  } else {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID")
+    )
+  }
 
   val ch = new ContactHub(auth)
 
   // FIXME: Given it takes about 30 seconds for new events to be indexed, we
   // rely on some existing events that were added manually to the test workspace
-//  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
   var customerId: String = _
   val initialCreatedCustomers = new ListBuffer[Customer]
   val createdCustomers = new ListBuffer[Customer]
@@ -42,7 +50,6 @@ class EventSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with 
   val createdEvents = new ListBuffer[EventCreated]
   val sleepAmountInSecs = 60
   
-//  val eventId = "ee542c93-bec1-476d-bdbf-a417f342438c"
   var eventId: String = _
   val eventTitle = "The Title"
   val eventDate = "2016-12-29T14:36:49.339Z"
@@ -89,28 +96,27 @@ class EventSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with 
     val createdEcommerceEvent = ch.addEvent(ecommerceEvent)
     initialCreatedEvents.append(createdEcommerceEvent)
     
-    println("Created customers: " + initialCreatedCustomers)
-    println("Created events: " + initialCreatedEvents)
+    println("[" + Thread.currentThread.getId() + "] Created [" + initialCreatedCustomers.size + "] customers: " + initialCreatedCustomers)
+    println("[" + Thread.currentThread.getId() + "] Created [" + initialCreatedEvents.size + "] events: " + initialCreatedEvents)
     
-    println("Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers and events")
+    println("[" + Thread.currentThread.getId() + "] Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers and events")
     for( a <- 1 to sleepAmountInSecs){
-       print("z")
        Thread.sleep(1000l)
     }
-    println("\nback to work")
+    println("[" + Thread.currentThread.getId() + "] back to work")
     
   }
   
   override def afterAll() {
     for (createdCustomer <- initialCreatedCustomers) {
-      println("Deleting customer [" + createdCustomer.id.get + "]")
+      println("[" + Thread.currentThread.getId() + "] Deleting customer [" + createdCustomer.id.get + "]")
       ch.deleteCustomer(createdCustomer.id.get)
     }
     initialCreatedCustomers.clear()
     
     for (createdEvent <- initialCreatedEvents) {
       if (Try(ch.deleteEvent(createdEvent.id.get)).isFailure) {
-        println("Cannot delete event [" + createdEvent.id.get + "]")
+        println("[" + Thread.currentThread.getId() + "] Cannot delete event [" + createdEvent.id.get + "]")
       }
     }
     initialCreatedEvents.clear()
@@ -124,7 +130,7 @@ class EventSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with 
     
     for (createdEvent <- createdEvents) {
       if (Try(ch.deleteEvent(createdEvent.id.get)).isFailure) {
-        println("Cannot delete event [" + createdEvent.id.get + "]") 
+        println("[" + Thread.currentThread.getId() + "] Cannot delete event [" + createdEvent.id.get + "]") 
       }
     }
     createdEvents.clear()

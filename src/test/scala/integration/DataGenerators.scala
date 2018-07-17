@@ -21,5 +21,4 @@ trait DataGenerators {
         .build)
       .build
   }
-
 }

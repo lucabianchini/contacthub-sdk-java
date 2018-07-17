@@ -8,20 +8,34 @@ import it.contactlab.hub.sdk.java.queries._
 import java.time._
 import java.util.Arrays
 import java.util.Optional
+import java.net.URI
 
+import org.scalacheck.Gen
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
+import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
 
+import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
 
-class QuerySpec extends FeatureSpec with GivenWhenThen {
+class QuerySpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with DataGenerators {
 
-  val auth = new Auth(
-    sys.env("CONTACTHUB_TEST_TOKEN"),
-    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
-    sys.env("CONTACTHUB_TEST_NODE_ID")
-  );
+  val auth = if (sys.env.get("CONTACTHUB_TEST_API_URL").isDefined) {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID"),
+      sys.env("CONTACTHUB_TEST_API_URL")
+    )
+  } else {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID")
+    )
+  }
 
   val ch = new ContactHub(auth)
 
@@ -50,6 +64,63 @@ class QuerySpec extends FeatureSpec with GivenWhenThen {
     .conditions(Arrays.asList(atomicMario, atomicBetween))
     .build
 
+  val initialCreatedCustomers = new ListBuffer[Customer]
+  val sleepAmountInSecs = 60  
+  var tmpCustomer: Customer = _
+  var tmpContacts: Contacts = _
+  
+  override def beforeAll() {
+    tmpContacts = genCustomer.sample.get.base.get.contacts.get
+    tmpCustomer = Customer.builder
+      .base(BaseProperties.builder
+        .firstName("Mario")
+        .lastName("Mario")
+        .dob(LocalDate.parse("1978-01-01"))
+        .pictureUrl(new URI("https://www.example.com/its-a-me-Mario.jpg"))
+        .contacts(tmpContacts)
+        .build)
+      .build
+    initialCreatedCustomers.append(ch.addCustomer(tmpCustomer))
+
+    tmpContacts = genCustomer.sample.get.base.get.contacts.get
+    tmpCustomer = Customer.builder
+      .base(BaseProperties.builder
+        .firstName("Mario")
+        .lastName("Mario")
+        .dob(LocalDate.parse("1984-01-01"))
+        .contacts(tmpContacts)
+        .build)
+      .build
+    initialCreatedCustomers.append(ch.addCustomer(tmpCustomer))
+    
+    tmpContacts = genCustomer.sample.get.base.get.contacts.get
+    tmpCustomer = Customer.builder
+      .base(BaseProperties.builder
+        .firstName("Luigi")
+        .lastName("Mario")
+        .dob(LocalDate.parse("1990-01-01"))
+        .pictureUrl(new URI("https://www.example.com/its-a-me-Luigi.jpg"))
+        .contacts(tmpContacts)
+        .build)
+      .build
+    initialCreatedCustomers.append(ch.addCustomer(tmpCustomer))
+    
+    println("[" + Thread.currentThread.getId() + "] Created [" + initialCreatedCustomers.size + "] customers: " + initialCreatedCustomers)
+    println("[" + Thread.currentThread.getId() + "] Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers")
+    for( a <- 1 to sleepAmountInSecs){
+       Thread.sleep(1000l)
+    }
+    println("[" + Thread.currentThread.getId() + "] back to work")
+  }
+  
+   override def afterAll() {
+    for (createdCustomer <- initialCreatedCustomers) {
+      println("[" + Thread.currentThread.getId() + "] Deleting customer [" + createdCustomer.id.get + "]")
+      ch.deleteCustomer(createdCustomer.id.get)
+    }
+    initialCreatedCustomers.clear()
+  }
+  
   feature("createQuery helper") {
     scenario("Using the createQuery helper", Integration) {
       Given("I get a QueryContainer using the createQuery helper")

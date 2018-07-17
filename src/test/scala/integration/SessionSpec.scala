@@ -9,11 +9,20 @@ import org.scalatest.BeforeAndAfterAll
 
 class SessionSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfterAll with DataGenerators {
 
-  val auth = new Auth(
-    sys.env("CONTACTHUB_TEST_TOKEN"),
-    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
-    sys.env("CONTACTHUB_TEST_NODE_ID")
-  );
+  val auth = if (sys.env.get("CONTACTHUB_TEST_API_URL").isDefined) {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID"),
+      sys.env("CONTACTHUB_TEST_API_URL")
+    )
+  } else {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID")
+    )
+  }
 
   val ch = new ContactHub(auth)
 

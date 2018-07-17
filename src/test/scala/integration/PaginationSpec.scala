@@ -2,27 +2,95 @@ package it.contactlab.hub.sdk.java.test.integration
 
 import it.contactlab.hub.sdk.java.ContactHub
 import it.contactlab.hub.sdk.java.Auth
-import it.contactlab.hub.sdk.java.models.GetCustomersOptions
-import it.contactlab.hub.sdk.java.models.EventFilters
+import it.contactlab.hub.sdk.java.models._
 
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers._
 import org.scalatest.GivenWhenThen
+import org.scalatest.BeforeAndAfter
+import org.scalatest.BeforeAndAfterAll
 
-class PaginationSpec extends FeatureSpec with GivenWhenThen {
+import java.time._
+import scala.collection.JavaConversions._
+import scala.collection.mutable._
 
-  val auth = new Auth(
-    sys.env("CONTACTHUB_TEST_TOKEN"),
-    sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
-    sys.env("CONTACTHUB_TEST_NODE_ID")
-  )
+class PaginationSpec extends FeatureSpec with GivenWhenThen with BeforeAndAfter with BeforeAndAfterAll with DataGenerators {
+
+  val auth = if (sys.env.get("CONTACTHUB_TEST_API_URL").isDefined) {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID"),
+      sys.env("CONTACTHUB_TEST_API_URL")
+    )
+  } else {
+    new Auth(
+      sys.env("CONTACTHUB_TEST_TOKEN"),
+      sys.env("CONTACTHUB_TEST_WORKSPACE_ID"),
+      sys.env("CONTACTHUB_TEST_NODE_ID")
+    )
+  }
 
   val ch = new ContactHub(auth)
-
-  // FIXME: Given it takes about 30 seconds for new events to be indexed, we
-  // rely on some existing events that were added manually to the test workspace
-  val customerId = "b765329a-84b2-4380-bfa5-fa4ec33d3b82"
-
+  var customerId: String = _
+  val initialCreatedCustomers = new ListBuffer[Customer]
+  val initialCreatedEvents = new ListBuffer[EventCreated]
+  val customersToCreate = 29
+  val eventTitle = "The Title"
+  val eventUserAgent = "testUserAgent"
+  val eventDate = "2016-12-29T14:36:49.339Z"
+  val eventsToCreate = 30
+  val sleepAmountInSecs = 60
+  
+  override def beforeAll() {
+    val customer = genCustomer.sample.get
+    val customerWithEvents = ch.addCustomer(customer)
+    initialCreatedCustomers.append(customerWithEvents)
+    customerId = customerWithEvents.id.get
+    
+     val webEvent = WebEvent.builder
+        .customerId(customerId)
+        .`type`(EventType.viewedPage)
+        .date(OffsetDateTime.parse(eventDate))
+        .properties(HashMap(
+          "title" -> eventTitle
+        ))
+        .contextInfo(
+              WebContextInfo.builder.client(
+                Client.builder
+                .userAgent(eventUserAgent)
+                .ip("127.0.0.1")
+                .build
+            ).build
+        ).build
+            
+    for (e <- 1 to eventsToCreate) {
+      initialCreatedEvents.append(ch.addEvent(webEvent))
+    }
+    println("[" + Thread.currentThread.getId() + "] Created [" + initialCreatedEvents.size + "] events: " + initialCreatedEvents)
+    
+    for (a <- 1 to customersToCreate) {
+      val customer = genCustomer.sample.get
+      initialCreatedCustomers.append(ch.addCustomer(customer))
+    }
+    
+    println("[" + Thread.currentThread.getId() + "] Created [" + initialCreatedCustomers.size + "] customers: " + initialCreatedCustomers)
+    
+    println("[" + Thread.currentThread.getId() + "] Waiting (" + sleepAmountInSecs + " secs) for Hub to index newly created customers and events")
+    for (a <- 1 to sleepAmountInSecs) {
+       Thread.sleep(1000l)
+    }
+    println("[" + Thread.currentThread.getId() + "] back to work")
+  }
+  
+  override def afterAll() {
+    for (createdCustomer <- initialCreatedCustomers) {
+      println("[" + Thread.currentThread.getId() + "] Deleting customer [" + createdCustomer.id.get + "]")
+      ch.deleteCustomer(createdCustomer.id.get)
+    }
+    initialCreatedCustomers.clear()
+  }
+  
   feature("Paginating Customers") {
     scenario("Reading pagination attributes") {
       Given("I fetch a list of customers")
